@@ -7,7 +7,7 @@
     <ProjectGuid>{B5584FBD-6E00-499A-A6E3-784DB92B3180}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Veil.Tests</RootNamespace>
+    <RootNamespace>Veil</RootNamespace>
     <AssemblyName>Veil.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -40,6 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Veil\Veil.csproj">
+      <Project>{97d96b66-edfe-474b-bc72-d8439830fc76}</Project>
+      <Name>Veil</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
