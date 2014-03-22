@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Reflection;
 
 namespace Veil
 {
@@ -17,5 +16,10 @@ namespace Veil
         public Type LiteralType { get; set; }
 
         public object LiteralContent { get; set; }
+    }
+
+    internal class WriteModelPropertyNode : ISyntaxTreeNode
+    {
+        public PropertyInfo ModelProperty { get; set; }
     }
 }

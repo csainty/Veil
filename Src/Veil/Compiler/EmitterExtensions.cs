@@ -24,53 +24,63 @@ namespace Veil.Compiler
             emitter.LoadArgument(0);
         }
 
+        public static void LoadModelToStack<T>(this Emit<Action<TextWriter, T>> emitter)
+        {
+            emitter.LoadArgument(1);
+        }
+
+        public static void CallWriteFor<T>(this Emit<Action<TextWriter, T>> emitter, Type writerType)
+        {
+            emitter.CallVirtual(writers[writerType]);
+        }
+
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, string content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(string)]);
+            emitter.CallWriteFor(typeof(string));
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, int content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(int)]);
+            emitter.CallWriteFor(typeof(int));
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, double content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(double)]);
+            emitter.CallWriteFor(typeof(double));
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, float content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(float)]);
+            emitter.CallWriteFor(typeof(float));
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, long content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(long)]);
+            emitter.CallWriteFor(typeof(long));
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, uint content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(uint)]);
+            emitter.CallWriteFor(typeof(uint));
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, ulong content)
         {
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
-            emitter.CallVirtual(writers[typeof(ulong)]);
+            emitter.CallWriteFor(typeof(ulong));
         }
     }
 }

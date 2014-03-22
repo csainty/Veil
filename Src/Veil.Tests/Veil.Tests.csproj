@@ -45,6 +45,7 @@
     <Compile Include="Compiler\CompilerTestBase.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
+    <Compile Include="Compiler\WriteModelPropertyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

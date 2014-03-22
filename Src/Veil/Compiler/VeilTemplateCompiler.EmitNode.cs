@@ -10,13 +10,11 @@ namespace Veil.Compiler
         {
             var nodeType = node.GetType();
             if (nodeType == typeof(WriteLiteralNode))
-            {
                 EmitWriteLiteral(emitter, (WriteLiteralNode)node);
-            }
+            else if (nodeType == typeof(WriteModelPropertyNode))
+                EmitWriteModelProperty(emitter, (WriteModelPropertyNode)node);
             else
-            {
                 throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(nodeType.Name));
-            }
         }
     }
 }
