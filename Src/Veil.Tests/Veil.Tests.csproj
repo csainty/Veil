@@ -51,6 +51,7 @@
     <Compile Include="Parser\Hail\WriteModelPropertyTests.cs" />
     <Compile Include="Parser\ParserTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VeilEngineTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -2,6 +2,7 @@
 using System.IO;
 using Veil.Compiler;
 using Veil.Parser;
+using Veil.Parser.Hail;
 
 namespace Veil
 {
@@ -13,6 +14,7 @@ namespace Veil
 
         public VeilEngine()
         {
+            this.parser = new HailTemplateParser();
             this.compiler = new VeilTemplateCompiler();
         }
 
