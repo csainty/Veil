@@ -43,11 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compiler\EmitterExtensions.cs" />
     <Compile Include="Compiler\ITemplateCompiler.cs" />
+    <Compile Include="Compiler\VeilCompilerException.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitNode.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteLiteral.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Parser\ITemplateParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyntaxTree.cs" />
     <Compile Include="VeilEngine.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
