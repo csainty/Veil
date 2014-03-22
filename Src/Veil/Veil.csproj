@@ -50,7 +50,10 @@
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteLiteral.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IVeilEngine.cs" />
+    <Compile Include="Parser\Hail\ParserState.cs" />
     <Compile Include="Parser\ITemplateParser.cs" />
+    <Compile Include="Parser\Hail\HailTemplateParser.cs" />
+    <Compile Include="Parser\VeilParserException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyntaxTree.cs" />
     <Compile Include="VeilEngine.cs" />

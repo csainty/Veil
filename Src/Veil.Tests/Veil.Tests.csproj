@@ -47,6 +47,9 @@
     <Compile Include="Compiler\TemplateRootNodeTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
     <Compile Include="Compiler\WriteModelPropertyTests.cs" />
+    <Compile Include="Parser\Hail\WriteLiteralTests.cs" />
+    <Compile Include="Parser\Hail\WriteModelPropertyTests.cs" />
+    <Compile Include="Parser\ParserTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +61,7 @@
       <Name>Veil</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
