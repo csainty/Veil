@@ -6,7 +6,11 @@ namespace Veil
 {
     internal interface ISyntaxTreeNode { }
 
-    internal class TemplateRootNode : ISyntaxTreeNode
+    internal class TemplateRootNode : BlockNode
+    {
+    }
+
+    internal class BlockNode : ISyntaxTreeNode
     {
         public IEnumerable<ISyntaxTreeNode> TemplateNodes { get; set; }
     }
@@ -21,5 +25,14 @@ namespace Veil
     internal class WriteModelPropertyNode : ISyntaxTreeNode
     {
         public PropertyInfo ModelProperty { get; set; }
+    }
+
+    internal class ConditionalOnModelPropertyNode : ISyntaxTreeNode
+    {
+        public PropertyInfo ModelProperty { get; set; }
+
+        public BlockNode TrueBlock { get; set; }
+
+        public BlockNode FalseBlock { get; set; }
     }
 }

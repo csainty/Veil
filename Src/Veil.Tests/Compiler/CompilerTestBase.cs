@@ -20,5 +20,15 @@ namespace Veil.Compiler
         {
             return new TemplateRootNode { TemplateNodes = nodes };
         }
+
+        protected BlockNode CreateBlock(params ISyntaxTreeNode[] nodes)
+        {
+            return new BlockNode { TemplateNodes = nodes };
+        }
+
+        protected WriteLiteralNode CreateStringLiteral(string value)
+        {
+            return new WriteLiteralNode { LiteralType = typeof(string), LiteralContent = value };
+        }
     }
 }

@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler\CompilerTestBase.cs" />
+    <Compile Include="Compiler\ConditionalOnModelPropertyNodeTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
     <Compile Include="Compiler\TemplateRootNodeTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />

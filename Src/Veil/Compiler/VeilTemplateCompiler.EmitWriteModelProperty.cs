@@ -9,18 +9,7 @@ namespace Veil.Compiler
         private static void EmitWriteModelProperty<T>(Emit<Action<TextWriter, T>> emitter, WriteModelPropertyNode node)
         {
             emitter.LoadWriterToStack();
-            emitter.LoadModelToStack();
-
-            var get = node.ModelProperty.GetGetMethod();
-            if (get.IsVirtual)
-            {
-                emitter.CallVirtual(get);
-            }
-            else
-            {
-                emitter.Call(get);
-            }
-
+            emitter.LoadModelPropertyToStack(node.ModelProperty);
             emitter.CallWriteFor(node.ModelProperty.PropertyType);
         }
     }

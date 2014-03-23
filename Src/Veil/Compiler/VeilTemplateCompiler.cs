@@ -10,10 +10,7 @@ namespace Veil.Compiler
         {
             var emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
 
-            foreach (var node in templateSyntaxTree.TemplateNodes)
-            {
-                EmitNode(emitter, node);
-            }
+            EmitNode(emitter, templateSyntaxTree);
 
             emitter.Return();
             return emitter.CreateDelegate();
