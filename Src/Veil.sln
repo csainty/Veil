@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veil", "Veil\Veil.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veil.Tests", "Veil.Tests\Veil.Tests.csproj", "{B5584FBD-6E00-499A-A6E3-784DB92B3180}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veil.Benchmark", "Veil.Benchmark\Veil.Benchmark.csproj", "{DD60B91D-18AE-42D3-BF11-B9FAC4E16525}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B5584FBD-6E00-499A-A6E3-784DB92B3180}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5584FBD-6E00-499A-A6E3-784DB92B3180}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5584FBD-6E00-499A-A6E3-784DB92B3180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD60B91D-18AE-42D3-BF11-B9FAC4E16525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD60B91D-18AE-42D3-BF11-B9FAC4E16525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD60B91D-18AE-42D3-BF11-B9FAC4E16525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD60B91D-18AE-42D3-BF11-B9FAC4E16525}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

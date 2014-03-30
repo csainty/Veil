@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Test Template</title>
+</head>
+<body>
+	<h1>Test Template</h1>
+
+	<nav>
+		
+			<a>Sign Out</a>
+		
+	</nav>
+</body>
+</html>
