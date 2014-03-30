@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -39,9 +40,18 @@ namespace Veil.Parser.Hail
                     blockStack.Peek().Add(conditional);
                     blockStack.Push(block);
                 }
-                else if (token.StartsWith("/if"))
+                else if (token == "else")
                 {
-                    var nodes = blockStack.Pop();
+                    AssertInsideConditionalOnModelBlock(blockStack, "{{else}}");
+                    blockStack.Pop();
+                    var block = new BlockNode();
+                    ((ConditionalOnModelPropertyNode)blockStack.Peek().Nodes.Last()).FalseBlock = block;
+                    blockStack.Push(block);
+                }
+                else if (token == "/if")
+                {
+                    AssertInsideConditionalOnModelBlock(blockStack, "{{/if}}");
+                    blockStack.Pop();
                 }
                 else
                 {
@@ -53,7 +63,35 @@ namespace Veil.Parser.Hail
                 blockStack.Peek().Add(WriteStringLiteral(template.Substring(index)));
             }
 
+            AssertStackOnRootNode(blockStack);
+
             return (TemplateRootNode)blockStack.Pop();
+        }
+
+        private void AssertStackOnRootNode(Stack<BlockNode> blockStack)
+        {
+            if (!(blockStack.Peek() is TemplateRootNode))
+            {
+                throw new VeilParserException("Mismatched block found. Expected to find the end of the template by found '{0}'".FormatInvariant(blockStack.Peek().GetType()));
+            }
+        }
+
+        private void AssertInsideConditionalOnModelBlock(Stack<BlockNode> blockStack, string foundToken)
+        {
+            var faulted = false;
+            faulted = blockStack.Count < 2;
+
+            if (!faulted)
+            {
+                var block = blockStack.Pop();
+                faulted = !(blockStack.Peek().Nodes.Last() is ConditionalOnModelPropertyNode);
+                blockStack.Push(block);
+            }
+
+            if (faulted)
+            {
+                throw new VeilParserException("Found token '{0}' outside of a conditional block.".FormatInvariant(foundToken));
+            }
         }
 
         private static PropertyInfo ParsePropertyName(string name, Type modelType)
