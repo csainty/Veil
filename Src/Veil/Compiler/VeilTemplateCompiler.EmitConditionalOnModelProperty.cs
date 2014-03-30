@@ -9,12 +9,12 @@ namespace Veil.Compiler
     {
         private static void EmitConditionalOnModelProperty<T>(Emit<Action<TextWriter, T>> emitter, ConditionalOnModelPropertyNode node)
         {
-            if (node.TrueBlock == null || !node.TrueBlock.TemplateNodes.Any())
+            if (node.TrueBlock == null || !node.TrueBlock.Nodes.Any())
             {
                 throw new VeilCompilerException("Conditionals must have a True block");
             }
 
-            if (node.FalseBlock == null || !node.FalseBlock.TemplateNodes.Any())
+            if (node.FalseBlock == null || !node.FalseBlock.Nodes.Any())
             {
                 var done = emitter.DefineLabel();
                 emitter.LoadModelPropertyToStack(node.ModelProperty);

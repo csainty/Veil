@@ -1,34 +1,28 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Veil.Parser.Hail
 {
     [TestFixture]
     internal class WriteModelPropertyTests : ParserTestBase<HailTemplateParser>
     {
-        [TestCase("{{Name}}", new[] { "Name" })]
-        [TestCase("{{ Name }}", new[] { "Name" })]
-        [TestCase("Hello {{Name}}", new[] { "Name" })]
-        [TestCase("Hello {{Name}}, {{ Greeting }}", new[] { "Name", "Greeting" })]
-        public void Should_parse_model_property_names(string template, string[] expectedPropertyNames)
+        [TestCaseSource("PropertyNameTestSource")]
+        public void Should_parse_model_property_names(string template, ISyntaxTreeNode[] expectedTemplate)
         {
-            var model = new { Name = "", Greeting = "" };
-            var syntaxTree = Parse(template, model.GetType());
-            var propertyNames = syntaxTree.TemplateNodes.OfType<WriteModelPropertyNode>().Select(x => x.ModelProperty.Name);
-            Assert.That(propertyNames, Is.EquivalentTo(expectedPropertyNames));
+            var syntaxTree = Parse(template, typeof(TestModel));
+            AssertSyntaxTree(syntaxTree, expectedTemplate);
         }
 
-        [TestCase]
-        public void Should_throw_if_identifier_is_incomplete()
+        public object[] PropertyNameTestSource()
         {
-            var model = new { Name = "" };
-            Assert.Throws<VeilParserException>(() =>
-            {
-                Parse("Hello {{ Name} !", model.GetType());
-            });
+            return new object[] {
+                new object[] {"{{Name}}", new ISyntaxTreeNode[] { WriteModelPropertyNode.Create(typeof(TestModel), "Name") } },
+                new object[] {"{{ Name }}", new ISyntaxTreeNode[] { WriteModelPropertyNode.Create(typeof(TestModel), "Name") } },
+                new object[] {"Hello {{Name}}", new ISyntaxTreeNode[] { WriteLiteralNode.String("Hello "), WriteModelPropertyNode.Create(typeof(TestModel), "Name") } },
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new ISyntaxTreeNode[] { WriteLiteralNode.String("Hello "), WriteModelPropertyNode.Create(typeof(TestModel), "Name"), WriteLiteralNode.String(", "), WriteModelPropertyNode.Create(typeof(TestModel), "Greeting") } }
+            };
         }
 
-        [TestCase]
+        [Test]
         public void Should_throw_if_property_not_part_OF_model()
         {
             var model = new { Name = "" };
@@ -38,12 +32,30 @@ namespace Veil.Parser.Hail
             });
         }
 
-        [TestCase]
-        public void Should_handle_incomplete_identifier_marker()
+        [TestCase("{Name}")]
+        [TestCase("Hello {Name}")]
+        [TestCase("Hello { this string { contains { opening identifiers")]
+        [TestCase("{{ name }")]
+        [TestCase("Hello {{ name }")]
+        [TestCase("Hello {{ name } World")]
+        [TestCase("{ name }}")]
+        [TestCase("Hello { name }}")]
+        [TestCase("Hello { name }} World")]
+        [TestCase("{{{ Name }}")]
+        [TestCase("{{{ Name }}}")]
+        [TestCase("Hello {{{ Name }}}")]
+        [TestCase("Hello {{{ Name }}} World")]
+        public void Should_handle_incomplete_identifier_marker(string testString)
         {
-            var syntaxTree = Parse("Hello {Name}", typeof(object));
-            var result = syntaxTree.TemplateNodes.OfType<WriteLiteralNode>().Single();
-            Assert.That(result.LiteralContent, Is.EqualTo("Hello {Name}"));
+            var syntaxTree = Parse(testString, typeof(object));
+            AssertSyntaxTree(syntaxTree, WriteLiteralNode.String(testString));
+        }
+
+        private class TestModel
+        {
+            public string Name { get; set; }
+
+            public string Greeting { get; set; }
         }
     }
 }

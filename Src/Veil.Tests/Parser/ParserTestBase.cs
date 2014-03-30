@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using DeepEqual.Syntax;
 
 namespace Veil.Parser
 {
@@ -22,10 +22,12 @@ namespace Veil.Parser
             }
         }
 
-        protected void AssertTemplate(TemplateRootNode template, params ISyntaxTreeNode[] nodes)
+        protected void AssertSyntaxTree(TemplateRootNode template, params ISyntaxTreeNode[] expectedNodes)
         {
-            var resultNodes = template.TemplateNodes.ToArray();
-            Assert.That(resultNodes, Has.Length.EqualTo(nodes.Length));
+            var resultNodes = template.Nodes.ToArray();
+            var comparisonTemplate = new TemplateRootNode();
+            comparisonTemplate.AddRange(expectedNodes);
+            template.ShouldDeepEqual(comparisonTemplate);
         }
     }
 }

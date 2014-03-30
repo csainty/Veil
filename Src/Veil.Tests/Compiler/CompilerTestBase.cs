@@ -18,12 +18,16 @@ namespace Veil.Compiler
 
         protected TemplateRootNode CreateTemplate(params ISyntaxTreeNode[] nodes)
         {
-            return new TemplateRootNode { TemplateNodes = nodes };
+            var template = new TemplateRootNode();
+            template.AddRange(nodes);
+            return template;
         }
 
         protected BlockNode CreateBlock(params ISyntaxTreeNode[] nodes)
         {
-            return new BlockNode { TemplateNodes = nodes };
+            var block = new BlockNode();
+            block.AddRange(nodes);
+            return block;
         }
 
         protected WriteLiteralNode CreateStringLiteral(string value)

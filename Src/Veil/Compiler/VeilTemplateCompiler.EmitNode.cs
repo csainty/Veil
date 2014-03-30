@@ -27,7 +27,7 @@ namespace Veil.Compiler
         private static IEnumerable<ISyntaxTreeNode> GetIndividualNodes(ISyntaxTreeNode node)
         {
             if (node is BlockNode)
-                return ((BlockNode)node).TemplateNodes;
+                return ((BlockNode)node).Nodes;
             else
                 return new[] { node };
         }
