@@ -14,10 +14,23 @@ namespace Veil
         [TestCase("{{#if ViewCount}}Count: {{ViewCount}}{{/if}}", "Count: 10")]
         [TestCase("{{#if IsAdmin}}Yo Admin!{{/if}}", "")]
         [TestCase("{{#if IsAdmin}}Yo Admin!{{else}}Sorry{{/if}}", "Sorry")]
+        [TestCase("Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil")]
         public void Should_render_a_hail_template(string template, string expectedResult)
         {
             var view = Compile(template);
-            var result = Execute(view, new ViewModel { Name = "Chris", ViewCount = 10, IsAdmin = false });
+            var result = Execute(view, new ViewModel {
+                Name = "Chris",
+                ViewCount = 10,
+                IsAdmin = false,
+                Department = new Department
+                {
+                    DepartmentName = "Developers",
+                    Company = new Company
+                    {
+                        CompanyName = "Veil"
+                    }
+                }
+            });
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -45,7 +58,21 @@ namespace Veil
 
             public int ViewCount { get; set; }
 
-            public bool IsAdmin { get; set; }
+            public bool IsAdmin = false;
+
+            public Department Department { get; set; }
+        }
+
+        private class Department
+        {
+            public string DepartmentName { get; set; }
+
+            public Company Company { get; set; }
+        }
+
+        private class Company
+        {
+            public string CompanyName { get; set; }
         }
     }
 }
