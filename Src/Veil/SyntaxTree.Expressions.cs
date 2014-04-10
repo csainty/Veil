@@ -37,4 +37,25 @@ namespace Veil
             return new ModelFieldExpressionNode { Field = type.GetField(fieldName) };
         }
     }
+
+    internal class SubModelExpressionNode : IModelExpressionNode
+    {
+        public IModelExpressionNode ModelExpression { get; set; }
+
+        public IModelExpressionNode SubModelExpression { get; set; }
+
+        public Type Type
+        {
+            get { return SubModelExpression.Type; }
+        }
+
+        public static SubModelExpressionNode Create(IModelExpressionNode modelExpression, IModelExpressionNode subModelExpression)
+        {
+            return new SubModelExpressionNode
+            {
+                ModelExpression = modelExpression,
+                SubModelExpression = subModelExpression
+            };
+        }
+    }
 }

@@ -9,7 +9,7 @@ namespace Veil.Compiler
         private static void EmitWriteModelProperty<T>(Emit<Action<TextWriter, T>> emitter, WriteModelExpressionNode node)
         {
             emitter.LoadWriterToStack();
-            emitter.LoadModelPropertyToStack(node.Expression);
+            emitter.LoadModelExpressionToStack(node.Expression);
             emitter.CallWriteFor(node.Expression.Type);
         }
     }

@@ -25,6 +25,16 @@ namespace Veil.Compiler
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [SetCulture("en-US")]
+        [TestCaseSource("TestCases")]
+        public void Should_be_able_to_output_model_from_sub_model<T>(T model, string expectedResult)
+        {
+            var template = CreateTemplate(WriteModelExpressionNode.Create(model.GetType(), "Sub.SubData"));
+            var result = ExecuteTemplate(template, model);
+
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         public object[] TestCases()
         {
             return new object[] {
@@ -43,6 +53,13 @@ namespace Veil.Compiler
             public T Data { get { return DataField; } }
 
             public T DataField;
+
+            public SubModel<T> Sub { get { return new SubModel<T> { SubData = DataField }; } }
+        }
+
+        private class SubModel<T>
+        {
+            public T SubData { get; set; }
         }
     }
 }

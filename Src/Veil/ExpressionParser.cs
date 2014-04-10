@@ -9,6 +9,16 @@ namespace Veil
         {
             expression = expression.Trim();
 
+            var dotIndex = expression.IndexOf('.');
+            if (dotIndex >= 0)
+            {
+                var subModel = ExpressionParser.Parse(modelType, expression.Substring(0, dotIndex));
+                return SubModelExpressionNode.Create(
+                    subModel,
+                    ExpressionParser.Parse(subModel.Type, expression.Substring(dotIndex + 1))
+                );
+            }
+
             var propertyInfo = modelType.GetProperty(expression);
             if (propertyInfo != null) return new ModelPropertyExpressionNode { Property = propertyInfo };
 

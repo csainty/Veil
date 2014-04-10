@@ -22,6 +22,13 @@ namespace Veil
         }
 
         [Test]
+        public void Should_parse_property_from_submodel()
+        {
+            var result = ExpressionParser.Parse(typeof(Model), "SubModel.SubProperty");
+            result.ShouldDeepEqual(SubModelExpressionNode.Create(ModelPropertyExpressionNode.Create(typeof(Model), "SubModel"), ModelPropertyExpressionNode.Create(typeof(SubModel), "SubProperty")));
+        }
+
+        [Test]
         public void Should_throw_if_expression_cant_be_parsed()
         {
             Assert.Throws<VeilParserException>(() =>
@@ -34,7 +41,14 @@ namespace Veil
         {
             public bool Property { get; set; }
 
-            public bool Field;
+            public bool Field = false;
+
+            public SubModel SubModel { get; set; }
+        }
+
+        private class SubModel
+        {
+            public bool SubProperty { get; set; }
         }
     }
 }

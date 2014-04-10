@@ -83,10 +83,14 @@ namespace Veil.Compiler
             emitter.CallWriteFor(typeof(ulong));
         }
 
-        public static void LoadModelPropertyToStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)
+        public static void LoadModelExpressionToStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)
         {
             emitter.LoadModelToStack();
+            emitter.LoadExpressionFromCurrentModelOnStack(expression);
+        }
 
+        public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)
+        {
             if (expression is ModelPropertyExpressionNode)
             {
                 var get = ((ModelPropertyExpressionNode)expression).Property.GetGetMethod();
@@ -98,9 +102,19 @@ namespace Veil.Compiler
                 {
                     emitter.Call(get);
                 }
-            } else if (expression is ModelFieldExpressionNode)
+            }
+            else if (expression is ModelFieldExpressionNode)
             {
                 emitter.LoadField(((ModelFieldExpressionNode)expression).Field);
+            }
+            else if (expression is SubModelExpressionNode)
+            {
+                emitter.LoadExpressionFromCurrentModelOnStack(((SubModelExpressionNode)expression).ModelExpression);
+                emitter.LoadExpressionFromCurrentModelOnStack(((SubModelExpressionNode)expression).SubModelExpression);
+            }
+            else
+            {
+                throw new VeilCompilerException("Unknown expression type '{0}'".FormatInvariant(expression.GetType().Name));
             }
         }
     }

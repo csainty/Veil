@@ -17,7 +17,7 @@ namespace Veil.Compiler
             if (node.FalseBlock == null || !node.FalseBlock.Nodes.Any())
             {
                 var done = emitter.DefineLabel();
-                emitter.LoadModelPropertyToStack(node.Expression);
+                emitter.LoadModelExpressionToStack(node.Expression);
                 emitter.BranchIfFalse(done);
                 EmitNode(emitter, node.TrueBlock);
                 emitter.MarkLabel(done);
@@ -27,7 +27,7 @@ namespace Veil.Compiler
                 var done = emitter.DefineLabel();
                 var falseBlock = emitter.DefineLabel();
 
-                emitter.LoadModelPropertyToStack(node.Expression);
+                emitter.LoadModelExpressionToStack(node.Expression);
                 emitter.BranchIfFalse(falseBlock);
                 EmitNode(emitter, node.TrueBlock);
                 emitter.Branch(done);
