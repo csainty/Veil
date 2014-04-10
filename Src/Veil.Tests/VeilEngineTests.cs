@@ -15,6 +15,7 @@ namespace Veil
         [TestCase("{{#if IsAdmin}}Yo Admin!{{/if}}", "")]
         [TestCase("{{#if IsAdmin}}Yo Admin!{{else}}Sorry{{/if}}", "Sorry")]
         [TestCase("Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil")]
+        [TestCase("Department: {{ Department.GetDepartmentNumber() }}", "Department: 10")]
         public void Should_render_a_hail_template(string template, string expectedResult)
         {
             var view = Compile(template);
@@ -68,6 +69,11 @@ namespace Veil
             public string DepartmentName { get; set; }
 
             public Company Company { get; set; }
+
+            public int GetDepartmentNumber()
+            {
+                return 10;
+            }
         }
 
         private class Company

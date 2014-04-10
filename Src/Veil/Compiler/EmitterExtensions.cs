@@ -29,9 +29,21 @@ namespace Veil.Compiler
             emitter.LoadArgument(1);
         }
 
+        public static void CallMethod<T>(this Emit<Action<TextWriter, T>> emitter, MethodInfo info)
+        {
+            if (info.IsVirtual)
+            {
+                emitter.CallVirtual(info);
+            }
+            else
+            {
+                emitter.Call(info);
+            }
+        }
+
         public static void CallWriteFor<T>(this Emit<Action<TextWriter, T>> emitter, Type writerType)
         {
-            emitter.CallVirtual(writers[writerType]);
+            emitter.CallMethod(writers[writerType]);
         }
 
         public static void OutputLiteral<T>(this Emit<Action<TextWriter, T>> emitter, string content)
@@ -93,15 +105,7 @@ namespace Veil.Compiler
         {
             if (expression is ModelPropertyExpressionNode)
             {
-                var get = ((ModelPropertyExpressionNode)expression).Property.GetGetMethod();
-                if (get.IsVirtual)
-                {
-                    emitter.CallVirtual(get);
-                }
-                else
-                {
-                    emitter.Call(get);
-                }
+                emitter.CallMethod(((ModelPropertyExpressionNode)expression).Property.GetGetMethod());
             }
             else if (expression is ModelFieldExpressionNode)
             {
@@ -111,6 +115,10 @@ namespace Veil.Compiler
             {
                 emitter.LoadExpressionFromCurrentModelOnStack(((SubModelExpressionNode)expression).ModelExpression);
                 emitter.LoadExpressionFromCurrentModelOnStack(((SubModelExpressionNode)expression).SubModelExpression);
+            }
+            else if (expression is FunctionCallExpressionNode)
+            {
+                emitter.CallMethod(((FunctionCallExpressionNode)expression).Function);
             }
             else
             {

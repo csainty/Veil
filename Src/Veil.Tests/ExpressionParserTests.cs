@@ -41,14 +41,21 @@ namespace Veil
             );
         }
 
+        [Test]
+        public void Should_parse_function_from_submodel()
+        {
+            var result = ExpressionParser.Parse(typeof(Model), "Function()");
+            result.ShouldDeepEqual(FunctionCallExpressionNode.Create(typeof(Model), "Function"));
+        }
+
         [TestCase("Foo")]
         [TestCase("Foo.Bar")]
         [TestCase("SubModel.Foo")]
         [TestCase("property")]
         [TestCase("field")]
-        [TestCase("Property()")]
         [TestCase("Property[]")]
-        [TestCase("Property.ToString()")]
+        [TestCase("function()")]
+        [TestCase("Property.toString()")]
         public void Should_throw_if_expression_cant_be_parsed(string expression)
         {
             Assert.Throws<VeilParserException>(() =>
@@ -64,6 +71,11 @@ namespace Veil
             public bool Field = false;
 
             public SubModel SubModel { get; set; }
+
+            public string Function()
+            {
+                return "Func";
+            }
         }
 
         private class SubModel

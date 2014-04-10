@@ -19,6 +19,12 @@ namespace Veil
                 );
             }
 
+            if (expression.EndsWith("()"))
+            {
+                var methodInfo = modelType.GetMethod(expression.Substring(0, expression.Length - 2));
+                if (methodInfo != null) return new FunctionCallExpressionNode { Function = methodInfo };
+            }
+
             var propertyInfo = modelType.GetProperty(expression);
             if (propertyInfo != null) return new ModelPropertyExpressionNode { Property = propertyInfo };
 

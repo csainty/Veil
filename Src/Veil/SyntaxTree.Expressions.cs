@@ -58,4 +58,19 @@ namespace Veil
             };
         }
     }
+
+    internal class FunctionCallExpressionNode : IModelExpressionNode
+    {
+        public MethodInfo Function { get; set; }
+
+        public Type Type
+        {
+            get { return this.Function.ReturnType; }
+        }
+
+        public static FunctionCallExpressionNode Create(Type modelType, string functionName)
+        {
+            return new FunctionCallExpressionNode { Function = modelType.GetMethod(functionName) };
+        }
+    }
 }
