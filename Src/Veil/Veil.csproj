@@ -49,6 +49,7 @@
     <Compile Include="Compiler\VeilTemplateCompiler.EmitConditionalOnModelProperty.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitNode.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteLiteral.cs" />
+    <Compile Include="ExpressionParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IVeilEngine.cs" />
     <Compile Include="Parser\ITemplateParser.cs" />

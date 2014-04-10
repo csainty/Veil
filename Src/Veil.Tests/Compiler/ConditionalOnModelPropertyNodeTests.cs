@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Veil.Compiler
 {
@@ -9,12 +8,11 @@ namespace Veil.Compiler
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_property<T>(T model, string expectedResult)
         {
-            var template = CreateTemplate(new ConditionalOnModelPropertyNode
-            {
-                ModelProperty = model.GetType().GetProperty("Condition"),
-                TrueBlock = CreateBlock(CreateStringLiteral("True")),
-                FalseBlock = CreateBlock(CreateStringLiteral("False"))
-            });
+            var template = CreateTemplate(ConditionalOnModelPropertyNode.Create(
+                model.GetType(),
+                "Condition",
+                CreateBlock(CreateStringLiteral("True")),
+                CreateBlock(CreateStringLiteral("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -29,20 +27,20 @@ namespace Veil.Compiler
             var model = new { Condition1 = c1, Condition2 = c2 };
             var template = CreateTemplate(
                 CreateStringLiteral("Start "),
-                CreateConditional(
-                    model.GetType().GetProperty("Condition1"),
+                ConditionalOnModelPropertyNode.Create(
+                    model.GetType(), "Condition1",
                     CreateBlock(
                         CreateStringLiteral("True1 "),
-                        CreateConditional(
-                            model.GetType().GetProperty("Condition2"),
+                        ConditionalOnModelPropertyNode.Create(
+                            model.GetType(), "Condition2",
                             CreateBlock(CreateStringLiteral("True2 ")),
                             CreateBlock(CreateStringLiteral("False2 "))
                         )
                     ),
                     CreateBlock(
                         CreateStringLiteral("False1 "),
-                        CreateConditional(
-                            model.GetType().GetProperty("Condition2"),
+                        ConditionalOnModelPropertyNode.Create(
+                            model.GetType(), "Condition2",
                             CreateBlock(CreateStringLiteral("True2 ")),
                             CreateBlock(CreateStringLiteral("False2 "))
                         )
@@ -57,7 +55,7 @@ namespace Veil.Compiler
         public void Should_throw_with_empty_true_block(BlockNode trueNode)
         {
             var model = new { X = true };
-            var template = CreateTemplate(CreateConditional(model.GetType().GetProperty("X"), trueNode, CreateBlock()));
+            var template = CreateTemplate(ConditionalOnModelPropertyNode.Create(model.GetType(), "X", trueNode, CreateBlock()));
             Assert.Throws<VeilCompilerException>(() =>
             {
                 this.ExecuteTemplate(template, model);
@@ -68,7 +66,7 @@ namespace Veil.Compiler
         public void Should_handle_empty_false_block(BlockNode falseBlock)
         {
             var model = new { X = true };
-            var template = CreateTemplate(CreateConditional(model.GetType().GetProperty("X"), CreateBlock(CreateStringLiteral("Hello")), falseBlock));
+            var template = CreateTemplate(ConditionalOnModelPropertyNode.Create(model.GetType(), "X", CreateBlock(CreateStringLiteral("Hello")), falseBlock));
             var result = this.ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello"));
         }
@@ -90,16 +88,6 @@ namespace Veil.Compiler
             return new object[] {
                 new object[] { null },
                 new object[] { CreateBlock() }
-            };
-        }
-
-        private ConditionalOnModelPropertyNode CreateConditional(PropertyInfo property, BlockNode trueBlock, BlockNode falseBlock)
-        {
-            return new ConditionalOnModelPropertyNode
-            {
-                ModelProperty = property,
-                TrueBlock = trueBlock,
-                FalseBlock = falseBlock
             };
         }
     }

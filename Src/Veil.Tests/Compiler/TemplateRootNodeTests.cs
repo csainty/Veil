@@ -10,9 +10,9 @@ namespace Veil.Compiler
         {
             var model = new { Name = "World" };
             var template = CreateTemplate(
-                new WriteLiteralNode { LiteralType = typeof(string), LiteralContent = "Hello " },
-                new WriteModelPropertyNode { ModelProperty = model.GetType().GetProperty("Name") },
-                new WriteLiteralNode { LiteralType = typeof(string), LiteralContent = "!" }
+                WriteLiteralNode.String("Hello "),
+                WriteModelPropertyNode.Create(model.GetType(), "Name"),
+                WriteLiteralNode.String("!")
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello World!"));

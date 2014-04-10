@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Veil.Parser.Hail
@@ -22,7 +21,7 @@ namespace Veil.Parser.Hail
             {
                 if (index < match.Index)
                 {
-                    blockStack.Peek().Add(WriteStringLiteral(template.Substring(index, match.Index - index)));
+                    blockStack.Peek().Add(WriteLiteralNode.String(template.Substring(index, match.Index - index)));
                 }
 
                 index = match.Index + match.Length;
@@ -32,11 +31,7 @@ namespace Veil.Parser.Hail
                 if (token.StartsWith("#if"))
                 {
                     var block = new BlockNode();
-                    var conditional = new ConditionalOnModelPropertyNode
-                    {
-                        ModelProperty = ParsePropertyName(token.Substring(4), modelType),
-                        TrueBlock = block
-                    };
+                    var conditional = ConditionalOnModelPropertyNode.Create(modelType, token.Substring(4), block);
                     blockStack.Peek().Add(conditional);
                     blockStack.Push(block);
                 }
@@ -55,12 +50,12 @@ namespace Veil.Parser.Hail
                 }
                 else
                 {
-                    blockStack.Peek().Add(WriteModelProperty(ParsePropertyName(token, modelType)));
+                    blockStack.Peek().Add(WriteModelPropertyNode.Create(modelType, token));
                 }
             }
             if (index < template.Length)
             {
-                blockStack.Peek().Add(WriteStringLiteral(template.Substring(index)));
+                blockStack.Peek().Add(WriteLiteralNode.String(template.Substring(index)));
             }
 
             AssertStackOnRootNode(blockStack);
@@ -92,31 +87,6 @@ namespace Veil.Parser.Hail
             {
                 throw new VeilParserException("Found token '{0}' outside of a conditional block.".FormatInvariant(foundToken));
             }
-        }
-
-        private static PropertyInfo ParsePropertyName(string name, Type modelType)
-        {
-            name = name.Trim();
-            var propertyInfo = modelType.GetProperty(name);
-            if (propertyInfo == null) throw new VeilParserException("Property '{0}' not found on model '{1}'".FormatInvariant(name, modelType.Name));
-            return propertyInfo;
-        }
-
-        private static ISyntaxTreeNode WriteStringLiteral(string content)
-        {
-            return new WriteLiteralNode
-            {
-                LiteralType = typeof(string),
-                LiteralContent = content
-            };
-        }
-
-        private static ISyntaxTreeNode WriteModelProperty(PropertyInfo property)
-        {
-            return new WriteModelPropertyNode
-            {
-                ModelProperty = property
-            };
         }
     }
 }

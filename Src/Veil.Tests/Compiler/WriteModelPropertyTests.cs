@@ -9,7 +9,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_property<T>(T model, string expectedResult)
         {
-            var template = CreateTemplate(new WriteModelPropertyNode { ModelProperty = model.GetType().GetProperty("Data") });
+            var template = CreateTemplate(WriteModelPropertyNode.Create(model.GetType(), "Data"));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
