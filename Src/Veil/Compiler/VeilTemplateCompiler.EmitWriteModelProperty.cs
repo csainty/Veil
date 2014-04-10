@@ -6,11 +6,11 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitWriteModelProperty<T>(Emit<Action<TextWriter, T>> emitter, WriteModelPropertyNode node)
+        private static void EmitWriteModelProperty<T>(Emit<Action<TextWriter, T>> emitter, WriteModelExpressionNode node)
         {
             emitter.LoadWriterToStack();
-            emitter.LoadModelPropertyToStack(node.Property);
-            emitter.CallWriteFor(node.Property.Type);
+            emitter.LoadModelPropertyToStack(node.Expression);
+            emitter.CallWriteFor(node.Expression.Type);
         }
     }
 }

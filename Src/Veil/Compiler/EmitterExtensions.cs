@@ -83,13 +83,13 @@ namespace Veil.Compiler
             emitter.CallWriteFor(typeof(ulong));
         }
 
-        public static void LoadModelPropertyToStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelPropertyNode property)
+        public static void LoadModelPropertyToStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)
         {
             emitter.LoadModelToStack();
 
-            if (property is ModelProperty)
+            if (expression is ModelPropertyExpressionNode)
             {
-                var get = ((ModelProperty)property).Property.GetGetMethod();
+                var get = ((ModelPropertyExpressionNode)expression).Property.GetGetMethod();
                 if (get.IsVirtual)
                 {
                     emitter.CallVirtual(get);
@@ -98,6 +98,9 @@ namespace Veil.Compiler
                 {
                     emitter.Call(get);
                 }
+            } else if (expression is ModelFieldExpressionNode)
+            {
+                emitter.LoadField(((ModelFieldExpressionNode)expression).Field);
             }
         }
     }

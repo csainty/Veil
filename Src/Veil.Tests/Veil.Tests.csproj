@@ -46,11 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler\CompilerTestBase.cs" />
-    <Compile Include="Compiler\ConditionalOnModelPropertyNodeTests.cs" />
+    <Compile Include="Compiler\ConditionalOnModelExpressionTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
-    <Compile Include="Compiler\TemplateRootNodeTests.cs" />
+    <Compile Include="Compiler\TemplateRootTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
-    <Compile Include="Compiler\WriteModelPropertyTests.cs" />
+    <Compile Include="Compiler\WriteModelExpressionTests.cs" />
+    <Compile Include="ExpressionParserTests.cs" />
     <Compile Include="Parser\Hail\ConditionalOnModelPropertyTests.cs" />
     <Compile Include="Parser\Hail\WriteLiteralTests.cs" />
     <Compile Include="Parser\Hail\WriteModelPropertyTests.cs" />

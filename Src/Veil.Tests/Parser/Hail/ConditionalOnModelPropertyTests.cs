@@ -11,7 +11,7 @@ namespace Veil.Parser.Hail
             var template = Parse("Hello {{#if Conditional }} John{{/if}}", typeof(TestModel));
             AssertSyntaxTree(template, new ISyntaxTreeNode[] {
                 WriteLiteralNode.String("Hello "),
-                ConditionalOnModelPropertyNode.Create(typeof(TestModel), "Conditional",
+                ConditionalOnModelExpressionNode.Create(typeof(TestModel), "Conditional",
                     new ISyntaxTreeNode[] { WriteLiteralNode.String(" John") }
                 )
             });
@@ -23,7 +23,7 @@ namespace Veil.Parser.Hail
             var template = Parse("Hello {{#if Conditional }}John{{else}}Jim{{/if}}", typeof(TestModel));
             AssertSyntaxTree(template, new ISyntaxTreeNode[] {
                 WriteLiteralNode.String("Hello "),
-                ConditionalOnModelPropertyNode.Create(typeof(TestModel), "Conditional",
+                ConditionalOnModelExpressionNode.Create(typeof(TestModel), "Conditional",
                     new ISyntaxTreeNode[] { WriteLiteralNode.String("John") },
                     new ISyntaxTreeNode[] { WriteLiteralNode.String("Jim") }
                 )

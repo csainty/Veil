@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Veil
 {
     internal interface ISyntaxTreeNode { }
-
-    internal interface IModelPropertyNode : ISyntaxTreeNode
-    {
-        Type Type { get; }
-    }
 
     internal interface IBlockNode : ISyntaxTreeNode
     {
@@ -61,52 +55,37 @@ namespace Veil
         }
     }
 
-    internal class ModelProperty : IModelPropertyNode
+    internal class WriteModelExpressionNode : ISyntaxTreeNode
     {
-        public PropertyInfo Property { get; set; }
+        public IModelExpressionNode Expression { get; set; }
 
-        public Type Type
+        public static WriteModelExpressionNode Create(Type type, string propertyExpression)
         {
-            get { return this.Property.PropertyType; }
-        }
-
-        public static ModelProperty Create(Type type, string propertyName)
-        {
-            return new ModelProperty { Property = type.GetProperty(propertyName) };
+            return new WriteModelExpressionNode { Expression = ExpressionParser.Parse(type, propertyExpression) };
         }
     }
 
-    internal class WriteModelPropertyNode : ISyntaxTreeNode
+    internal class ConditionalOnModelExpressionNode : ISyntaxTreeNode
     {
-        public IModelPropertyNode Property { get; set; }
-
-        public static WriteModelPropertyNode Create(Type type, string propertyExpression)
-        {
-            return new WriteModelPropertyNode { Property = ExpressionParser.Parse(type, propertyExpression) };
-        }
-    }
-
-    internal class ConditionalOnModelPropertyNode : ISyntaxTreeNode
-    {
-        public IModelPropertyNode Property { get; set; }
+        public IModelExpressionNode Expression { get; set; }
 
         public IBlockNode TrueBlock { get; set; }
 
         public IBlockNode FalseBlock { get; set; }
 
-        public static ConditionalOnModelPropertyNode Create(Type type, string propertyExpression, IBlockNode trueBlock, IBlockNode falseBlock = null)
+        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, IBlockNode trueBlock, IBlockNode falseBlock = null)
         {
-            return new ConditionalOnModelPropertyNode
+            return new ConditionalOnModelExpressionNode
             {
-                Property = ExpressionParser.Parse(type, propertyExpression),
+                Expression = ExpressionParser.Parse(type, propertyExpression),
                 TrueBlock = trueBlock,
                 FalseBlock = falseBlock
             };
         }
 
-        public static ConditionalOnModelPropertyNode Create(Type type, string propertyExpression, IEnumerable<ISyntaxTreeNode> trueBlock, IEnumerable<ISyntaxTreeNode> falseBlock = null)
+        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, IEnumerable<ISyntaxTreeNode> trueBlock, IEnumerable<ISyntaxTreeNode> falseBlock = null)
         {
-            return ConditionalOnModelPropertyNode.Create(type, propertyExpression, BlockNode.Create(trueBlock), falseBlock == null ? null : BlockNode.Create(falseBlock));
+            return ConditionalOnModelExpressionNode.Create(type, propertyExpression, BlockNode.Create(trueBlock), falseBlock == null ? null : BlockNode.Create(falseBlock));
         }
     }
 }

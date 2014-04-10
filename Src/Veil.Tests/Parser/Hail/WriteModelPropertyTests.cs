@@ -15,10 +15,10 @@ namespace Veil.Parser.Hail
         public object[] PropertyNameTestSource()
         {
             return new object[] {
-                new object[] {"{{Name}}", new ISyntaxTreeNode[] { WriteModelPropertyNode.Create(typeof(TestModel), "Name") } },
-                new object[] {"{{ Name }}", new ISyntaxTreeNode[] { WriteModelPropertyNode.Create(typeof(TestModel), "Name") } },
-                new object[] {"Hello {{Name}}", new ISyntaxTreeNode[] { WriteLiteralNode.String("Hello "), WriteModelPropertyNode.Create(typeof(TestModel), "Name") } },
-                new object[] {"Hello {{Name}}, {{ Greeting }}", new ISyntaxTreeNode[] { WriteLiteralNode.String("Hello "), WriteModelPropertyNode.Create(typeof(TestModel), "Name"), WriteLiteralNode.String(", "), WriteModelPropertyNode.Create(typeof(TestModel), "Greeting") } }
+                new object[] {"{{Name}}", new ISyntaxTreeNode[] { WriteModelExpressionNode.Create(typeof(TestModel), "Name") } },
+                new object[] {"{{ Name }}", new ISyntaxTreeNode[] { WriteModelExpressionNode.Create(typeof(TestModel), "Name") } },
+                new object[] {"Hello {{Name}}", new ISyntaxTreeNode[] { WriteLiteralNode.String("Hello "), WriteModelExpressionNode.Create(typeof(TestModel), "Name") } },
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new ISyntaxTreeNode[] { WriteLiteralNode.String("Hello "), WriteModelExpressionNode.Create(typeof(TestModel), "Name"), WriteLiteralNode.String(", "), WriteModelExpressionNode.Create(typeof(TestModel), "Greeting") } }
             };
         }
 

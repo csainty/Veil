@@ -3,7 +3,7 @@
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class TemplateRootNodeTests : CompilerTestBase
+    internal class TemplateRootTests : CompilerTestBase
     {
         [Test]
         public void Should_emit_all_nodes_in_syntax_tree()
@@ -11,7 +11,7 @@ namespace Veil.Compiler
             var model = new { Name = "World" };
             var template = CreateTemplate(
                 WriteLiteralNode.String("Hello "),
-                WriteModelPropertyNode.Create(model.GetType(), "Name"),
+                WriteModelExpressionNode.Create(model.GetType(), "Name"),
                 WriteLiteralNode.String("!")
             );
             var result = ExecuteTemplate(template, model);

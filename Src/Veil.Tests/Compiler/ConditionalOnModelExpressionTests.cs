@@ -3,14 +3,27 @@
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class ConditionalOnModelPropertyNodeTests : CompilerTestBase
+    internal class ConditionalOnModelExpressionTests : CompilerTestBase
     {
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_property<T>(T model, string expectedResult)
         {
-            var template = CreateTemplate(ConditionalOnModelPropertyNode.Create(
+            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(
                 model.GetType(),
                 "Condition",
+                CreateBlock(CreateStringLiteral("True")),
+                CreateBlock(CreateStringLiteral("False"))));
+            var result = ExecuteTemplate(template, model);
+
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [TestCaseSource("TruthyFalseyCases")]
+        public void Should_render_correct_block_based_on_model_field<T>(T model, string expectedResult)
+        {
+            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(
+                model.GetType(),
+                "ConditionField",
                 CreateBlock(CreateStringLiteral("True")),
                 CreateBlock(CreateStringLiteral("False"))));
             var result = ExecuteTemplate(template, model);
@@ -27,11 +40,11 @@ namespace Veil.Compiler
             var model = new { Condition1 = c1, Condition2 = c2 };
             var template = CreateTemplate(
                 CreateStringLiteral("Start "),
-                ConditionalOnModelPropertyNode.Create(
+                ConditionalOnModelExpressionNode.Create(
                     model.GetType(), "Condition1",
                     CreateBlock(
                         CreateStringLiteral("True1 "),
-                        ConditionalOnModelPropertyNode.Create(
+                        ConditionalOnModelExpressionNode.Create(
                             model.GetType(), "Condition2",
                             CreateBlock(CreateStringLiteral("True2 ")),
                             CreateBlock(CreateStringLiteral("False2 "))
@@ -39,7 +52,7 @@ namespace Veil.Compiler
                     ),
                     CreateBlock(
                         CreateStringLiteral("False1 "),
-                        ConditionalOnModelPropertyNode.Create(
+                        ConditionalOnModelExpressionNode.Create(
                             model.GetType(), "Condition2",
                             CreateBlock(CreateStringLiteral("True2 ")),
                             CreateBlock(CreateStringLiteral("False2 "))
@@ -55,7 +68,7 @@ namespace Veil.Compiler
         public void Should_throw_with_empty_true_block(BlockNode trueNode)
         {
             var model = new { X = true };
-            var template = CreateTemplate(ConditionalOnModelPropertyNode.Create(model.GetType(), "X", trueNode, CreateBlock()));
+            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(model.GetType(), "X", trueNode, CreateBlock()));
             Assert.Throws<VeilCompilerException>(() =>
             {
                 this.ExecuteTemplate(template, model);
@@ -66,7 +79,7 @@ namespace Veil.Compiler
         public void Should_handle_empty_false_block(BlockNode falseBlock)
         {
             var model = new { X = true };
-            var template = CreateTemplate(ConditionalOnModelPropertyNode.Create(model.GetType(), "X", CreateBlock(CreateStringLiteral("Hello")), falseBlock));
+            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(model.GetType(), "X", CreateBlock(CreateStringLiteral("Hello")), falseBlock));
             var result = this.ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello"));
         }
@@ -74,12 +87,12 @@ namespace Veil.Compiler
         public object[] TruthyFalseyCases()
         {
             return new object[] {
-                new object[] { new { Condition = true }, "True" },
-                new object[] { new { Condition = false }, "False" },
-                new object[] { new { Condition = 1 }, "True" },
-                new object[] { new { Condition = 0 }, "False" },
-                new object[] { new { Condition = new object() }, "True" },
-                new object[] { new { Condition = (object)null }, "False" }
+                new object[] { new Model<bool>{ ConditionField = true }, "True" },
+                new object[] { new Model<bool>{ ConditionField = false }, "False" },
+                new object[] { new Model<int>{ ConditionField = 1 }, "True" },
+                new object[] { new Model<int>{ ConditionField = 0 }, "False" },
+                new object[] { new Model<object>{ ConditionField = new object() }, "True" },
+                new object[] { new Model<object>{ ConditionField = (object)null }, "False" }
             };
         }
 
@@ -89,6 +102,13 @@ namespace Veil.Compiler
                 new object[] { null },
                 new object[] { CreateBlock() }
             };
+        }
+
+        private class Model<T>
+        {
+            public T ConditionField;
+
+            public T Condition { get { return this.ConditionField; } }
         }
     }
 }
