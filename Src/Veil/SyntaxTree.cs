@@ -88,4 +88,20 @@ namespace Veil
             return ConditionalOnModelExpressionNode.Create(type, propertyExpression, BlockNode.Create(trueBlock), falseBlock == null ? null : BlockNode.Create(falseBlock));
         }
     }
+
+    internal class EachNode : ISyntaxTreeNode
+    {
+        public IModelExpressionNode Collection { get; set; }
+
+        public BlockNode Body { get; set; }
+
+        internal static EachNode Create(ModelPropertyExpressionNode collection, BlockNode body)
+        {
+            return new EachNode
+            {
+                Collection = collection,
+                Body = body
+            };
+        }
+    }
 }

@@ -19,6 +19,8 @@ namespace Veil.Compiler
                     EmitWriteModelProperty(emitter, (WriteModelExpressionNode)node);
                 else if (nodeType == typeof(ConditionalOnModelExpressionNode))
                     EmitConditionalOnModelProperty(emitter, (ConditionalOnModelExpressionNode)node);
+                else if (nodeType == typeof(EachNode))
+                    EmitEach(emitter, (EachNode)node);
                 else
                     throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(nodeType.Name));
             }
