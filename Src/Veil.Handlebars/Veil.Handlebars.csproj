@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DD60B91D-18AE-42D3-BF11-B9FAC4E16525}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{3335691A-38B6-4DD1-96CB-A1C262CEF4CC}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Veil.Benchmark</RootNamespace>
-    <AssemblyName>Veil.Benchmark</AssemblyName>
+    <RootNamespace>Veil.Handlebars</RootNamespace>
+    <AssemblyName>Veil.Handlebars</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,12 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chevron.IE">
-      <HintPath>..\packages\Chevron.IE.Merged.0.3.2\Lib\NET40\Chevron.IE.dll</HintPath>
-    </Reference>
-    <Reference Include="SimpleSpeedTester">
-      <HintPath>..\packages\SimpleSpeedTester.1.1.0\lib\net40\SimpleSpeedTester.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,26 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="HandlebarsParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <EmbeddedResource Include="Template.haml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
-      <Project>{3335691a-38b6-4dd1-96cb-a1c262cef4cc}</Project>
-      <Name>Veil.Handlebars</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Veil\Veil.csproj">
       <Project>{97d96b66-edfe-474b-bc72-d8439830fc76}</Project>
       <Name>Veil</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Template.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

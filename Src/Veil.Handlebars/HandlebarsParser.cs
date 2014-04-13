@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Veil.Parser.Hail
+namespace Veil.Handlebars
 {
-    internal class HailTemplateParser : ITemplateParser
+    public class HandlebarsParser : ITemplateParser
     {
         public TemplateRootNode Parse(TextReader templateReader, Type modelType)
         {
@@ -67,7 +67,7 @@ namespace Veil.Parser.Hail
         {
             if (!(blockStack.Peek() is TemplateRootNode))
             {
-                throw new VeilParserException("Mismatched block found. Expected to find the end of the template by found '{0}'".FormatInvariant(blockStack.Peek().GetType()));
+                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template by found '{0}'", blockStack.Peek().GetType()));
             }
         }
 
@@ -85,7 +85,7 @@ namespace Veil.Parser.Hail
 
             if (faulted)
             {
-                throw new VeilParserException("Found token '{0}' outside of a conditional block.".FormatInvariant(foundToken));
+                throw new VeilParserException(String.Format("Found token '{0}' outside of a conditional block.", foundToken));
             }
         }
     }

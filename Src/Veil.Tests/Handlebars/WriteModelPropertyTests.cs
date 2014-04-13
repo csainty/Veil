@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace Veil.Parser.Hail
+namespace Veil.Handlebars
 {
     [TestFixture]
-    internal class WriteModelPropertyTests : ParserTestBase<HailTemplateParser>
+    internal class WriteModelPropertyTests : ParserTestBase<HandlebarsParser>
     {
         [TestCaseSource("PropertyNameTestSource")]
         public void Should_parse_model_property_names(string template, ISyntaxTreeNode[] expectedTemplate)

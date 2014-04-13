@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-namespace Veil.Parser
+namespace Veil
 {
-    internal interface ITemplateParser
+    public interface ITemplateParser
     {
         TemplateRootNode Parse(TextReader templateReader, Type modelType);
     }

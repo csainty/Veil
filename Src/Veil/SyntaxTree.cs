@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace Veil
 {
-    internal interface ISyntaxTreeNode { }
+    public interface ISyntaxTreeNode { }
 
-    internal interface IBlockNode : ISyntaxTreeNode
+    public interface IBlockNode : ISyntaxTreeNode
     {
         IEnumerable<ISyntaxTreeNode> Nodes { get; }
     }
 
-    internal class TemplateRootNode : BlockNode
+    public class TemplateRootNode : BlockNode
     {
     }
 
-    internal class BlockNode : IBlockNode
+    public class BlockNode : IBlockNode
     {
         private List<ISyntaxTreeNode> nodes;
 
@@ -43,7 +43,7 @@ namespace Veil
         }
     }
 
-    internal class WriteLiteralNode : ISyntaxTreeNode
+    public class WriteLiteralNode : ISyntaxTreeNode
     {
         public Type LiteralType { get; set; }
 
@@ -55,7 +55,7 @@ namespace Veil
         }
     }
 
-    internal class WriteModelExpressionNode : ISyntaxTreeNode
+    public class WriteModelExpressionNode : ISyntaxTreeNode
     {
         public IModelExpressionNode Expression { get; set; }
 
@@ -65,7 +65,7 @@ namespace Veil
         }
     }
 
-    internal class ConditionalOnModelExpressionNode : ISyntaxTreeNode
+    public class ConditionalOnModelExpressionNode : ISyntaxTreeNode
     {
         public IModelExpressionNode Expression { get; set; }
 
@@ -89,7 +89,7 @@ namespace Veil
         }
     }
 
-    internal class EachNode : ISyntaxTreeNode
+    public class EachNode : ISyntaxTreeNode
     {
         public IModelExpressionNode Collection { get; set; }
 

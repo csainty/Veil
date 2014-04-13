@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Veil.Parser
+namespace Veil
 {
     public class VeilParserException : Exception
     {

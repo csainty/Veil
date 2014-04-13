@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using DeepEqual.Syntax;
 
-namespace Veil.Parser
+namespace Veil
 {
     internal class ParserTestBase<T> where T : ITemplateParser, new()
     {

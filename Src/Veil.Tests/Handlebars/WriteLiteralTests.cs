@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace Veil.Parser.Hail
+namespace Veil.Handlebars
 {
     [TestFixture]
-    internal class WriteLiteralTests : ParserTestBase<HailTemplateParser>
+    internal class WriteLiteralTests : ParserTestBase<HandlebarsParser>
     {
         [Test]
         public void Should_parse_template_without_expressions_as_literal()

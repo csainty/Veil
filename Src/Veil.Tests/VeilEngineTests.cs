@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using NUnit.Framework;
+using Veil.Handlebars;
 
 namespace Veil
 {
     [TestFixture]
     public class VeilEngineTests
     {
-        private readonly IVeilEngine engine = new VeilEngine();
+        private readonly IVeilEngine engine = new VeilEngine(new HandlebarsParser());
 
         [TestCase("Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!")]
         [TestCase("{{#if Name}}Hello {{Name}}{{/if}}", "Hello Chris")]
@@ -19,7 +20,8 @@ namespace Veil
         public void Should_render_a_hail_template(string template, string expectedResult)
         {
             var view = Compile(template);
-            var result = Execute(view, new ViewModel {
+            var result = Execute(view, new ViewModel
+            {
                 Name = "Chris",
                 ViewCount = 10,
                 IsAdmin = false,

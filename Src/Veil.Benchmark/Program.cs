@@ -2,8 +2,8 @@
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Chevron;
 using SimpleSpeedTester.Core;
+using Veil.Handlebars;
 
 namespace Veil.Benchmark
 {
@@ -20,7 +20,7 @@ namespace Veil.Benchmark
 
             {
                 Console.WriteLine("Testing Veil.Hail...");
-                var veilEngine = new VeilEngine();
+                var veilEngine = new VeilEngine(new HandlebarsParser());
                 var veilTemplate = veilEngine.Compile<ViewModel>(new StringReader(template));
                 AssertTemplateSample(Unwrap(veilTemplate, model));
                 var veilGroup = new TestGroup("Veil.Hail").PlanAndExecute("Template", () =>
@@ -30,7 +30,7 @@ namespace Veil.Benchmark
                 Console.WriteLine(veilGroup);
             }
 
-            using (var handlebars = new Handlebars())
+            using (var handlebars = new Chevron.Handlebars())
             {
                 Console.WriteLine("Testing Chevron.IE.Merged...");
                 handlebars.RegisterTemplate("default", template);

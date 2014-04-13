@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using Veil.Compiler;
-using Veil.Parser;
-using Veil.Parser.Hail;
 
 namespace Veil
 {
@@ -12,9 +10,9 @@ namespace Veil
 
         private readonly ITemplateCompiler compiler;
 
-        public VeilEngine()
+        public VeilEngine(ITemplateParser parser)
         {
-            this.parser = new HailTemplateParser();
+            this.parser = parser;
             this.compiler = new VeilTemplateCompiler();
         }
 

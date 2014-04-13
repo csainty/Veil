@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Veil.Compiler
+namespace Veil
 {
     public class VeilCompilerException : Exception
     {

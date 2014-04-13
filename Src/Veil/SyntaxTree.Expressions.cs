@@ -3,12 +3,12 @@ using System.Reflection;
 
 namespace Veil
 {
-    internal interface IModelExpressionNode : ISyntaxTreeNode
+    public interface IModelExpressionNode : ISyntaxTreeNode
     {
         Type Type { get; }
     }
 
-    internal class ModelPropertyExpressionNode : IModelExpressionNode
+    public class ModelPropertyExpressionNode : IModelExpressionNode
     {
         public PropertyInfo Property { get; set; }
 
@@ -23,7 +23,7 @@ namespace Veil
         }
     }
 
-    internal class ModelFieldExpressionNode : IModelExpressionNode
+    public class ModelFieldExpressionNode : IModelExpressionNode
     {
         public FieldInfo Field { get; set; }
 
@@ -38,7 +38,7 @@ namespace Veil
         }
     }
 
-    internal class SubModelExpressionNode : IModelExpressionNode
+    public class SubModelExpressionNode : IModelExpressionNode
     {
         public IModelExpressionNode ModelExpression { get; set; }
 
@@ -59,7 +59,7 @@ namespace Veil
         }
     }
 
-    internal class FunctionCallExpressionNode : IModelExpressionNode
+    public class FunctionCallExpressionNode : IModelExpressionNode
     {
         public MethodInfo Function { get; set; }
 
@@ -74,7 +74,7 @@ namespace Veil
         }
     }
 
-    internal class SelfExpressionNode : IModelExpressionNode
+    public class SelfExpressionNode : IModelExpressionNode
     {
         public Type Type { get; set; }
 

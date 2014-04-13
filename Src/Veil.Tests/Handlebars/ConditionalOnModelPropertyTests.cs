@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace Veil.Parser.Hail
+namespace Veil.Handlebars
 {
     [TestFixture]
-    internal class ConditionalOnModelPropertyTests : ParserTestBase<HailTemplateParser>
+    internal class ConditionalOnModelPropertyTests : ParserTestBase<HandlebarsParser>
     {
         [Test]
         public void Should_parse_if_statement()
