@@ -109,6 +109,9 @@ namespace Veil.Compiler
             {
                 emitter.CallMethod(((FunctionCallExpressionNode)expression).Function);
             }
+            else if (expression is SelfExpressionNode)
+            {
+            }
             else
             {
                 throw new VeilCompilerException("Unknown expression type '{0}'".FormatInvariant(expression.GetType().Name));

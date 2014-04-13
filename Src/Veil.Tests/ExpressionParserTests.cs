@@ -48,6 +48,13 @@ namespace Veil
             result.ShouldDeepEqual(FunctionCallExpressionNode.Create(typeof(Model), "Function"));
         }
 
+        [TestCase("this")]
+        public void Should_parse_self_expression_node(string expression)
+        {
+            var result = ExpressionParser.Parse(typeof(Model), expression);
+            result.ShouldDeepEqual(SelfExpressionNode.Create(typeof(Model)));
+        }
+
         [TestCase("Foo")]
         [TestCase("Foo.Bar")]
         [TestCase("SubModel.Foo")]

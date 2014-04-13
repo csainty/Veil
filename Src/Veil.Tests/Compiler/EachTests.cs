@@ -50,6 +50,21 @@ namespace Veil.Compiler
             Assert.That(result, Is.EqualTo("JohnKim"));
         }
 
+        [Test]
+        public void Should_be_able_to_output_value_types_from_collections()
+        {
+            var model = new { Items = new[] { "1", "2", "3", "4" } };
+            var template = CreateTemplate(EachNode.Create(
+                ModelPropertyExpressionNode.Create(model.GetType(), "Items"),
+                BlockNode.Create(new[] {
+                    WriteModelExpressionNode.Create(typeof(string), "this")
+                })
+            ));
+
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("1234"));
+        }
+
         private class ItemModel
         {
             public string Name { get; set; }

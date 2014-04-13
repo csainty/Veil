@@ -25,6 +25,11 @@ namespace Veil
                 if (methodInfo != null) return new FunctionCallExpressionNode { Function = methodInfo };
             }
 
+            if (expression == "this")
+            {
+                return SelfExpressionNode.Create(modelType);
+            }
+
             var propertyInfo = modelType.GetProperty(expression);
             if (propertyInfo != null) return new ModelPropertyExpressionNode { Property = propertyInfo };
 

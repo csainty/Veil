@@ -73,4 +73,14 @@ namespace Veil
             return new FunctionCallExpressionNode { Function = modelType.GetMethod(functionName) };
         }
     }
+
+    internal class SelfExpressionNode : IModelExpressionNode
+    {
+        public Type Type { get; set; }
+
+        public static SelfExpressionNode Create(Type modelType)
+        {
+            return new SelfExpressionNode { Type = modelType };
+        }
+    }
 }

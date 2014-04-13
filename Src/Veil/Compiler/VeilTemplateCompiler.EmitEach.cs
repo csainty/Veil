@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Sigil;
+﻿using System.Collections.Generic;
 
 namespace Veil.Compiler
 {
@@ -37,7 +34,7 @@ namespace Veil.Compiler
                 state.AddModelScope(e => e.LoadLocal(item));
                 EmitNode(state, node.Body);
                 state.RemoveModelScope();
-                
+
                 state.Emitter.Branch(loop);
 
                 state.Emitter.MarkLabel(done);
