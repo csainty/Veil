@@ -8,12 +8,12 @@ namespace Veil.Compiler
     {
         public Action<TextWriter, T> Compile<T>(TemplateRootNode templateSyntaxTree)
         {
-            var emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
+            var state = new VeilCompilerState<T>();
 
-            EmitNode(emitter, templateSyntaxTree);
+            EmitNode(state, templateSyntaxTree);
 
-            emitter.Return();
-            return emitter.CreateDelegate();
+            state.Emitter.Return();
+            return state.Emitter.CreateDelegate();
         }
     }
 }

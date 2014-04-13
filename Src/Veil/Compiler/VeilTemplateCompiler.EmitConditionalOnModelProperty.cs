@@ -1,13 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Sigil;
+﻿using System.Linq;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitConditionalOnModelProperty<T>(Emit<Action<TextWriter, T>> emitter, ConditionalOnModelExpressionNode node)
+        private static void EmitConditionalOnModelProperty<T>(VeilCompilerState<T> state, ConditionalOnModelExpressionNode node)
         {
             if (node.TrueBlock == null || !node.TrueBlock.Nodes.Any())
             {
@@ -16,26 +13,28 @@ namespace Veil.Compiler
 
             if (node.FalseBlock == null || !node.FalseBlock.Nodes.Any())
             {
-                var done = emitter.DefineLabel();
-                emitter.LoadModelExpressionToStack(node.Expression);
-                emitter.BranchIfFalse(done);
-                EmitNode(emitter, node.TrueBlock);
-                emitter.MarkLabel(done);
+                var done = state.Emitter.DefineLabel();
+                state.PushCurrentModelOnStack();
+                state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                state.Emitter.BranchIfFalse(done);
+                EmitNode(state, node.TrueBlock);
+                state.Emitter.MarkLabel(done);
             }
             else
             {
-                var done = emitter.DefineLabel();
-                var falseBlock = emitter.DefineLabel();
+                var done = state.Emitter.DefineLabel();
+                var falseBlock = state.Emitter.DefineLabel();
 
-                emitter.LoadModelExpressionToStack(node.Expression);
-                emitter.BranchIfFalse(falseBlock);
-                EmitNode(emitter, node.TrueBlock);
-                emitter.Branch(done);
+                state.PushCurrentModelOnStack();
+                state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                state.Emitter.BranchIfFalse(falseBlock);
+                EmitNode(state, node.TrueBlock);
+                state.Emitter.Branch(done);
 
-                emitter.MarkLabel(falseBlock);
-                EmitNode(emitter, node.FalseBlock);
+                state.Emitter.MarkLabel(falseBlock);
+                EmitNode(state, node.FalseBlock);
 
-                emitter.MarkLabel(done);
+                state.Emitter.MarkLabel(done);
             }
         }
     }

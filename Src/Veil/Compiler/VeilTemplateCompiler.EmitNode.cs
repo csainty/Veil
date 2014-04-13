@@ -7,20 +7,20 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitNode<T>(Emit<Action<TextWriter, T>> emitter, ISyntaxTreeNode rootNode)
+        private static void EmitNode<T>(VeilCompilerState<T> state, ISyntaxTreeNode rootNode)
         {
             var nodes = GetIndividualNodes(rootNode);
             foreach (var node in nodes)
             {
                 var nodeType = node.GetType();
                 if (nodeType == typeof(WriteLiteralNode))
-                    EmitWriteLiteral(emitter, (WriteLiteralNode)node);
+                    EmitWriteLiteral(state, (WriteLiteralNode)node);
                 else if (nodeType == typeof(WriteModelExpressionNode))
-                    EmitWriteModelProperty(emitter, (WriteModelExpressionNode)node);
+                    EmitWriteModelProperty(state, (WriteModelExpressionNode)node);
                 else if (nodeType == typeof(ConditionalOnModelExpressionNode))
-                    EmitConditionalOnModelProperty(emitter, (ConditionalOnModelExpressionNode)node);
+                    EmitConditionalOnModelProperty(state, (ConditionalOnModelExpressionNode)node);
                 else if (nodeType == typeof(EachNode))
-                    EmitEach(emitter, (EachNode)node);
+                    EmitEach(state, (EachNode)node);
                 else
                     throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(nodeType.Name));
             }

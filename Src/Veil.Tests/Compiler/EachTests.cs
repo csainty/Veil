@@ -35,5 +35,24 @@ namespace Veil.Compiler
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("ItemItem"));
         }
+
+        [Test]
+        public void Should_use_items_from_collection_as_scope()
+        {
+            var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
+            var template = CreateTemplate(EachNode.Create(
+                ModelPropertyExpressionNode.Create(model.GetType(), "Items"),
+                BlockNode.Create(new[] {
+                    WriteModelExpressionNode.Create(typeof(ItemModel), "Name")
+                })
+            ));
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("JohnKim"));
+        }
+
+        private class ItemModel
+        {
+            public string Name { get; set; }
+        }
     }
 }

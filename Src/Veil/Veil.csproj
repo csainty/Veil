@@ -46,6 +46,7 @@
     <Compile Include="Compiler\EmitterExtensions.cs" />
     <Compile Include="Compiler\ITemplateCompiler.cs" />
     <Compile Include="Compiler\VeilCompilerException.cs" />
+    <Compile Include="Compiler\VeilCompilerState.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitConditionalOnModelProperty.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitEach.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitNode.cs" />

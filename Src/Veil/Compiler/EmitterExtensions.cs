@@ -24,11 +24,6 @@ namespace Veil.Compiler
             emitter.LoadArgument(0);
         }
 
-        public static void LoadModelToStack<T>(this Emit<Action<TextWriter, T>> emitter)
-        {
-            emitter.LoadArgument(1);
-        }
-
         public static void CallMethod<T>(this Emit<Action<TextWriter, T>> emitter, MethodInfo info)
         {
             if (info.IsVirtual)
@@ -93,12 +88,6 @@ namespace Veil.Compiler
             emitter.LoadWriterToStack();
             emitter.LoadConstant(content);
             emitter.CallWriteFor(typeof(ulong));
-        }
-
-        public static void LoadModelExpressionToStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)
-        {
-            emitter.LoadModelToStack();
-            emitter.LoadExpressionFromCurrentModelOnStack(expression);
         }
 
         public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)

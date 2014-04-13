@@ -6,35 +6,35 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitWriteLiteral<T>(Emit<Action<TextWriter, T>> emitter, WriteLiteralNode node)
+        private static void EmitWriteLiteral<T>(VeilCompilerState<T> state, WriteLiteralNode node)
         {
             if (node.LiteralType == typeof(string))
             {
-                emitter.OutputLiteral((string)node.LiteralContent);
+                state.Emitter.OutputLiteral((string)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(int))
             {
-                emitter.OutputLiteral((int)node.LiteralContent);
+                state.Emitter.OutputLiteral((int)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(double))
             {
-                emitter.OutputLiteral((double)node.LiteralContent);
+                state.Emitter.OutputLiteral((double)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(float))
             {
-                emitter.OutputLiteral((float)node.LiteralContent);
+                state.Emitter.OutputLiteral((float)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(long))
             {
-                emitter.OutputLiteral((long)node.LiteralContent);
+                state.Emitter.OutputLiteral((long)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(uint))
             {
-                emitter.OutputLiteral((uint)node.LiteralContent);
+                state.Emitter.OutputLiteral((uint)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(ulong))
             {
-                emitter.OutputLiteral((ulong)node.LiteralContent);
+                state.Emitter.OutputLiteral((ulong)node.LiteralContent);
             }
             else
             {
