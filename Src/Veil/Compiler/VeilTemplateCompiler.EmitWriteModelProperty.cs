@@ -11,7 +11,7 @@ namespace Veil.Compiler
             state.Emitter.LoadWriterToStack();
             state.PushCurrentModelOnStack();
             state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
-            state.Emitter.CallWriteFor(node.Expression.Type);
+            state.Emitter.CallWriteFor(node.Expression.ResultType);
         }
     }
 }

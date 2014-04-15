@@ -90,26 +90,26 @@ namespace Veil.Compiler
             emitter.CallWriteFor(typeof(ulong));
         }
 
-        public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, ModelExpressionNode expression)
+        public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, SyntaxTreeNode.ExpressionNode expression)
         {
-            if (expression is ModelPropertyExpressionNode)
+            if (expression is SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode)
             {
-                emitter.CallMethod(((ModelPropertyExpressionNode)expression).Property.GetGetMethod());
+                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode)expression).Property.GetGetMethod());
             }
-            else if (expression is ModelFieldExpressionNode)
+            else if (expression is SyntaxTreeNode.ExpressionNode.ModelFieldExpressionNode)
             {
-                emitter.LoadField(((ModelFieldExpressionNode)expression).Field);
+                emitter.LoadField(((SyntaxTreeNode.ExpressionNode.ModelFieldExpressionNode)expression).Field);
             }
-            else if (expression is SubModelExpressionNode)
+            else if (expression is SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)
             {
-                emitter.LoadExpressionFromCurrentModelOnStack(((SubModelExpressionNode)expression).ModelExpression);
-                emitter.LoadExpressionFromCurrentModelOnStack(((SubModelExpressionNode)expression).SubModelExpression);
+                emitter.LoadExpressionFromCurrentModelOnStack(((SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)expression).ModelExpression);
+                emitter.LoadExpressionFromCurrentModelOnStack(((SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)expression).SubModelExpression);
             }
-            else if (expression is FunctionCallExpressionNode)
+            else if (expression is SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)
             {
-                emitter.CallMethod(((FunctionCallExpressionNode)expression).Function);
+                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)expression).Function);
             }
-            else if (expression is SelfExpressionNode)
+            else if (expression is SyntaxTreeNode.ExpressionNode.SelfExpressionNode)
             {
             }
             else

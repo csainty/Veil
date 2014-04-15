@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Veil
 {
-    public abstract class SyntaxTreeNode
+    public abstract partial class SyntaxTreeNode
     {
         public static BlockNode Block(params SyntaxTreeNode[] nodes)
         {
@@ -26,7 +26,7 @@ namespace Veil
             return new WriteModelExpressionNode { Expression = ExpressionParser.Parse(type, expression) };
         }
 
-        public static EachNode Each(ModelPropertyExpressionNode collectionExpression, BlockNode body)
+        public static EachNode Each(SyntaxTreeNode.ExpressionNode collectionExpression, BlockNode body)
         {
             return new EachNode
             {
@@ -76,12 +76,12 @@ namespace Veil
 
         public class WriteModelExpressionNode : SyntaxTreeNode
         {
-            public ModelExpressionNode Expression { get; set; }
+            public ExpressionNode Expression { get; set; }
         }
 
         public class ConditionalOnModelExpressionNode : SyntaxTreeNode
         {
-            public ModelExpressionNode Expression { get; set; }
+            public ExpressionNode Expression { get; set; }
 
             public BlockNode TrueBlock { get; set; }
 
@@ -90,7 +90,7 @@ namespace Veil
 
         public class EachNode : SyntaxTreeNode
         {
-            public ModelExpressionNode Collection { get; set; }
+            public ExpressionNode Collection { get; set; }
 
             public BlockNode Body { get; set; }
         }

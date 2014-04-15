@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using SimpleSpeedTester.Core;
-using Veil.Handlebars;
 
 namespace Veil.Benchmark
 {

@@ -11,7 +11,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new List<string> { "1", "2" } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
-                ModelPropertyExpressionNode.Create(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.StringLiteral("Item")
                 )
@@ -26,7 +26,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { "1", "2" } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
-                ModelPropertyExpressionNode.Create(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.StringLiteral("Item")
                 )
@@ -41,7 +41,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
-                ModelPropertyExpressionNode.Create(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.Expression(typeof(ItemModel), "Name")
                 )
@@ -55,7 +55,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { "1", "2", "3", "4" } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
-                ModelPropertyExpressionNode.Create(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.Expression(typeof(string), "this")
                 )

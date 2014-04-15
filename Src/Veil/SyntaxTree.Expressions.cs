@@ -3,86 +3,101 @@ using System.Reflection;
 
 namespace Veil
 {
-    public abstract class ModelExpressionNode : SyntaxTreeNode
+    public abstract partial class SyntaxTreeNode
     {
-        public abstract Type Type { get; }
-    }
-
-    public class ModelPropertyExpressionNode : ModelExpressionNode
-    {
-        public PropertyInfo Property { get; set; }
-
-        public override Type Type
+        public abstract class ExpressionNode : SyntaxTreeNode
         {
-            get { return this.Property.PropertyType; }
-        }
+            public abstract Type ResultType { get; }
 
-        public static ModelPropertyExpressionNode Create(Type type, string propertyName)
-        {
-            return new ModelPropertyExpressionNode { Property = type.GetProperty(propertyName) };
-        }
-    }
-
-    public class ModelFieldExpressionNode : ModelExpressionNode
-    {
-        public FieldInfo Field { get; set; }
-
-        public override Type Type
-        {
-            get { return this.Field.FieldType; }
-        }
-
-        public static ModelFieldExpressionNode Create(Type type, string fieldName)
-        {
-            return new ModelFieldExpressionNode { Field = type.GetField(fieldName) };
-        }
-    }
-
-    public class SubModelExpressionNode : ModelExpressionNode
-    {
-        public ModelExpressionNode ModelExpression { get; set; }
-
-        public ModelExpressionNode SubModelExpression { get; set; }
-
-        public override Type Type
-        {
-            get { return SubModelExpression.Type; }
-        }
-
-        public static SubModelExpressionNode Create(ModelExpressionNode modelExpression, ModelExpressionNode subModelExpression)
-        {
-            return new SubModelExpressionNode
+            public static ModelPropertyExpressionNode ModelProperty(Type modelType, string propertyName)
             {
-                ModelExpression = modelExpression,
-                SubModelExpression = subModelExpression
-            };
-        }
-    }
+                return new ModelPropertyExpressionNode
+                {
+                    Property = modelType.GetProperty(propertyName)
+                };
+            }
 
-    public class FunctionCallExpressionNode : ModelExpressionNode
-    {
-        public MethodInfo Function { get; set; }
+            public static ModelFieldExpressionNode ModelField(Type modelType, string fieldName)
+            {
+                return new ModelFieldExpressionNode
+                {
+                    Field = modelType.GetField(fieldName)
+                };
+            }
 
-        public override Type Type
-        {
-            get { return this.Function.ReturnType; }
-        }
+            public static SubModelExpressionNode ModelSubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression)
+            {
+                return new SubModelExpressionNode
+                {
+                    ModelExpression = modelExpression,
+                    SubModelExpression = subModelExpression
+                };
+            }
 
-        public static FunctionCallExpressionNode Create(Type modelType, string functionName)
-        {
-            return new FunctionCallExpressionNode { Function = modelType.GetMethod(functionName) };
-        }
-    }
+            public static FunctionCallExpressionNode ModelFunction(Type modelType, string functionName)
+            {
+                return new FunctionCallExpressionNode
+                {
+                    Function = modelType.GetMethod(functionName)
+                };
+            }
 
-    public class SelfExpressionNode : ModelExpressionNode
-    {
-        private Type type;
+            public static SelfExpressionNode Self(Type modelType)
+            {
+                return new SelfExpressionNode
+                {
+                    ModelType = modelType
+                };
+            }
 
-        public override Type Type { get { return this.type; } }
+            public class ModelPropertyExpressionNode : ExpressionNode
+            {
+                public PropertyInfo Property { get; set; }
 
-        public static SelfExpressionNode Create(Type modelType)
-        {
-            return new SelfExpressionNode { type = modelType };
+                public override Type ResultType
+                {
+                    get { return this.Property.PropertyType; }
+                }
+            }
+
+            public class ModelFieldExpressionNode : ExpressionNode
+            {
+                public FieldInfo Field { get; set; }
+
+                public override Type ResultType
+                {
+                    get { return this.Field.FieldType; }
+                }
+            }
+
+            public class SubModelExpressionNode : ExpressionNode
+            {
+                public ExpressionNode ModelExpression { get; set; }
+
+                public ExpressionNode SubModelExpression { get; set; }
+
+                public override Type ResultType
+                {
+                    get { return SubModelExpression.ResultType; }
+                }
+            }
+
+            public class FunctionCallExpressionNode : ExpressionNode
+            {
+                public MethodInfo Function { get; set; }
+
+                public override Type ResultType
+                {
+                    get { return this.Function.ReturnType; }
+                }
+            }
+
+            public class SelfExpressionNode : ExpressionNode
+            {
+                public Type ModelType { get; set; }
+
+                public override Type ResultType { get { return this.ModelType; } }
+            }
         }
     }
 }

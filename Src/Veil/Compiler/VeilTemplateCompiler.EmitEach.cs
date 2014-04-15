@@ -6,7 +6,7 @@ namespace Veil.Compiler
     {
         private static void EmitEach<T>(VeilCompilerState<T> state, SyntaxTreeNode.EachNode node)
         {
-            var itemType = node.Collection.Type.GetEnumerableInterface().GetGenericArguments()[0];
+            var itemType = node.Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0];
             var enumerable = typeof(IEnumerable<>).MakeGenericType(itemType);
             var getEnumerator = enumerable.GetMethod("GetEnumerator");
             var moveNext = typeof(System.Collections.IEnumerator).GetMethod("MoveNext");
