@@ -20,8 +20,8 @@ namespace Veil.Benchmark
 
             {
                 Console.WriteLine("Testing Veil.Hail...");
-                var veilEngine = new VeilEngine(new HandlebarsParser());
-                var veilTemplate = veilEngine.Compile<ViewModel>(new StringReader(template));
+                var veilEngine = new VeilEngine();
+                var veilTemplate = veilEngine.Compile<ViewModel>("handlebars", new StringReader(template));
                 AssertTemplateSample(Unwrap(veilTemplate, model));
                 var veilGroup = new TestGroup("Veil.Hail").PlanAndExecute("Template", () =>
                 {

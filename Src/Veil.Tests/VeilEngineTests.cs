@@ -8,7 +8,7 @@ namespace Veil
     [TestFixture]
     public class VeilEngineTests
     {
-        private readonly IVeilEngine engine = new VeilEngine(new HandlebarsParser());
+        private readonly IVeilEngine engine = new VeilEngine();
 
         [TestCase("Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!")]
         [TestCase("{{#if Name}}Hello {{Name}}{{/if}}", "Hello Chris")]
@@ -42,7 +42,7 @@ namespace Veil
         {
             using (var reader = new StringReader(template))
             {
-                return this.engine.Compile<ViewModel>(reader);
+                return this.engine.Compile<ViewModel>("handlebars", reader);
             }
         }
 
