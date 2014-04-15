@@ -6,7 +6,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitWriteModelProperty<T>(VeilCompilerState<T> state, WriteModelExpressionNode node)
+        private static void EmitWriteModelProperty<T>(VeilCompilerState<T> state, SyntaxTreeNode.WriteModelExpressionNode node)
         {
             state.Emitter.LoadWriterToStack();
             state.PushCurrentModelOnStack();

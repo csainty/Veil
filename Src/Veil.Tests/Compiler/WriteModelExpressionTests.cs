@@ -9,7 +9,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_property<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(WriteModelExpressionNode.Create(model.GetType(), "Data"));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(model.GetType(), "Data"));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -19,7 +19,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_field<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(WriteModelExpressionNode.Create(model.GetType(), "DataField"));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(model.GetType(), "DataField"));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -29,7 +29,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_from_sub_model<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(WriteModelExpressionNode.Create(model.GetType(), "Sub.SubData"));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(model.GetType(), "Sub.SubData"));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));

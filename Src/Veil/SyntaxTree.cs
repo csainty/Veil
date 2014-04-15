@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Veil
 {
@@ -13,12 +12,36 @@ namespace Veil
             return block;
         }
 
-        public static WriteLiteralNode StringLiteral(string value)
+        public static WriteLiteralNode StringLiteral(string content)
         {
             return new WriteLiteralNode
             {
-                LiteralContent = value,
+                LiteralContent = content,
                 LiteralType = typeof(string)
+            };
+        }
+
+        public static WriteModelExpressionNode Expression(Type type, string expression)
+        {
+            return new WriteModelExpressionNode { Expression = ExpressionParser.Parse(type, expression) };
+        }
+
+        public static EachNode Each(ModelPropertyExpressionNode collectionExpression, BlockNode body)
+        {
+            return new EachNode
+            {
+                Collection = collectionExpression,
+                Body = body
+            };
+        }
+
+        public static ConditionalOnModelExpressionNode Conditional(Type type, string propertyExpression, BlockNode trueBlock, BlockNode falseBlock = null)
+        {
+            return new ConditionalOnModelExpressionNode
+            {
+                Expression = ExpressionParser.Parse(type, propertyExpression),
+                TrueBlock = trueBlock,
+                FalseBlock = falseBlock
             };
         }
 
@@ -50,55 +73,26 @@ namespace Veil
 
             public object LiteralContent { get; set; }
         }
-    }
 
-    public class WriteModelExpressionNode : SyntaxTreeNode
-    {
-        public ModelExpressionNode Expression { get; set; }
-
-        public static WriteModelExpressionNode Create(Type type, string propertyExpression)
+        public class WriteModelExpressionNode : SyntaxTreeNode
         {
-            return new WriteModelExpressionNode { Expression = ExpressionParser.Parse(type, propertyExpression) };
-        }
-    }
-
-    public class ConditionalOnModelExpressionNode : SyntaxTreeNode
-    {
-        public ModelExpressionNode Expression { get; set; }
-
-        public BlockNode TrueBlock { get; set; }
-
-        public BlockNode FalseBlock { get; set; }
-
-        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, BlockNode trueBlock, BlockNode falseBlock = null)
-        {
-            return new ConditionalOnModelExpressionNode
-            {
-                Expression = ExpressionParser.Parse(type, propertyExpression),
-                TrueBlock = trueBlock,
-                FalseBlock = falseBlock
-            };
+            public ModelExpressionNode Expression { get; set; }
         }
 
-        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, IEnumerable<SyntaxTreeNode> trueBlock, IEnumerable<SyntaxTreeNode> falseBlock = null)
+        public class ConditionalOnModelExpressionNode : SyntaxTreeNode
         {
-            return ConditionalOnModelExpressionNode.Create(type, propertyExpression, SyntaxTreeNode.Block(trueBlock.ToArray()), falseBlock == null ? null : SyntaxTreeNode.Block(falseBlock.ToArray()));
+            public ModelExpressionNode Expression { get; set; }
+
+            public BlockNode TrueBlock { get; set; }
+
+            public BlockNode FalseBlock { get; set; }
         }
-    }
 
-    public class EachNode : SyntaxTreeNode
-    {
-        public ModelExpressionNode Collection { get; set; }
-
-        public BlockNode Body { get; set; }
-
-        internal static EachNode Create(ModelPropertyExpressionNode collection, BlockNode body)
+        public class EachNode : SyntaxTreeNode
         {
-            return new EachNode
-            {
-                Collection = collection,
-                Body = body
-            };
+            public ModelExpressionNode Collection { get; set; }
+
+            public BlockNode Body { get; set; }
         }
     }
 }

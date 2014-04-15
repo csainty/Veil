@@ -4,7 +4,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitEach<T>(VeilCompilerState<T> state, EachNode node)
+        private static void EmitEach<T>(VeilCompilerState<T> state, SyntaxTreeNode.EachNode node)
         {
             var itemType = node.Collection.Type.GetEnumerableInterface().GetGenericArguments()[0];
             var enumerable = typeof(IEnumerable<>).MakeGenericType(itemType);
