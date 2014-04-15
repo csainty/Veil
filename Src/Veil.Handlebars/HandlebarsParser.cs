@@ -8,11 +8,6 @@ namespace Veil.Handlebars
 {
     public class HandlebarsParser : ITemplateParser
     {
-        static HandlebarsParser()
-        {
-            VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
-        }
-
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd();

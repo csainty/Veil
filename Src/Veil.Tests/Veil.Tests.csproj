@@ -58,6 +58,7 @@
     <Compile Include="Handlebars\WriteModelPropertyTests.cs" />
     <Compile Include="ParserTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestSuiteSetUp.cs" />
     <Compile Include="VeilEngineTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using SimpleSpeedTester.Core;
+using Veil.Handlebars;
 
 namespace Veil.Benchmark
 {
@@ -16,6 +17,8 @@ namespace Veil.Benchmark
             {
                 template = reader.ReadToEnd();
             }
+
+            VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
 
             {
                 Console.WriteLine("Testing Veil.Hail...");
@@ -41,6 +44,7 @@ namespace Veil.Benchmark
                 Console.WriteLine(chevronGroup);
             }
 
+            Console.WriteLine("Done");
             Console.ReadKey();
         }
 
