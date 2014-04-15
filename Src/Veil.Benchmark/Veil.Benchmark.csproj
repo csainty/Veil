@@ -36,11 +36,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Chevron.IE.Merged.0.4.0\Lib\NET40\Chevron.IE.dll</HintPath>
     </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleSpeedTester">
       <HintPath>..\packages\SimpleSpeedTester.1.1.0\lib\net40\SimpleSpeedTester.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,6 +62,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Template.haml" />
+    <EmbeddedResource Include="Template.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
