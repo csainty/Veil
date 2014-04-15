@@ -9,10 +9,10 @@ namespace Veil.Handlebars
         public void Should_parse_if_statement()
         {
             var template = Parse("Hello {{#if Conditional }} John{{/if}}", typeof(TestModel));
-            AssertSyntaxTree(template, new ISyntaxTreeNode[] {
-                WriteLiteralNode.String("Hello "),
+            AssertSyntaxTree(template, new SyntaxTreeNode[] {
+                SyntaxTreeNode.StringLiteral("Hello "),
                 ConditionalOnModelExpressionNode.Create(typeof(TestModel), "Conditional",
-                    new ISyntaxTreeNode[] { WriteLiteralNode.String(" John") }
+                    new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral(" John") }
                 )
             });
         }
@@ -21,11 +21,11 @@ namespace Veil.Handlebars
         public void Should_parse_else_statement()
         {
             var template = Parse("Hello {{#if Conditional }}John{{else}}Jim{{/if}}", typeof(TestModel));
-            AssertSyntaxTree(template, new ISyntaxTreeNode[] {
-                WriteLiteralNode.String("Hello "),
+            AssertSyntaxTree(template, new SyntaxTreeNode[] {
+                SyntaxTreeNode.StringLiteral("Hello "),
                 ConditionalOnModelExpressionNode.Create(typeof(TestModel), "Conditional",
-                    new ISyntaxTreeNode[] { WriteLiteralNode.String("John") },
-                    new ISyntaxTreeNode[] { WriteLiteralNode.String("Jim") }
+                    new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("John") },
+                    new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Jim") }
                 )
             });
         }

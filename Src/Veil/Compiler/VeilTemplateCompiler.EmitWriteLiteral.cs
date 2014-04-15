@@ -6,7 +6,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitWriteLiteral<T>(VeilCompilerState<T> state, WriteLiteralNode node)
+        private static void EmitWriteLiteral<T>(VeilCompilerState<T> state, SyntaxTreeNode.WriteLiteralNode node)
         {
             if (node.LiteralType == typeof(string))
             {

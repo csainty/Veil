@@ -6,7 +6,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler : ITemplateCompiler
     {
-        public Action<TextWriter, T> Compile<T>(TemplateRootNode templateSyntaxTree)
+        public Action<TextWriter, T> Compile<T>(SyntaxTreeNode templateSyntaxTree)
         {
             var state = new VeilCompilerState<T>();
 

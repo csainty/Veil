@@ -1,63 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Veil
 {
-    public interface ISyntaxTreeNode { }
-
-    public interface IBlockNode : ISyntaxTreeNode
+    public abstract class SyntaxTreeNode
     {
-        IEnumerable<ISyntaxTreeNode> Nodes { get; }
-    }
-
-    public class TemplateRootNode : BlockNode
-    {
-    }
-
-    public class BlockNode : IBlockNode
-    {
-        private List<ISyntaxTreeNode> nodes;
-
-        public BlockNode()
-        {
-            this.nodes = new List<ISyntaxTreeNode>();
-        }
-
-        public void Add(ISyntaxTreeNode node)
-        {
-            this.nodes.Add(node);
-        }
-
-        public void AddRange(IEnumerable<ISyntaxTreeNode> nodes)
-        {
-            this.nodes.AddRange(nodes);
-        }
-
-        public IEnumerable<ISyntaxTreeNode> Nodes { get { return this.nodes; } }
-
-        public static BlockNode Create(IEnumerable<ISyntaxTreeNode> nodes)
+        public static BlockNode Block(params SyntaxTreeNode[] nodes)
         {
             var block = new BlockNode();
             block.AddRange(nodes);
             return block;
         }
-    }
 
-    public class WriteLiteralNode : ISyntaxTreeNode
-    {
-        public Type LiteralType { get; set; }
-
-        public object LiteralContent { get; set; }
-
-        public static WriteLiteralNode String(string value)
+        public static WriteLiteralNode StringLiteral(string value)
         {
-            return new WriteLiteralNode { LiteralContent = value, LiteralType = typeof(string) };
+            return new WriteLiteralNode
+            {
+                LiteralContent = value,
+                LiteralType = typeof(string)
+            };
+        }
+
+        public class BlockNode : SyntaxTreeNode
+        {
+            private List<SyntaxTreeNode> nodes;
+
+            public BlockNode()
+            {
+                this.nodes = new List<SyntaxTreeNode>();
+            }
+
+            public void Add(SyntaxTreeNode node)
+            {
+                this.nodes.Add(node);
+            }
+
+            public void AddRange(IEnumerable<SyntaxTreeNode> nodes)
+            {
+                this.nodes.AddRange(nodes);
+            }
+
+            public IEnumerable<SyntaxTreeNode> Nodes { get { return this.nodes; } }
+        }
+
+        public class WriteLiteralNode : SyntaxTreeNode
+        {
+            public Type LiteralType { get; set; }
+
+            public object LiteralContent { get; set; }
         }
     }
 
-    public class WriteModelExpressionNode : ISyntaxTreeNode
+    public class WriteModelExpressionNode : SyntaxTreeNode
     {
-        public IModelExpressionNode Expression { get; set; }
+        public ModelExpressionNode Expression { get; set; }
 
         public static WriteModelExpressionNode Create(Type type, string propertyExpression)
         {
@@ -65,15 +62,15 @@ namespace Veil
         }
     }
 
-    public class ConditionalOnModelExpressionNode : ISyntaxTreeNode
+    public class ConditionalOnModelExpressionNode : SyntaxTreeNode
     {
-        public IModelExpressionNode Expression { get; set; }
+        public ModelExpressionNode Expression { get; set; }
 
-        public IBlockNode TrueBlock { get; set; }
+        public BlockNode TrueBlock { get; set; }
 
-        public IBlockNode FalseBlock { get; set; }
+        public BlockNode FalseBlock { get; set; }
 
-        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, IBlockNode trueBlock, IBlockNode falseBlock = null)
+        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, BlockNode trueBlock, BlockNode falseBlock = null)
         {
             return new ConditionalOnModelExpressionNode
             {
@@ -83,15 +80,15 @@ namespace Veil
             };
         }
 
-        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, IEnumerable<ISyntaxTreeNode> trueBlock, IEnumerable<ISyntaxTreeNode> falseBlock = null)
+        public static ConditionalOnModelExpressionNode Create(Type type, string propertyExpression, IEnumerable<SyntaxTreeNode> trueBlock, IEnumerable<SyntaxTreeNode> falseBlock = null)
         {
-            return ConditionalOnModelExpressionNode.Create(type, propertyExpression, BlockNode.Create(trueBlock), falseBlock == null ? null : BlockNode.Create(falseBlock));
+            return ConditionalOnModelExpressionNode.Create(type, propertyExpression, SyntaxTreeNode.Block(trueBlock.ToArray()), falseBlock == null ? null : SyntaxTreeNode.Block(falseBlock.ToArray()));
         }
     }
 
-    public class EachNode : ISyntaxTreeNode
+    public class EachNode : SyntaxTreeNode
     {
-        public IModelExpressionNode Collection { get; set; }
+        public ModelExpressionNode Collection { get; set; }
 
         public BlockNode Body { get; set; }
 

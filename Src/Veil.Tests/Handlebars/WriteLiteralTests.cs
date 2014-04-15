@@ -11,7 +11,7 @@ namespace Veil.Handlebars
             var result = Parse("Hello World");
             AssertSyntaxTree(
                 result,
-                new WriteLiteralNode { LiteralContent = "Hello World", LiteralType = typeof(string) }
+                SyntaxTreeNode.StringLiteral("Hello World")
             );
         }
     }

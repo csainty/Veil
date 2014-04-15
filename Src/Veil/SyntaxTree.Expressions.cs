@@ -3,16 +3,16 @@ using System.Reflection;
 
 namespace Veil
 {
-    public interface IModelExpressionNode : ISyntaxTreeNode
+    public abstract class ModelExpressionNode : SyntaxTreeNode
     {
-        Type Type { get; }
+        public abstract Type Type { get; }
     }
 
-    public class ModelPropertyExpressionNode : IModelExpressionNode
+    public class ModelPropertyExpressionNode : ModelExpressionNode
     {
         public PropertyInfo Property { get; set; }
 
-        public Type Type
+        public override Type Type
         {
             get { return this.Property.PropertyType; }
         }
@@ -23,11 +23,11 @@ namespace Veil
         }
     }
 
-    public class ModelFieldExpressionNode : IModelExpressionNode
+    public class ModelFieldExpressionNode : ModelExpressionNode
     {
         public FieldInfo Field { get; set; }
 
-        public Type Type
+        public override Type Type
         {
             get { return this.Field.FieldType; }
         }
@@ -38,18 +38,18 @@ namespace Veil
         }
     }
 
-    public class SubModelExpressionNode : IModelExpressionNode
+    public class SubModelExpressionNode : ModelExpressionNode
     {
-        public IModelExpressionNode ModelExpression { get; set; }
+        public ModelExpressionNode ModelExpression { get; set; }
 
-        public IModelExpressionNode SubModelExpression { get; set; }
+        public ModelExpressionNode SubModelExpression { get; set; }
 
-        public Type Type
+        public override Type Type
         {
             get { return SubModelExpression.Type; }
         }
 
-        public static SubModelExpressionNode Create(IModelExpressionNode modelExpression, IModelExpressionNode subModelExpression)
+        public static SubModelExpressionNode Create(ModelExpressionNode modelExpression, ModelExpressionNode subModelExpression)
         {
             return new SubModelExpressionNode
             {
@@ -59,11 +59,11 @@ namespace Veil
         }
     }
 
-    public class FunctionCallExpressionNode : IModelExpressionNode
+    public class FunctionCallExpressionNode : ModelExpressionNode
     {
         public MethodInfo Function { get; set; }
 
-        public Type Type
+        public override Type Type
         {
             get { return this.Function.ReturnType; }
         }
@@ -74,13 +74,15 @@ namespace Veil
         }
     }
 
-    public class SelfExpressionNode : IModelExpressionNode
+    public class SelfExpressionNode : ModelExpressionNode
     {
-        public Type Type { get; set; }
+        private Type type;
+
+        public override Type Type { get { return this.type; } }
 
         public static SelfExpressionNode Create(Type modelType)
         {
-            return new SelfExpressionNode { Type = modelType };
+            return new SelfExpressionNode { type = modelType };
         }
     }
 }

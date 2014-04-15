@@ -5,6 +5,6 @@ namespace Veil
 {
     public interface ITemplateParser
     {
-        TemplateRootNode Parse(TextReader templateReader, Type modelType);
+        SyntaxTreeNode Parse(TextReader templateReader, Type modelType);
     }
 }

@@ -3,16 +3,16 @@
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class TemplateRootTests : CompilerTestBase
+    internal class BlockTests : CompilerTestBase
     {
         [Test]
-        public void Should_emit_all_nodes_in_syntax_tree()
+        public void Should_emit_all_nodes_in_block()
         {
             var model = new { Name = "World" };
-            var template = CreateTemplate(
-                WriteLiteralNode.String("Hello "),
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.StringLiteral("Hello "),
                 WriteModelExpressionNode.Create(model.GetType(), "Name"),
-                WriteLiteralNode.String("!")
+                SyntaxTreeNode.StringLiteral("!")
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello World!"));

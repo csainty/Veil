@@ -49,7 +49,7 @@
     <Compile Include="Compiler\ConditionalOnModelExpressionTests.cs" />
     <Compile Include="Compiler\EachTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
-    <Compile Include="Compiler\TemplateRootTests.cs" />
+    <Compile Include="Compiler\BlockTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
     <Compile Include="Compiler\WriteModelExpressionTests.cs" />
     <Compile Include="ExpressionParserTests.cs" />

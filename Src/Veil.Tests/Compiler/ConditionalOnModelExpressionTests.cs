@@ -8,11 +8,11 @@ namespace Veil.Compiler
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_property<T>(T model, string expectedResult)
         {
-            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(
+            var template = SyntaxTreeNode.Block(ConditionalOnModelExpressionNode.Create(
                 model.GetType(),
                 "Condition",
-                CreateBlock(CreateStringLiteral("True")),
-                CreateBlock(CreateStringLiteral("False"))));
+                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True")),
+                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -21,11 +21,11 @@ namespace Veil.Compiler
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_field<T>(T model, string expectedResult)
         {
-            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(
+            var template = SyntaxTreeNode.Block(ConditionalOnModelExpressionNode.Create(
                 model.GetType(),
                 "ConditionField",
-                CreateBlock(CreateStringLiteral("True")),
-                CreateBlock(CreateStringLiteral("False"))));
+                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True")),
+                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -38,37 +38,37 @@ namespace Veil.Compiler
         public void Should_be_able_to_nest_conditionals(bool c1, bool c2, string expectedResult)
         {
             var model = new { Condition1 = c1, Condition2 = c2 };
-            var template = CreateTemplate(
-                CreateStringLiteral("Start "),
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.StringLiteral("Start "),
                 ConditionalOnModelExpressionNode.Create(
                     model.GetType(), "Condition1",
-                    CreateBlock(
-                        CreateStringLiteral("True1 "),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.StringLiteral("True1 "),
                         ConditionalOnModelExpressionNode.Create(
                             model.GetType(), "Condition2",
-                            CreateBlock(CreateStringLiteral("True2 ")),
-                            CreateBlock(CreateStringLiteral("False2 "))
+                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True2 ")),
+                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False2 "))
                         )
                     ),
-                    CreateBlock(
-                        CreateStringLiteral("False1 "),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.StringLiteral("False1 "),
                         ConditionalOnModelExpressionNode.Create(
                             model.GetType(), "Condition2",
-                            CreateBlock(CreateStringLiteral("True2 ")),
-                            CreateBlock(CreateStringLiteral("False2 "))
+                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True2 ")),
+                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False2 "))
                         )
                     )
                 ),
-                CreateStringLiteral("End"));
+                SyntaxTreeNode.StringLiteral("End"));
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCaseSource("EmptyBlockCases")]
-        public void Should_throw_with_empty_true_block(BlockNode trueNode)
+        public void Should_throw_with_empty_true_block(SyntaxTreeNode.BlockNode trueNode)
         {
             var model = new { X = true };
-            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(model.GetType(), "X", trueNode, CreateBlock()));
+            var template = SyntaxTreeNode.Block(ConditionalOnModelExpressionNode.Create(model.GetType(), "X", trueNode, SyntaxTreeNode.Block()));
             Assert.Throws<VeilCompilerException>(() =>
             {
                 this.ExecuteTemplate(template, model);
@@ -76,10 +76,10 @@ namespace Veil.Compiler
         }
 
         [TestCaseSource("EmptyBlockCases")]
-        public void Should_handle_empty_false_block(BlockNode falseBlock)
+        public void Should_handle_empty_false_block(SyntaxTreeNode.BlockNode falseBlock)
         {
             var model = new { X = true };
-            var template = CreateTemplate(ConditionalOnModelExpressionNode.Create(model.GetType(), "X", CreateBlock(CreateStringLiteral("Hello")), falseBlock));
+            var template = SyntaxTreeNode.Block(ConditionalOnModelExpressionNode.Create(model.GetType(), "X", SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("Hello")), falseBlock));
             var result = this.ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello"));
         }
@@ -100,7 +100,7 @@ namespace Veil.Compiler
         {
             return new object[] {
                 new object[] { null },
-                new object[] { CreateBlock() }
+                new object[] { SyntaxTreeNode.Block() }
             };
         }
 

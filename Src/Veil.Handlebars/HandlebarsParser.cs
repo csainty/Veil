@@ -13,11 +13,11 @@ namespace Veil.Handlebars
             VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
         }
 
-        public TemplateRootNode Parse(TextReader templateReader, Type modelType)
+        public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd();
-            var blockStack = new Stack<BlockNode>();
-            blockStack.Push(new TemplateRootNode());
+            var blockStack = new Stack<Veil.SyntaxTreeNode.BlockNode>();
+            blockStack.Push(SyntaxTreeNode.Block());
 
             var matcher = new Regex(@"(?<!{){{[^{}]+}}(?!})");
             var matches = matcher.Matches(template);
@@ -26,7 +26,7 @@ namespace Veil.Handlebars
             {
                 if (index < match.Index)
                 {
-                    blockStack.Peek().Add(WriteLiteralNode.String(template.Substring(index, match.Index - index)));
+                    blockStack.Peek().Add(SyntaxTreeNode.StringLiteral(template.Substring(index, match.Index - index)));
                 }
 
                 index = match.Index + match.Length;
@@ -35,7 +35,7 @@ namespace Veil.Handlebars
 
                 if (token.StartsWith("#if"))
                 {
-                    var block = new BlockNode();
+                    var block = SyntaxTreeNode.Block();
                     var conditional = ConditionalOnModelExpressionNode.Create(modelType, token.Substring(4), block);
                     blockStack.Peek().Add(conditional);
                     blockStack.Push(block);
@@ -44,7 +44,7 @@ namespace Veil.Handlebars
                 {
                     AssertInsideConditionalOnModelBlock(blockStack, "{{else}}");
                     blockStack.Pop();
-                    var block = new BlockNode();
+                    var block = SyntaxTreeNode.Block();
                     ((ConditionalOnModelExpressionNode)blockStack.Peek().Nodes.Last()).FalseBlock = block;
                     blockStack.Push(block);
                 }
@@ -60,23 +60,23 @@ namespace Veil.Handlebars
             }
             if (index < template.Length)
             {
-                blockStack.Peek().Add(WriteLiteralNode.String(template.Substring(index)));
+                blockStack.Peek().Add(SyntaxTreeNode.StringLiteral(template.Substring(index)));
             }
 
             AssertStackOnRootNode(blockStack);
 
-            return (TemplateRootNode)blockStack.Pop();
+            return blockStack.Pop();
         }
 
-        private void AssertStackOnRootNode(Stack<BlockNode> blockStack)
+        private void AssertStackOnRootNode(Stack<Veil.SyntaxTreeNode.BlockNode> blockStack)
         {
-            if (!(blockStack.Peek() is TemplateRootNode))
+            if (blockStack.Count != 1)
             {
-                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template by found '{0}'", blockStack.Peek().GetType()));
+                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template but found '{0}' open blocks.", blockStack.Count));
             }
         }
 
-        private void AssertInsideConditionalOnModelBlock(Stack<BlockNode> blockStack, string foundToken)
+        private void AssertInsideConditionalOnModelBlock(Stack<SyntaxTreeNode.BlockNode> blockStack, string foundToken)
         {
             var faulted = false;
             faulted = blockStack.Count < 2;

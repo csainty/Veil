@@ -90,7 +90,7 @@ namespace Veil.Compiler
             emitter.CallWriteFor(typeof(ulong));
         }
 
-        public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, IModelExpressionNode expression)
+        public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, ModelExpressionNode expression)
         {
             if (expression is ModelPropertyExpressionNode)
             {

@@ -5,6 +5,6 @@ namespace Veil.Compiler
 {
     internal interface ITemplateCompiler
     {
-        Action<TextWriter, T> Compile<T>(TemplateRootNode templateSyntaxTree);
+        Action<TextWriter, T> Compile<T>(SyntaxTreeNode templateSyntaxTree);
     }
 }

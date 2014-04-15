@@ -4,7 +4,7 @@ namespace Veil
 {
     internal static class ExpressionParser
     {
-        public static IModelExpressionNode Parse(Type modelType, string expression)
+        public static ModelExpressionNode Parse(Type modelType, string expression)
         {
             expression = expression.Trim();
 

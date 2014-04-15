@@ -14,7 +14,7 @@ namespace Veil
             this.parser = new T();
         }
 
-        protected TemplateRootNode Parse(string template, Type modelType = null)
+        protected SyntaxTreeNode Parse(string template, Type modelType = null)
         {
             using (var reader = new StringReader(template))
             {
@@ -22,11 +22,9 @@ namespace Veil
             }
         }
 
-        protected void AssertSyntaxTree(TemplateRootNode template, params ISyntaxTreeNode[] expectedNodes)
+        protected void AssertSyntaxTree(SyntaxTreeNode template, params SyntaxTreeNode[] expectedNodes)
         {
-            var resultNodes = template.Nodes.ToArray();
-            var comparisonTemplate = new TemplateRootNode();
-            comparisonTemplate.AddRange(expectedNodes);
+            var comparisonTemplate = SyntaxTreeNode.Block(expectedNodes);
             template.ShouldDeepEqual(comparisonTemplate);
         }
     }
