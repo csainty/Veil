@@ -13,8 +13,9 @@ namespace Veil.Benchmark
         private static void Main(string[] args)
         {
             var model = new ViewModel { Name = "Test Template", IsLoggedIn = true };
-            string handlebarsTemplate = ReadTemplate("haml");
-            string razorTemplate = ReadTemplate("cshtml");
+            var handlebarsTemplate = ReadTemplate("haml");
+            var razorTemplate = ReadTemplate("cshtml");
+            var ssTemplate = ReadTemplate("sshtml");
 
             VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
 
@@ -46,11 +47,23 @@ namespace Veil.Benchmark
                 Console.WriteLine("Testing Razor...");
                 Razor.Compile<ViewModel>(razorTemplate, "Test");
                 AssertTemplateSample(Razor.Run<ViewModel>("Test", model));
-                var razorGroup = new TestGroup("Chevron.IE.Merged").PlanAndExecute("Template", () =>
+                var razorGroup = new TestGroup("Razor").PlanAndExecute("Template", () =>
                 {
                     Razor.Run<ViewModel>("Test", model);
                 }, 5000);
                 Console.WriteLine(razorGroup);
+            }
+
+            {
+                Console.WriteLine("Testing Super Simple View Engine...");
+                var engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();
+                var host = new TestHost();
+                AssertTemplateSample(engine.Render(ssTemplate, model, host));
+                var ssGroup = new TestGroup("SuperSimpleViewEngine").PlanAndExecute("Template", () =>
+                {
+                    engine.Render(ssTemplate, model, host);
+                }, 5000);
+                Console.WriteLine(ssGroup);
             }
 
             Console.WriteLine("Done");
@@ -91,5 +104,38 @@ namespace Veil.Benchmark
         public string Name { get; set; }
 
         public bool IsLoggedIn { get; set; }
+    }
+
+    public class TestHost : SuperSimpleViewEngine.IViewEngineHost
+    {
+        public string AntiForgeryToken()
+        {
+            return "";
+        }
+
+        public object Context
+        {
+            get { return this; }
+        }
+
+        public string ExpandPath(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetTemplate(string templateName, object model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetUriString(string name, params string[] parameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string HtmlEncode(string input)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
