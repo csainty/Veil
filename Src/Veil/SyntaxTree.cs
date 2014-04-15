@@ -5,6 +5,9 @@ namespace Veil
 {
     public abstract partial class SyntaxTreeNode
     {
+        /// <summary>
+        /// Create a sequential block of nodes
+        /// </summary>
         public static BlockNode Block(params SyntaxTreeNode[] nodes)
         {
             var block = new BlockNode();
@@ -12,6 +15,10 @@ namespace Veil
             return block;
         }
 
+        /// <summary>
+        /// Write a string literal to the TextWriter
+        /// </summary>
+        /// <param name="content">The string to be written</param>
         public static WriteLiteralNode StringLiteral(string content)
         {
             return new WriteLiteralNode
@@ -21,12 +28,23 @@ namespace Veil
             };
         }
 
-        public static WriteModelExpressionNode Expression(Type type, string expression)
+        /// <summary>
+        /// Evaluate an expression against the currently scoped model and write the value to the TextWriter
+        /// </summary>
+        public static WriteModelExpressionNode Expression(ExpressionNode expression)
         {
-            return new WriteModelExpressionNode { Expression = ExpressionParser.Parse(type, expression) };
+            return new WriteModelExpressionNode
+            {
+                Expression = expression
+            };
         }
 
-        public static EachNode Each(SyntaxTreeNode.ExpressionNode collectionExpression, BlockNode body)
+        /// <summary>
+        /// Iterate a collection and execute the body block scoped to each item in the collection
+        /// </summary>
+        /// <param name="collectionExpression">expression to load the collection</param>
+        /// <param name="body">Block to execute in the scope of each item</param>
+        public static EachNode Each(ExpressionNode collectionExpression, BlockNode body)
         {
             return new EachNode
             {
@@ -35,11 +53,18 @@ namespace Veil
             };
         }
 
-        public static ConditionalOnModelExpressionNode Conditional(Type type, string propertyExpression, BlockNode trueBlock, BlockNode falseBlock = null)
+        /// <summary>
+        /// Choose a Block to execute based on a condition
+        /// </summary>
+        /// <param name="expression">The expression to evaluate</param>
+        /// <param name="trueBlock">The block to execute when the expression is true</param>
+        /// <param name="falseBlock">The block to evaluate when the expression is false</param>
+        /// <returns></returns>
+        public static ConditionalOnModelExpressionNode Conditional(ExpressionNode expression, BlockNode trueBlock, BlockNode falseBlock = null)
         {
             return new ConditionalOnModelExpressionNode
             {
-                Expression = ExpressionParser.Parse(type, propertyExpression),
+                Expression = expression,
                 TrueBlock = trueBlock,
                 FalseBlock = falseBlock
             };

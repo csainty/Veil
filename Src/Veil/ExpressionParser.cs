@@ -2,7 +2,7 @@
 
 namespace Veil
 {
-    internal static class ExpressionParser
+    public static class ExpressionParser
     {
         public static SyntaxTreeNode.ExpressionNode Parse(Type modelType, string expression)
         {

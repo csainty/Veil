@@ -9,6 +9,11 @@ namespace Veil
         {
             public abstract Type ResultType { get; }
 
+            /// <summary>
+            /// Call the getter on the specified property
+            /// </summary>
+            /// <param name="modelType">The type of the scoped model</param>
+            /// <param name="propertyName">The name of the property</param>
             public static ModelPropertyExpressionNode ModelProperty(Type modelType, string propertyName)
             {
                 return new ModelPropertyExpressionNode
@@ -17,6 +22,11 @@ namespace Veil
                 };
             }
 
+            /// <summary>
+            /// Get a field
+            /// </summary>
+            /// <param name="modelType">The type of the scoped model</param>
+            /// <param name="fieldName">The name of the field</param>
             public static ModelFieldExpressionNode ModelField(Type modelType, string fieldName)
             {
                 return new ModelFieldExpressionNode
@@ -25,6 +35,11 @@ namespace Veil
                 };
             }
 
+            /// <summary>
+            /// Traverse one level down a model structure
+            /// </summary>
+            /// <param name="modelExpression">An expression referencing the model to traverse to</param>
+            /// <param name="subModelExpression">An expression to evaluate in the scope of the model that has been traversed to</param>
             public static SubModelExpressionNode ModelSubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression)
             {
                 return new SubModelExpressionNode
@@ -34,6 +49,11 @@ namespace Veil
                 };
             }
 
+            /// <summary>
+            /// Execute a function
+            /// </summary>
+            /// <param name="modelType">The type of the scoped model</param>
+            /// <param name="functionName">The name of the function</param>
             public static FunctionCallExpressionNode ModelFunction(Type modelType, string functionName)
             {
                 return new FunctionCallExpressionNode
@@ -42,6 +62,10 @@ namespace Veil
                 };
             }
 
+            /// <summary>
+            /// Evaluate the model itself e.g. Value types
+            /// </summary>
+            /// <param name="modelType">The type of the scoped model</param>
             public static SelfExpressionNode Self(Type modelType)
             {
                 return new SelfExpressionNode

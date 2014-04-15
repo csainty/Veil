@@ -36,7 +36,7 @@ namespace Veil.Handlebars
                 if (token.StartsWith("#if"))
                 {
                     var block = SyntaxTreeNode.Block();
-                    var conditional = SyntaxTreeNode.Conditional(modelType, token.Substring(4), block);
+                    var conditional = SyntaxTreeNode.Conditional(ExpressionParser.Parse(modelType, token.Substring(4)), block);
                     blockStack.Peek().Add(conditional);
                     blockStack.Push(block);
                 }
@@ -55,7 +55,7 @@ namespace Veil.Handlebars
                 }
                 else
                 {
-                    blockStack.Peek().Add(SyntaxTreeNode.Expression(modelType, token));
+                    blockStack.Peek().Add(SyntaxTreeNode.Expression(ExpressionParser.Parse(modelType, token)));
                 }
             }
             if (index < template.Length)

@@ -15,10 +15,10 @@ namespace Veil.Handlebars
         public object[] PropertyNameTestSource()
         {
             return new object[] {
-                new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.Expression(typeof(TestModel), "Name") } },
-                new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTreeNode.Expression(typeof(TestModel), "Name") } },
-                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Hello "), SyntaxTreeNode.Expression(typeof(TestModel), "Name") } },
-                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Hello "), SyntaxTreeNode.Expression(typeof(TestModel), "Name"), SyntaxTreeNode.StringLiteral(", "), SyntaxTreeNode.Expression(typeof(TestModel), "Greeting") } }
+                new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.Expression(ExpressionParser.Parse(typeof(TestModel), "Name")) } },
+                new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTreeNode.Expression(ExpressionParser.Parse(typeof(TestModel), "Name")) } },
+                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Hello "), SyntaxTreeNode.Expression(ExpressionParser.Parse(typeof(TestModel), "Name")) } },
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Hello "), SyntaxTreeNode.Expression(ExpressionParser.Parse(typeof(TestModel), "Name")), SyntaxTreeNode.StringLiteral(", "), SyntaxTreeNode.Expression(ExpressionParser.Parse(typeof(TestModel), "Greeting")) } }
             };
         }
 
