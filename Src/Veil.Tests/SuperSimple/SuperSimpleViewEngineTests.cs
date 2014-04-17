@@ -8,21 +8,24 @@ namespace Veil.Tests.SuperSimple
     [TestFixture]
     internal class SuperSimpleViewEngineTests : ParserTestBase<SuperSimpleParser>
     {
-        /*
         [Test]
         public void Should_replace_primitive_model_with_value()
         {
             // Given
             const string input = @"<html><head></head><body>Hello there @Model</body></html>";
-            const string model = "Bob";
 
             // When
-            var output = viewEngine.Render(input, model, this.fakeHost);
+            var output = Parse(input, typeof(string));
 
             // Then
-            Assert.Equal(@"<html><head></head><body>Hello there Bob</body></html>", output);
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.StringLiteral("<html><head></head><body>Hello there "),
+                SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                SyntaxTreeNode.StringLiteral("</body></html>")
+            );
         }
 
+        /*
         [Test]
         public void Should_replace_primitive_model_with_value_when_followed_by_closing_tag()
         {
