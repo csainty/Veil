@@ -52,8 +52,8 @@
     <Compile Include="Compiler\BlockTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
     <Compile Include="Compiler\WriteModelExpressionTests.cs" />
-    <Compile Include="ExpressionParserTests.cs" />
     <Compile Include="Handlebars\ConditionalOnModelPropertyTests.cs" />
+    <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
     <Compile Include="Handlebars\WriteLiteralTests.cs" />
     <Compile Include="Handlebars\WriteModelPropertyTests.cs" />
     <Compile Include="ParserTestBase.cs" />

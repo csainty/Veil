@@ -9,7 +9,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_property<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(ExpressionParser.Parse(model.GetType(), "Data")));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Data")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -19,7 +19,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_field<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(ExpressionParser.Parse(model.GetType(), "DataField")));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelField(model.GetType(), "DataField")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -29,7 +29,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_output_model_from_sub_model<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(ExpressionParser.Parse(model.GetType(), "Sub.SubData")));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelSubModel(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Sub"), SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -48,7 +48,7 @@ namespace Veil.Compiler
             };
         }
 
-        private class Model<T>
+        internal class Model<T>
         {
             public T Data { get { return DataField; } }
 
@@ -57,7 +57,7 @@ namespace Veil.Compiler
             public SubModel<T> Sub { get { return new SubModel<T> { SubData = DataField }; } }
         }
 
-        private class SubModel<T>
+        internal class SubModel<T>
         {
             public T SubData { get; set; }
         }

@@ -1,36 +1,36 @@
 ﻿using DeepEqual.Syntax;
 using NUnit.Framework;
 
-namespace Veil
+namespace Veil.Handlebars
 {
     [TestFixture]
-    internal class ExpressionParserTests
+    public class HandlebarsExpressionParerTests
     {
         [Test]
         public void Should_parse_property()
         {
-            var result = ExpressionParser.Parse(typeof(Model), "Property");
+            var result = HandlebarsExpressionParser.Parse(typeof(Model), "Property");
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(Model), "Property"));
         }
 
         [Test]
         public void Should_parse_field()
         {
-            var result = ExpressionParser.Parse(typeof(Model), "Field");
+            var result = HandlebarsExpressionParser.Parse(typeof(Model), "Field");
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelField(typeof(Model), "Field"));
         }
 
         [Test]
         public void Should_parse_property_from_submodel()
         {
-            var result = ExpressionParser.Parse(typeof(Model), "SubModel.SubProperty");
+            var result = HandlebarsExpressionParser.Parse(typeof(Model), "SubModel.SubProperty");
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelSubModel(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(Model), "SubModel"), SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(SubModel), "SubProperty")));
         }
 
         [Test]
         public void Should_parse_field_from_subsubmodel()
         {
-            var result = ExpressionParser.Parse(typeof(Model), "SubModel.SubSubModel.SubSubField");
+            var result = HandlebarsExpressionParser.Parse(typeof(Model), "SubModel.SubSubModel.SubSubField");
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelSubModel(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(Model), "SubModel"),
                 SyntaxTreeNode.ExpressionNode.ModelSubModel(
@@ -43,15 +43,15 @@ namespace Veil
         [Test]
         public void Should_parse_function_from_submodel()
         {
-            var result = ExpressionParser.Parse(typeof(Model), "Function()");
+            var result = HandlebarsExpressionParser.Parse(typeof(Model), "Function()");
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelFunction(typeof(Model), "Function"));
         }
 
         [TestCase("this")]
         public void Should_parse_self_expression_node(string expression)
         {
-            var result = ExpressionParser.Parse(typeof(Model), expression);
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Self(typeof(Model)));
+            var result = HandlebarsExpressionParser.Parse(typeof(string), expression);
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Self(typeof(string)));
         }
 
         [TestCase("Foo")]
@@ -66,7 +66,7 @@ namespace Veil
         {
             Assert.Throws<VeilParserException>(() =>
             {
-                ExpressionParser.Parse(typeof(Model), expression);
+                HandlebarsExpressionParser.Parse(typeof(Model), expression);
             });
         }
 

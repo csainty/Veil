@@ -11,7 +11,7 @@ namespace Veil.Compiler
             var model = new { Name = "World" };
             var template = SyntaxTreeNode.Block(
                 SyntaxTreeNode.StringLiteral("Hello "),
-                SyntaxTreeNode.Expression(ExpressionParser.Parse(model.GetType(), "Name")),
+                SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Name")),
                 SyntaxTreeNode.StringLiteral("!")
             );
             var result = ExecuteTemplate(template, model);
