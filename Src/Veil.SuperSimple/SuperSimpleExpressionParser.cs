@@ -8,7 +8,7 @@ namespace Veil.SuperSimple
         {
             expression = expression.Trim();
 
-            if (expression == "Model")
+            if (expression == "Model" || expression == "Current")
             {
                 return SyntaxTreeNode.ExpressionNode.Self(modelType);
             }
@@ -21,7 +21,7 @@ namespace Veil.SuperSimple
             var propertyInfo = modelType.GetProperty(expression);
             if (propertyInfo != null) return new SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode { Property = propertyInfo };
 
-            throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt model '{1}'", expression, modelType.Name));
+            return null;
         }
     }
 }
