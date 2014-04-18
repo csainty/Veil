@@ -6,7 +6,7 @@ using Veil.SuperSimple;
 namespace Veil.Tests.SuperSimple
 {
     [TestFixture]
-    internal class SuperSimpleViewEngineTests : ParserTestBase<SuperSimpleParser>
+    internal class SuperSimpleParserTests : ParserTestBase<SuperSimpleParser>
     {
         [Test]
         public void Should_replace_primitive_model_with_value()
@@ -32,19 +32,20 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        /*
         [Test]
         public void Should_replaces_valid_property_when_followed_by_closing_tag()
         {
-            const string input = @"<html><head></head><body>Hello there @Model.Name;</body></html>";
-            dynamic model = new ExpandoObject();
-            model.Name = "Bob";
-
-            var output = viewEngine.Render(input, model, this.fakeHost);
-
-            Assert.Equal(@"<html><head></head><body>Hello there Bob</body></html>", output);
+            var input = @"<html><head></head><body>Hello there @Model.Name;</body></html>";
+            var model = new { Name = "bob" };
+            var output = Parse(input, model.GetType());
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.StringLiteral("<html><head></head><body>Hello there "),
+                SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Name")),
+                SyntaxTreeNode.StringLiteral("</body></html>")
+            );
         }
 
+        /*
         [Test]
         public void Should_replace_multiple_properties_with_the_same_name()
         {
