@@ -24,7 +24,7 @@ namespace Veil.SuperSimple
                 index = match.Index + match.Length;
 
                 var token = match.Value.Trim(new[] { '@' });
-                block.Add(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.Self(modelType)));
+                block.Add(SyntaxTreeNode.Expression(SuperSimpleExpressionParser.Parse(modelType, token)));
             }
             if (index < template.Length)
             {

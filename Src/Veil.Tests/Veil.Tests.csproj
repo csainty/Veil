@@ -58,6 +58,7 @@
     <Compile Include="Handlebars\WriteExpressionTests.cs" />
     <Compile Include="ParserTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SuperSimple\SuperSimpleExpressionParserTests.cs" />
     <Compile Include="SuperSimple\SuperSimpleViewEngineTests.cs" />
     <Compile Include="TestSuiteSetUp.cs" />
     <Compile Include="VeilEngineTests.cs" />
