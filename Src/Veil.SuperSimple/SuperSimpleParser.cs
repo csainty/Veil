@@ -11,7 +11,7 @@ namespace Veil.SuperSimple
             var template = templateReader.ReadToEnd();
             var block = SyntaxTreeNode.Block();
 
-            var matcher = new Regex(@"(@[^\s\<]*)");
+            var matcher = new Regex(@"@[^\s<]*;?");
             var matches = matcher.Matches(template);
             var index = 0;
             foreach (Match match in matches)
@@ -23,7 +23,7 @@ namespace Veil.SuperSimple
 
                 index = match.Index + match.Length;
 
-                var token = match.Value.Trim(new[] { '@' });
+                var token = match.Value.Trim(new[] { '@', ';' });
                 block.Add(SyntaxTreeNode.Expression(SuperSimpleExpressionParser.Parse(modelType, token)));
             }
             if (index < template.Length)
