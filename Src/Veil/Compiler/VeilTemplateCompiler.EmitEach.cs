@@ -6,8 +6,7 @@ namespace Veil.Compiler
     {
         private static void EmitEach<T>(VeilCompilerState<T> state, SyntaxTreeNode.EachNode node)
         {
-            var itemType = node.Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0];
-            var enumerable = typeof(IEnumerable<>).MakeGenericType(itemType);
+            var enumerable = typeof(IEnumerable<>).MakeGenericType(node.ItemType);
             var getEnumerator = enumerable.GetMethod("GetEnumerator");
             var moveNext = typeof(System.Collections.IEnumerator).GetMethod("MoveNext");
             var getCurrent = getEnumerator.ReturnType.GetProperty("Current").GetGetMethod();
@@ -16,7 +15,7 @@ namespace Veil.Compiler
 
             state.PushCurrentModelOnStack();
             state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Collection);
-            using (var item = state.Emitter.DeclareLocal(itemType))
+            using (var item = state.Emitter.DeclareLocal(node.ItemType))
             using (var en = state.Emitter.DeclareLocal(getEnumerator.ReturnType))
             {
                 state.Emitter.CallMethod(getEnumerator);

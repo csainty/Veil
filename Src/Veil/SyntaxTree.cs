@@ -118,6 +118,8 @@ namespace Veil
             public ExpressionNode Collection { get; set; }
 
             public BlockNode Body { get; set; }
+
+            public Type ItemType { get { return Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0]; } }
         }
     }
 }
