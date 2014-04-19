@@ -10,8 +10,8 @@ namespace Veil.SuperSimple
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd();
-            var scopeStack = new Stack<ParserScope>();
-            scopeStack.Push(new ParserScope { Block = SyntaxTreeNode.Block(), ModelType = modelType });
+            var scopeStack = new LinkedList<ParserScope>();
+            scopeStack.AddFirst(new ParserScope { Block = SyntaxTreeNode.Block(), ModelType = modelType });
 
             var matcher = new Regex(@"@[A-Za-z0-9\.]*;?");
             var matches = matcher.Matches(template);
@@ -20,7 +20,7 @@ namespace Veil.SuperSimple
             {
                 if (index < match.Index)
                 {
-                    scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index, match.Index - index)));
+                    scopeStack.First.Value.Block.Add(SyntaxTreeNode.WriteString(template.Substring(index, match.Index - index)));
                 }
                 index = match.Index + match.Length;
 
@@ -29,32 +29,32 @@ namespace Veil.SuperSimple
                 {
                     token = token.Substring(5);
                     var each = SyntaxTreeNode.Iterate(
-                        SuperSimpleExpressionParser.Parse(modelType, token),
+                        SuperSimpleExpressionParser.Parse(scopeStack, token),
                         SyntaxTreeNode.Block()
                     );
                     if (!each.CollectionIsValid) throw new VeilParserException(String.Format("The expression '{0}' does not evaluate to a valid collection type", token));
-                    scopeStack.Peek().Block.Add(each);
-                    scopeStack.Push(new ParserScope { Block = each.Body, ModelType = each.ItemType });
+                    scopeStack.First.Value.Block.Add(each);
+                    scopeStack.AddFirst(new ParserScope { Block = each.Body, ModelType = each.ItemType });
                 }
                 else if (token == "EndEach")
                 {
-                    scopeStack.Pop();
+                    scopeStack.RemoveFirst();
                 }
                 else
                 {
-                    var expression = SuperSimpleExpressionParser.Parse(scopeStack.Peek().ModelType, token);
-                    scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression));
+                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, token);
+                    scopeStack.First.Value.Block.Add(SyntaxTreeNode.WriteExpression(expression));
                 }
             }
             if (index < template.Length)
             {
-                scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index)));
+                scopeStack.First.Value.Block.Add(SyntaxTreeNode.WriteString(template.Substring(index)));
             }
 
-            return scopeStack.Peek().Block;
+            return scopeStack.First.Value.Block;
         }
 
-        private class ParserScope
+        internal class ParserScope
         {
             public SyntaxTreeNode.BlockNode Block { get; set; }
 

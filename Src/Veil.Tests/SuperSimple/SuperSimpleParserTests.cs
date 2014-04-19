@@ -15,7 +15,7 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, typeof(string));
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString("</body></html>")
             );
         }
@@ -27,7 +27,7 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, typeof(string));
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString("</body></html>")
             );
         }
@@ -40,7 +40,7 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name")),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString("</body></html>")
             );
         }
@@ -53,9 +53,9 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name")),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString(", nice to see you "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name")),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString("</body></html>")
             );
         }
@@ -73,9 +73,9 @@ namespace Veil.Tests.SuperSimple
 
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name")),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString(" - welcome to "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "SiteName")),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "SiteName", SyntaxTreeNode.ExpressionScope.RootModel)),
                 SyntaxTreeNode.WriteString("</body></html>")
             );
         }
@@ -88,9 +88,9 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"), SyntaxTreeNode.Block(
+                SyntaxTreeNode.Iterate(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel), SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteString("<li>"),
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
                     SyntaxTreeNode.WriteString("</li>")
                 )),
                 SyntaxTreeNode.WriteString("</ul></body></html>")
@@ -106,11 +106,11 @@ namespace Veil.Tests.SuperSimple
 
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"), SyntaxTreeNode.Block(
+                SyntaxTreeNode.Iterate(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel), SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteString("<li id=\""),
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
                     SyntaxTreeNode.WriteString("\">"),
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
                     SyntaxTreeNode.WriteString("</li>")
                 )),
                 SyntaxTreeNode.WriteString("</ul></body></html>")
@@ -128,77 +128,68 @@ namespace Veil.Tests.SuperSimple
             });
         }
 
+        [Test]
+        public void Should_combine_single_substitutions_and_each_substitutions()
+        {
+            var input = @"<html><head></head><body><ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
+            var model = new
+            {
+                Name = "Nancy",
+                Users = new List<string>() { "Bob", "Jim", "Bill" }
+            };
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("<li>Hello "),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
+                        SyntaxTreeNode.WriteString(", "),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
+                        SyntaxTreeNode.WriteString(" says hello!</li>")
+                    )
+                ),
+                SyntaxTreeNode.WriteString("</ul></body></html>")
+            );
+        }
+
+        [Test]
+        public void Should_allow_model_statement_to_be_followed_by_a_newline()
+        {
+            var input = "<html><head></head><body>Hello there @Model.Name;\n</body></html>";
+            var model = new { Name = "Bob" };
+            var output = Parse(input, model.GetType());
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
+                SyntaxTreeNode.WriteString("\n</body></html>")
+            );
+        }
+
+        [Test]
+        public void Should_allow_each_statements_to_work_over_multiple_lines()
+        {
+            var input = "<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>@Each.Users;\n\t\t\t<li>@Current;</li>@EndEach;\n\t\t</ul>\n\t</body>\n</html>";
+            var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" } };
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.WriteString("<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>"),
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("\n\t\t\t<li>"),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                        SyntaxTreeNode.WriteString("</li>")
+                    )
+                ),
+                SyntaxTreeNode.WriteString("\n\t\t</ul>\n\t</body>\n</html>")
+            );
+        }
+
         /*
-                [Test]
-                public void Should_combine_single_substitutions_and_each_substitutions()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Name = "Nancy";
-                    model.Users = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_model_statement_to_be_followed_by_a_newline()
-                {
-                    const string input = "<html><head></head><body>Hello there @Model.Name;\n</body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Name = "Bob";
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal("<html><head></head><body>Hello there Bob\n</body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_each_statements_to_work_over_multiple_lines()
-                {
-                    const string input = "<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>@Each.Users;\n\t\t\t<li>@Current;</li>@EndEach;\n\t\t</ul>\n\t</body>\n</html>";
-                    dynamic model = new ExpandoObject();
-                    model.Users = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal("<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>\n\t\t\t<li>Bob</li>\n\t\t\t<li>Jim</li>\n\t\t\t<li>Bill</li>\n\t\t</ul>\n\t</body>\n</html>", output);
-                }
-
-                [Test]
-                public void Single_substitutions_work_with_standard_anonymous_type_objects()
-                {
-                    const string input = @"<html><head></head><body>Hello there @Model.Name; - welcome to @Model.SiteName;</body></html>";
-                    var model = new { Name = "Bob", SiteName = "Cool Site!" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body>Hello there Bob - welcome to Cool Site!</body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_each_substitutions_to_work_with_standard_anonymous_type_objects()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users;<li id=""@Current;"">@Current;</li>@EndEach;</ul></body></html>";
-                    var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" } };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li id=""Bob"">Bob</li><li id=""Jim"">Jim</li><li id=""Bill"">Bill</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_substitutions_to_work_with_standard_objects()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
                 [Test]
                 public void Should_render_block_when_if_statement_returns_true()
                 {
