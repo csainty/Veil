@@ -5,6 +5,10 @@ using System.Text.RegularExpressions;
 
 namespace Veil.SuperSimple
 {
+    // TODO:
+    // - Stack assertions for template end
+    // - Stack assertions for @If
+    // - Stack assertions for @Each
     public class SuperSimpleParser : ITemplateParser
     {
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)

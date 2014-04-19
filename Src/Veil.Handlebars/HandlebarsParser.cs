@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 
 namespace Veil.Handlebars
 {
+    // TODO:
+    // - Stack assertions on #each
     public class HandlebarsParser : ITemplateParser
     {
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)

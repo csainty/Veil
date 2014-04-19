@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Veil.Compiler
 {
+    // TODO: mimic a using block for the disposable
     internal partial class VeilTemplateCompiler
     {
         private static void EmitIterate<T>(VeilCompilerState<T> state, SyntaxTreeNode.IterateNode node)
@@ -10,6 +12,8 @@ namespace Veil.Compiler
             var getEnumerator = enumerable.GetMethod("GetEnumerator");
             var moveNext = typeof(System.Collections.IEnumerator).GetMethod("MoveNext");
             var getCurrent = getEnumerator.ReturnType.GetProperty("Current").GetGetMethod();
+            var disposeEnumerator = typeof(IDisposable).IsAssignableFrom(getEnumerator.ReturnType);
+            var dispose = typeof(IDisposable).GetMethod("Dispose");
             var loop = state.Emitter.DefineLabel();
             var done = state.Emitter.DefineLabel();
 
@@ -37,6 +41,12 @@ namespace Veil.Compiler
                 state.Emitter.Branch(loop);
 
                 state.Emitter.MarkLabel(done);
+
+                if (disposeEnumerator)
+                {
+                    state.Emitter.LoadLocal(en);
+                    state.Emitter.Call(dispose);
+                }
             }
         }
     }
