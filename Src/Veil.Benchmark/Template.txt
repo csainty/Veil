@@ -7,9 +7,14 @@
 	<h1>Test Template</h1>
 
 	<nav>
-		
-			<a>Sign Out</a>
-		
+		<a>Sign Out</a>
 	</nav>
+	<ul>
+		<li>User</li>
+		<li>Admin</li>
+		<li>Editor</li>
+		<li>Viewer</li>
+		<li>Uploader</li>
+	</ul>
 </body>
 </html>

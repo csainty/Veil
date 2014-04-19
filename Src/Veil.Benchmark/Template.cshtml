@@ -13,5 +13,12 @@
 			<a>Sign In</a>
 		}
 	</nav>
+    <ul>
+        @foreach (var role in Model.Roles)
+        {
+            <li>@role</li>
+        }
+    </ul>
+
 </body>
 </html>

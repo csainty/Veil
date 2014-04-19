@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -13,7 +14,11 @@ namespace Veil.Benchmark
     {
         private static void Main(string[] args)
         {
-            var model = new ViewModel { Name = "Test Template", IsLoggedIn = true };
+            var model = new ViewModel {
+                Name = "Test Template",
+                IsLoggedIn = true,
+                Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader" }
+            };
             var handlebarsTemplate = ReadTemplate("haml");
             var razorTemplate = ReadTemplate("cshtml");
             var ssTemplate = ReadTemplate("sshtml");
@@ -112,6 +117,8 @@ namespace Veil.Benchmark
         public string Name { get; set; }
 
         public bool IsLoggedIn { get; set; }
+
+        public IEnumerable<string> Roles { get; set; }
     }
 
     public class TestHost : SuperSimpleViewEngine.IViewEngineHost
