@@ -6,12 +6,24 @@ namespace Veil.Compiler
     {
         private static void EmitConditional<T>(VeilCompilerState<T> state, SyntaxTreeNode.ConditionalNode node)
         {
-            if (node.TrueBlock == null || !node.TrueBlock.Nodes.Any())
+            var hasTrueBlock = node.TrueBlock != null && node.TrueBlock.Nodes.Any();
+            var hasFalseBlock = node.FalseBlock != null && node.FalseBlock.Nodes.Any();
+
+            if (!hasTrueBlock && !hasFalseBlock)
             {
-                throw new VeilCompilerException("Conditionals must have a True block");
+                throw new VeilCompilerException("Conditionals must have a True or False block");
             }
 
-            if (node.FalseBlock == null || !node.FalseBlock.Nodes.Any())
+            if (!hasTrueBlock)
+            {
+                var done = state.Emitter.DefineLabel();
+                state.PushExpressionScopeOnStack(node.Expression);
+                state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                state.Emitter.BranchIfTrue(done);
+                EmitNode(state, node.FalseBlock);
+                state.Emitter.MarkLabel(done);
+            }
+            else if (!hasFalseBlock)
             {
                 var done = state.Emitter.DefineLabel();
                 state.PushExpressionScopeOnStack(node.Expression);

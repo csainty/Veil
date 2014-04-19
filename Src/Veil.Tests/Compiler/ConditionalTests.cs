@@ -63,14 +63,14 @@ namespace Veil.Compiler
         }
 
         [TestCaseSource("EmptyBlockCases")]
-        public void Should_throw_with_empty_true_block(SyntaxTreeNode.BlockNode trueNode)
+        public void Should_throw_with_empty_blocks(SyntaxTreeNode.BlockNode emptyBlock)
         {
             var model = new { X = true };
             var template = SyntaxTreeNode.Block(
                 SyntaxTreeNode.Conditional(
                 SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "X"),
-                trueNode,
-                SyntaxTreeNode.Block()
+                emptyBlock,
+                emptyBlock
             ));
 
             Assert.Throws<VeilCompilerException>(() =>
@@ -88,6 +88,20 @@ namespace Veil.Compiler
                     SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "X"),
                     SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Hello")),
                     falseBlock)
+                );
+            var result = this.ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Hello"));
+        }
+
+        [TestCaseSource("EmptyBlockCases")]
+        public void Should_handle_empty_true_block(SyntaxTreeNode.BlockNode trueBlock)
+        {
+            var model = new { X = false };
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.Conditional(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "X"),
+                    trueBlock,
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Hello")))
                 );
             var result = this.ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello"));
