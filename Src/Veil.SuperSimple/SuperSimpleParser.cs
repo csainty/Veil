@@ -32,6 +32,7 @@ namespace Veil.SuperSimple
                         SuperSimpleExpressionParser.Parse(modelType, token),
                         SyntaxTreeNode.Block()
                     );
+                    if (!each.CollectionIsValid) throw new VeilParserException(String.Format("The expression '{0}' does not evaluate to a valid collection type", token));
                     scopeStack.Peek().Block.Add(each);
                     scopeStack.Push(new ParserScope { Block = each.Body, ModelType = each.ItemType });
                 }
@@ -42,14 +43,7 @@ namespace Veil.SuperSimple
                 else
                 {
                     var expression = SuperSimpleExpressionParser.Parse(scopeStack.Peek().ModelType, token);
-                    if (expression == null)
-                    {
-                        scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteString("[ERR!]"));
-                    }
-                    else
-                    {
-                        scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression));
-                    }
+                    scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression));
                 }
             }
             if (index < template.Length)

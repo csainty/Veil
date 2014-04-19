@@ -61,32 +61,6 @@ namespace Veil.Tests.SuperSimple
         }
 
         [Test]
-        public void Should_replace_invalid_properties_with_error_string()
-        {
-            const string input = @"<html><head></head><body>Hello there @Model.Wrong;</body></html>";
-            var model = new { Name = "bob" };
-            var output = Parse(input, model.GetType());
-            AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteString("[ERR!]"),
-                SyntaxTreeNode.WriteString("</body></html>")
-            );
-        }
-
-        [Test]
-        public void Should_not_replace_properties_if_case_is_incorrect()
-        {
-            const string input = @"<html><head></head><body>Hello there @Model.name;</body></html>";
-            var model = new { Name = "bob" };
-            var output = Parse(input, model.GetType());
-            AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteString("[ERR!]"),
-                SyntaxTreeNode.WriteString("</body></html>")
-            );
-        }
-
-        [Test]
         public void Should_replace_multiple_properties_from_model()
         {
             var input = @"<html><head></head><body>Hello there @Model.Name; - welcome to @Model.SiteName;</body></html>";
@@ -143,19 +117,18 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_throw_if_using_non_enumerable_type_for_each()
+        {
+            var input = @"<html><head></head><body><ul>@Each.Users;<li id=""@Current;"">@Current;</li>@EndEach;</ul></body></html>";
+            var model = new { Users = new object() };
+            Assert.Throws<VeilParserException>(() =>
+            {
+                Parse(input, model.GetType());
+            });
+        }
+
         /*
-                [Test]
-                public void Should_try_to_use_non_enumerable_in_each_shows_error()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users;<li id=""@Current;"">@Current;</li>@EndEach;</ul></body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Users = new object();
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul>[ERR!]</ul></body></html>", output);
-                }
-
                 [Test]
                 public void Should_combine_single_substitutions_and_each_substitutions()
                 {

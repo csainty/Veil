@@ -21,7 +21,7 @@ namespace Veil.SuperSimple
             var propertyInfo = modelType.GetProperty(expression);
             if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(modelType, expression);
 
-            return null;
+            throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt model '{1}'", expression, modelType.Name));
         }
     }
 }

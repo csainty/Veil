@@ -31,11 +31,14 @@ namespace Veil.SuperSimple
         }
 
         [TestCase("Model.Wrong")]
-        public void Should_return_null_for_invalid_expressions(string expression)
+        [TestCase("Model.name")]
+        public void Should_throw_for_invalid_expressions(string expression)
         {
-            var model = new { };
-            var result = SuperSimpleExpressionParser.Parse(model.GetType(), expression);
-            Assert.That(result, Is.Null);
+            var model = new { Name = "foo" };
+            Assert.Throws<VeilParserException>(() =>
+            {
+                SuperSimpleExpressionParser.Parse(model.GetType(), expression);
+            });
         }
     }
 }
