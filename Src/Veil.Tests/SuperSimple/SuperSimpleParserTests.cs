@@ -225,62 +225,38 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_not_render_block_when_ifnot_statements_returns_true()
+        {
+            var input = @"<html><head></head><body>@IfNot.HasUsers;<p>No users found!</p>@EndIf;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
+            var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.WriteString("<html><head></head><body>"),
+                SyntaxTreeNode.Conditional(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "HasUsers"),
+                    SyntaxTreeNode.Block(),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("<p>No users found!</p>")
+                    )
+                ),
+                SyntaxTreeNode.WriteString("<ul>"),
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("<li>Hello "),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                        SyntaxTreeNode.WriteString(", "),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
+                        SyntaxTreeNode.WriteString(" says hello!</li>")
+                    )
+                ),
+                SyntaxTreeNode.WriteString("</ul></body></html>")
+            );
+        }
+
         /*
-                [Test]
-                public void Should_not_render_block_when_ifnot_statements_returns_true()
-                {
-                    const string input = @"<html><head></head><body>@IfNot.HasUsers;<p>No users found!</p>@EndIf;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_render_block_when_ifnot_statement_returns_false()
-                {
-                    const string input = @"<html><head></head><body>@IfNot.HasUsers;<p>No users found!</p>@EndIf;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    var model = new FakeModel("Nancy", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><p>No users found!</p><ul></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_not_conflict_when_if_and_ifNot_statements_combined_but_not_nested()
-                {
-                    const string input = @"<html><head></head><body>@IfNot.HasUsers;<p>No users found!</p>@EndIf;@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
-                    var model = new FakeModel("Nancy", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><p>No users found!</p></body></html>", output);
-                }
-
-                [Test]
-                public void Should_match_multiple_if_statements_correctly()
-                {
-                    const string input = "@If.One;<p>One</p>@EndIf; @If.Two;<p>Two</p>@EndIf;";
-                    var model = new { One = true, Two = true };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<p>One</p> <p>Two</p>", output);
-                }
-
-                [Test]
-                public void Should_match_correctly_when_multiple_each_statements()
-                {
-                    const string input = "@Each.Users;<li>@Current;</li>@EndEach; @Each.Admins;<li>@Current;</li>@EndEach;";
-                    var model = new { Users = new List<string> { "1", "2" }, Admins = new List<string> { "3", "4" } };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<li>1</li><li>2</li> <li>3</li><li>4</li>", output);
-                }
-
                 [Test]
                 public void Should_return_true_for_ifhascollection_when_if_model_has_a_collection_with_items_but_no_bool()
                 {

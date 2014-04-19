@@ -50,6 +50,17 @@ namespace Veil.SuperSimple
                     scopeStack.First.Value.Block.Add(condition);
                     scopeStack.AddFirst(new ParserScope { Block = condition.TrueBlock, ModelType = scopeStack.First.Value.ModelType });
                 }
+                else if (token.StartsWith("IfNot."))
+                {
+                    token = token.Substring(6);
+                    var condition = SyntaxTreeNode.Conditional(
+                        SuperSimpleExpressionParser.Parse(scopeStack, token),
+                        SyntaxTreeNode.Block(),
+                        SyntaxTreeNode.Block()
+                    );
+                    scopeStack.First.Value.Block.Add(condition);
+                    scopeStack.AddFirst(new ParserScope { Block = condition.FalseBlock, ModelType = scopeStack.First.Value.ModelType });
+                }
                 else if (token == "EndIf")
                 {
                     scopeStack.RemoveFirst();
