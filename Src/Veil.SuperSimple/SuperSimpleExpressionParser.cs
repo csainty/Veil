@@ -23,10 +23,14 @@ namespace Veil.SuperSimple
             if (expression.StartsWith("Model."))
             {
                 expression = expression.Substring(6);
+                var propertyInfo = rootModelType.GetProperty(expression);
+                if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(rootModelType, expression, SyntaxTreeNode.ExpressionScope.RootModel);
             }
-
-            var propertyInfo = rootModelType.GetProperty(expression);
-            if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(rootModelType, expression, SyntaxTreeNode.ExpressionScope.RootModel);
+            else
+            {
+                var propertyInfo = scopedModelType.GetProperty(expression);
+                if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(rootModelType, expression, SyntaxTreeNode.ExpressionScope.CurrentModelOnStack);
+            }
 
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt root model '{1}'", expression, rootModelType.Name));
         }

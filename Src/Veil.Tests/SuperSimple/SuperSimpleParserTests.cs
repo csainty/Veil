@@ -88,11 +88,14 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel), SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("<li>"),
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                    SyntaxTreeNode.WriteString("</li>")
-                )),
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("<li>"),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
+                        SyntaxTreeNode.WriteString("</li>")
+                    )
+                ),
                 SyntaxTreeNode.WriteString("</ul></body></html>")
             );
         }
@@ -106,13 +109,16 @@ namespace Veil.Tests.SuperSimple
 
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel), SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("<li id=\""),
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                    SyntaxTreeNode.WriteString("\">"),
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                    SyntaxTreeNode.WriteString("</li>")
-                )),
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("<li id=\""),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
+                        SyntaxTreeNode.WriteString("\">"),
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
+                        SyntaxTreeNode.WriteString("</li>")
+                    )
+                ),
                 SyntaxTreeNode.WriteString("</ul></body></html>")
             );
         }
@@ -142,7 +148,7 @@ namespace Veil.Tests.SuperSimple
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
                 SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel),
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
                     SyntaxTreeNode.Block(
                         SyntaxTreeNode.WriteString("<li>Hello "),
                         SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
@@ -178,7 +184,7 @@ namespace Veil.Tests.SuperSimple
             AssertSyntaxTree(output,
                 SyntaxTreeNode.WriteString("<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>"),
                 SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users", SyntaxTreeNode.ExpressionScope.RootModel),
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
                     SyntaxTreeNode.Block(
                         SyntaxTreeNode.WriteString("\n\t\t\t<li>"),
                         SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
@@ -189,29 +195,37 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_render_block_when_if_statement_returns_true()
+        {
+            var input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
+            var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(output,
+                SyntaxTreeNode.WriteString("<html><head></head><body>"),
+                SyntaxTreeNode.Conditional(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "HasUsers"),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("<ul>"),
+                        SyntaxTreeNode.Iterate(
+                            SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
+                            SyntaxTreeNode.Block(
+                                SyntaxTreeNode.WriteString("<li>Hello "),
+                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
+                                SyntaxTreeNode.WriteString(", "),
+                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
+                                SyntaxTreeNode.WriteString(" says hello!</li>")
+                            )
+                        ),
+                        SyntaxTreeNode.WriteString("</ul>")
+                    )
+                ),
+                SyntaxTreeNode.WriteString("</body></html>")
+            );
+        }
+
         /*
-                [Test]
-                public void Should_render_block_when_if_statement_returns_true()
-                {
-                    const string input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_not_render_block_when_if_statement_returns_false()
-                {
-                    const string input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
-                    var model = new FakeModel("Nancy", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body></body></html>", output);
-                }
-
                 [Test]
                 public void Should_not_render_block_when_ifnot_statements_returns_true()
                 {

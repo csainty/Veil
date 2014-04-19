@@ -40,6 +40,20 @@ namespace Veil.SuperSimple
                 {
                     scopeStack.RemoveFirst();
                 }
+                else if (token.StartsWith("If."))
+                {
+                    token = token.Substring(3);
+                    var condition = SyntaxTreeNode.Conditional(
+                        SuperSimpleExpressionParser.Parse(scopeStack, token),
+                        SyntaxTreeNode.Block()
+                    );
+                    scopeStack.First.Value.Block.Add(condition);
+                    scopeStack.AddFirst(new ParserScope { Block = condition.TrueBlock, ModelType = scopeStack.First.Value.ModelType });
+                }
+                else if (token == "EndIf")
+                {
+                    scopeStack.RemoveFirst();
+                }
                 else
                 {
                     var expression = SuperSimpleExpressionParser.Parse(scopeStack, token);
