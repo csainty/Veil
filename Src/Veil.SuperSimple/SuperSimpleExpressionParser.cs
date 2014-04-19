@@ -19,7 +19,7 @@ namespace Veil.SuperSimple
             }
 
             var propertyInfo = modelType.GetProperty(expression);
-            if (propertyInfo != null) return new SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode { Property = propertyInfo };
+            if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(modelType, expression);
 
             return null;
         }

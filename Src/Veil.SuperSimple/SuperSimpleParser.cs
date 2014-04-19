@@ -20,7 +20,7 @@ namespace Veil.SuperSimple
             {
                 if (index < match.Index)
                 {
-                    scopeStack.Peek().Block.Add(SyntaxTreeNode.StringLiteral(template.Substring(index, match.Index - index)));
+                    scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index, match.Index - index)));
                 }
                 index = match.Index + match.Length;
 
@@ -28,7 +28,7 @@ namespace Veil.SuperSimple
                 if (token.StartsWith("Each."))
                 {
                     token = token.Substring(5);
-                    var each = SyntaxTreeNode.Each(
+                    var each = SyntaxTreeNode.Iterate(
                         SuperSimpleExpressionParser.Parse(modelType, token),
                         SyntaxTreeNode.Block()
                     );
@@ -44,17 +44,17 @@ namespace Veil.SuperSimple
                     var expression = SuperSimpleExpressionParser.Parse(scopeStack.Peek().ModelType, token);
                     if (expression == null)
                     {
-                        scopeStack.Peek().Block.Add(SyntaxTreeNode.StringLiteral("[ERR!]"));
+                        scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteString("[ERR!]"));
                     }
                     else
                     {
-                        scopeStack.Peek().Block.Add(SyntaxTreeNode.Expression(expression));
+                        scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression));
                     }
                 }
             }
             if (index < template.Length)
             {
-                scopeStack.Peek().Block.Add(SyntaxTreeNode.StringLiteral(template.Substring(index)));
+                scopeStack.Peek().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index)));
             }
 
             return scopeStack.Peek().Block;

@@ -27,7 +27,7 @@ namespace Veil.SuperSimple
         {
             var model = new { Name = "foo" };
             var result = SuperSimpleExpressionParser.Parse(model.GetType(), "Model.Name");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Name"));
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name"));
         }
 
         [TestCase("Model.Wrong")]
