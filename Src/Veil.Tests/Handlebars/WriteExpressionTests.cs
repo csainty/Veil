@@ -15,10 +15,10 @@ namespace Veil.Handlebars
         public object[] PropertyNameTestSource()
         {
             return new object[] {
-                new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
-                new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
-                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
-                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")), SyntaxTreeNode.WriteString(", "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Greeting")) } }
+                new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name")) } },
+                new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name")) } },
+                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name")) } },
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name")), SyntaxTreeNode.WriteString(", "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Greeting")) } }
             };
         }
 

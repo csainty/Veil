@@ -92,13 +92,13 @@ namespace Veil.Compiler
 
         public static void LoadExpressionFromCurrentModelOnStack<T>(this Emit<Action<TextWriter, T>> emitter, SyntaxTreeNode.ExpressionNode expression)
         {
-            if (expression is SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode)
+            if (expression is SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)
             {
-                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode)expression).Property.GetGetMethod());
+                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)expression).Property.GetGetMethod());
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.ModelFieldExpressionNode)
+            else if (expression is SyntaxTreeNode.ExpressionNode.FieldExpressionNode)
             {
-                emitter.LoadField(((SyntaxTreeNode.ExpressionNode.ModelFieldExpressionNode)expression).Field);
+                emitter.LoadField(((SyntaxTreeNode.ExpressionNode.FieldExpressionNode)expression).Field);
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)
             {

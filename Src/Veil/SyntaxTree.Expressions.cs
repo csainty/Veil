@@ -23,9 +23,9 @@ namespace Veil
             /// <param name="modelType">The type of the scoped model</param>
             /// <param name="propertyName">The name of the property</param>
             /// <param name="scope">The scope this expression evaluated in</param>
-            public static ModelPropertyExpressionNode ModelProperty(Type modelType, string propertyName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+            public static PropertyExpressionNode Property(Type modelType, string propertyName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
-                return new ModelPropertyExpressionNode
+                return new PropertyExpressionNode
                 {
                     Property = modelType.GetProperty(propertyName),
                     Scope = scope
@@ -38,9 +38,9 @@ namespace Veil
             /// <param name="modelType">The type of the scoped model</param>
             /// <param name="fieldName">The name of the field</param>
             /// <param name="scope">The scope this expression evaluated in</param>
-            public static ModelFieldExpressionNode ModelField(Type modelType, string fieldName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+            public static FieldExpressionNode Field(Type modelType, string fieldName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
-                return new ModelFieldExpressionNode
+                return new FieldExpressionNode
                 {
                     Field = modelType.GetField(fieldName),
                     Scope = scope
@@ -53,7 +53,7 @@ namespace Veil
             /// <param name="modelExpression">An expression referencing the model to traverse to</param>
             /// <param name="subModelExpression">An expression to evaluate in the scope of the model that has been traversed to</param>
             /// <param name="scope">The scope this expression evaluated in</param>
-            public static SubModelExpressionNode ModelSubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+            public static SubModelExpressionNode SubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new SubModelExpressionNode
                 {
@@ -69,7 +69,7 @@ namespace Veil
             /// <param name="modelType">The type of the scoped model</param>
             /// <param name="functionName">The name of the function</param>
             /// <param name="scope">The scope this expression evaluated in</param>
-            public static FunctionCallExpressionNode ModelFunction(Type modelType, string functionName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+            public static FunctionCallExpressionNode Function(Type modelType, string functionName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new FunctionCallExpressionNode
                 {
@@ -92,7 +92,7 @@ namespace Veil
                 };
             }
 
-            public class ModelPropertyExpressionNode : ExpressionNode
+            public class PropertyExpressionNode : ExpressionNode
             {
                 public PropertyInfo Property { get; set; }
 
@@ -102,7 +102,7 @@ namespace Veil
                 }
             }
 
-            public class ModelFieldExpressionNode : ExpressionNode
+            public class FieldExpressionNode : ExpressionNode
             {
                 public FieldInfo Field { get; set; }
 

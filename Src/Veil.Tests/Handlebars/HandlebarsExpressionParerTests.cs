@@ -10,32 +10,32 @@ namespace Veil.Handlebars
         public void Should_parse_property()
         {
             var result = HandlebarsExpressionParser.Parse(typeof(Model), "Property");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(Model), "Property"));
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(typeof(Model), "Property"));
         }
 
         [Test]
         public void Should_parse_field()
         {
             var result = HandlebarsExpressionParser.Parse(typeof(Model), "Field");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelField(typeof(Model), "Field"));
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Field(typeof(Model), "Field"));
         }
 
         [Test]
         public void Should_parse_property_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(typeof(Model), "SubModel.SubProperty");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelSubModel(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(Model), "SubModel"), SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(SubModel), "SubProperty")));
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(SyntaxTreeNode.ExpressionNode.Property(typeof(Model), "SubModel"), SyntaxTreeNode.ExpressionNode.Property(typeof(SubModel), "SubProperty")));
         }
 
         [Test]
         public void Should_parse_field_from_subsubmodel()
         {
             var result = HandlebarsExpressionParser.Parse(typeof(Model), "SubModel.SubSubModel.SubSubField");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelSubModel(
-                SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(Model), "SubModel"),
-                SyntaxTreeNode.ExpressionNode.ModelSubModel(
-                    SyntaxTreeNode.ExpressionNode.ModelField(typeof(SubModel), "SubSubModel"),
-                    SyntaxTreeNode.ExpressionNode.ModelField(typeof(SubSubModel), "SubSubField"))
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(
+                SyntaxTreeNode.ExpressionNode.Property(typeof(Model), "SubModel"),
+                SyntaxTreeNode.ExpressionNode.SubModel(
+                    SyntaxTreeNode.ExpressionNode.Field(typeof(SubModel), "SubSubModel"),
+                    SyntaxTreeNode.ExpressionNode.Field(typeof(SubSubModel), "SubSubField"))
                 )
             );
         }
@@ -44,7 +44,7 @@ namespace Veil.Handlebars
         public void Should_parse_function_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(typeof(Model), "Function()");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.ModelFunction(typeof(Model), "Function"));
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Function(typeof(Model), "Function"));
         }
 
         [TestCase("this")]

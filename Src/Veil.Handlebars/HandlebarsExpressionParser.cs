@@ -12,7 +12,7 @@ namespace Veil
             if (dotIndex >= 0)
             {
                 var subModel = HandlebarsExpressionParser.Parse(modelType, expression.Substring(0, dotIndex));
-                return SyntaxTreeNode.ExpressionNode.ModelSubModel(
+                return SyntaxTreeNode.ExpressionNode.SubModel(
                     subModel,
                     HandlebarsExpressionParser.Parse(subModel.ResultType, expression.Substring(dotIndex + 1))
                 );
@@ -30,10 +30,10 @@ namespace Veil
             }
 
             var propertyInfo = modelType.GetProperty(expression);
-            if (propertyInfo != null) return new SyntaxTreeNode.ExpressionNode.ModelPropertyExpressionNode { Property = propertyInfo };
+            if (propertyInfo != null) return new SyntaxTreeNode.ExpressionNode.PropertyExpressionNode { Property = propertyInfo };
 
             var fieldInfo = modelType.GetField(expression);
-            if (fieldInfo != null) return new SyntaxTreeNode.ExpressionNode.ModelFieldExpressionNode { Field = fieldInfo };
+            if (fieldInfo != null) return new SyntaxTreeNode.ExpressionNode.FieldExpressionNode { Field = fieldInfo };
 
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt model '{1}'", expression, modelType.Name));
         }

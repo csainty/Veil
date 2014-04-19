@@ -11,7 +11,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new List<string> { "1", "2" } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteString("Item")
                 )
@@ -26,7 +26,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { "1", "2" } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteString("Item")
                 )
@@ -41,9 +41,9 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(ItemModel), "Name"))
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(ItemModel), "Name"))
                 )
             ));
             var result = ExecuteTemplate(template, model);
@@ -55,7 +55,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { "1", "2", "3", "4" } };
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)))
                 )

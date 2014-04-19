@@ -11,7 +11,7 @@ namespace Veil.Handlebars
             var template = Parse("Hello {{#if Conditional }} John{{/if}}", typeof(TestModel));
             AssertSyntaxTree(template, new SyntaxTreeNode[] {
                 SyntaxTreeNode.WriteString("Hello "),
-                SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Conditional"),
+                SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Conditional"),
                     SyntaxTreeNode.Block(SyntaxTreeNode.WriteString(" John"))
                 )
             });
@@ -23,7 +23,7 @@ namespace Veil.Handlebars
             var template = Parse("Hello {{#if Conditional }}John{{else}}Jim{{/if}}", typeof(TestModel));
             AssertSyntaxTree(template, new SyntaxTreeNode[] {
                 SyntaxTreeNode.WriteString("Hello "),
-                SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Conditional"),
+                SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Conditional"),
                     SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("John")),
                     SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Jim"))
                 )
