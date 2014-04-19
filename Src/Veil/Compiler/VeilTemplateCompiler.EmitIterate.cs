@@ -4,7 +4,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitEach<T>(VeilCompilerState<T> state, SyntaxTreeNode.EachNode node)
+        private static void EmitIterate<T>(VeilCompilerState<T> state, SyntaxTreeNode.IterateNode node)
         {
             var enumerable = typeof(IEnumerable<>).MakeGenericType(node.ItemType);
             var getEnumerator = enumerable.GetMethod("GetEnumerator");

@@ -47,8 +47,8 @@
     <Compile Include="Compiler\ITemplateCompiler.cs" />
     <Compile Include="VeilCompilerException.cs" />
     <Compile Include="Compiler\VeilCompilerState.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitConditionalOnExpression.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitEach.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitConditional.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitIterate.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitNode.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteLiteral.cs" />
     <Compile Include="Extensions.cs" />
@@ -62,7 +62,7 @@
     <Compile Include="Compiler\VeilTemplateCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteModelProperty.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteExpression.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

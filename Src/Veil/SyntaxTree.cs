@@ -19,7 +19,7 @@ namespace Veil
         /// Write a string literal to the TextWriter
         /// </summary>
         /// <param name="content">The string to be written</param>
-        public static WriteLiteralNode StringLiteral(string content)
+        public static WriteLiteralNode WriteString(string content)
         {
             return new WriteLiteralNode
             {
@@ -44,9 +44,9 @@ namespace Veil
         /// </summary>
         /// <param name="collectionExpression">expression to load the collection</param>
         /// <param name="body">Block to execute in the scope of each item</param>
-        public static EachNode Each(ExpressionNode collectionExpression, BlockNode body)
+        public static IterateNode Iterate(ExpressionNode collectionExpression, BlockNode body)
         {
-            return new EachNode
+            return new IterateNode
             {
                 Collection = collectionExpression,
                 Body = body
@@ -60,9 +60,9 @@ namespace Veil
         /// <param name="trueBlock">The block to execute when the expression is true</param>
         /// <param name="falseBlock">The block to evaluate when the expression is false</param>
         /// <returns></returns>
-        public static ConditionalOnExpressionNode Conditional(ExpressionNode expression, BlockNode trueBlock, BlockNode falseBlock = null)
+        public static ConditionalNode Conditional(ExpressionNode expression, BlockNode trueBlock, BlockNode falseBlock = null)
         {
-            return new ConditionalOnExpressionNode
+            return new ConditionalNode
             {
                 Expression = expression,
                 TrueBlock = trueBlock,
@@ -104,7 +104,7 @@ namespace Veil
             public ExpressionNode Expression { get; set; }
         }
 
-        public class ConditionalOnExpressionNode : SyntaxTreeNode
+        public class ConditionalNode : SyntaxTreeNode
         {
             public ExpressionNode Expression { get; set; }
 
@@ -113,7 +113,7 @@ namespace Veil
             public BlockNode FalseBlock { get; set; }
         }
 
-        public class EachNode : SyntaxTreeNode
+        public class IterateNode : SyntaxTreeNode
         {
             public ExpressionNode Collection { get; set; }
 

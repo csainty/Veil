@@ -46,16 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler\CompilerTestBase.cs" />
-    <Compile Include="Compiler\ConditionalOnExpressionTests.cs" />
-    <Compile Include="Compiler\EachTests.cs" />
+    <Compile Include="Compiler\ConditionalTests.cs" />
+    <Compile Include="Compiler\IterateTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
     <Compile Include="Compiler\BlockTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
     <Compile Include="Compiler\WriteExpressionTests.cs" />
-    <Compile Include="Handlebars\ConditionalOnModelPropertyTests.cs" />
+    <Compile Include="Handlebars\ConditionalTests.cs" />
     <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
     <Compile Include="Handlebars\WriteLiteralTests.cs" />
-    <Compile Include="Handlebars\WriteModelPropertyTests.cs" />
+    <Compile Include="Handlebars\WriteExpressionTests.cs" />
     <Compile Include="ParserTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestSuiteSetUp.cs" />

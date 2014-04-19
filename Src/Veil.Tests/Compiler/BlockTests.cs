@@ -10,9 +10,9 @@ namespace Veil.Compiler
         {
             var model = new { Name = "World" };
             var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.StringLiteral("Hello "),
+                SyntaxTreeNode.WriteString("Hello "),
                 SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Name")),
-                SyntaxTreeNode.StringLiteral("!")
+                SyntaxTreeNode.WriteString("!")
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello World!"));

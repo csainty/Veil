@@ -3,7 +3,7 @@
 namespace Veil.Handlebars
 {
     [TestFixture]
-    internal class WriteModelPropertyTests : ParserTestBase<HandlebarsParser>
+    internal class WriteExpressionTests : ParserTestBase<HandlebarsParser>
     {
         [TestCaseSource("PropertyNameTestSource")]
         public void Should_parse_model_property_names(string template, SyntaxTreeNode[] expectedTemplate)
@@ -17,8 +17,8 @@ namespace Veil.Handlebars
             return new object[] {
                 new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
                 new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
-                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
-                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.StringLiteral("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")), SyntaxTreeNode.StringLiteral(", "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Greeting")) } }
+                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")) } },
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Name")), SyntaxTreeNode.WriteString(", "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Greeting")) } }
             };
         }
 
@@ -48,7 +48,7 @@ namespace Veil.Handlebars
         public void Should_handle_incomplete_identifier_marker(string testString)
         {
             var syntaxTree = Parse(testString, typeof(object));
-            AssertSyntaxTree(syntaxTree, SyntaxTreeNode.StringLiteral(testString));
+            AssertSyntaxTree(syntaxTree, SyntaxTreeNode.WriteString(testString));
         }
 
         private class TestModel

@@ -4,16 +4,16 @@ using NUnit.Framework;
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class EachTests : CompilerTestBase
+    internal class IterateTests : CompilerTestBase
     {
         [Test]
         public void Should_be_able_to_iterate_a_list()
         {
             var model = new { Items = new List<string> { "1", "2" } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
-                    SyntaxTreeNode.StringLiteral("Item")
+                    SyntaxTreeNode.WriteString("Item")
                 )
             ));
 
@@ -25,10 +25,10 @@ namespace Veil.Compiler
         public void Should_be_able_to_iterate_an_array()
         {
             var model = new { Items = new[] { "1", "2" } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
-                    SyntaxTreeNode.StringLiteral("Item")
+                    SyntaxTreeNode.WriteString("Item")
                 )
             ));
 
@@ -40,7 +40,7 @@ namespace Veil.Compiler
         public void Should_use_items_from_collection_as_scope()
         {
             var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(ItemModel), "Name"))
@@ -54,7 +54,7 @@ namespace Veil.Compiler
         public void Should_be_able_to_output_value_types_from_collections()
         {
             var model = new { Items = new[] { "1", "2", "3", "4" } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)))

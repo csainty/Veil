@@ -3,16 +3,16 @@
 namespace Veil.Handlebars
 {
     [TestFixture]
-    internal class ConditionalOnModelPropertyTests : ParserTestBase<HandlebarsParser>
+    internal class ConditionalTests : ParserTestBase<HandlebarsParser>
     {
         [Test]
         public void Should_parse_if_statement()
         {
             var template = Parse("Hello {{#if Conditional }} John{{/if}}", typeof(TestModel));
             AssertSyntaxTree(template, new SyntaxTreeNode[] {
-                SyntaxTreeNode.StringLiteral("Hello "),
+                SyntaxTreeNode.WriteString("Hello "),
                 SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Conditional"),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral(" John"))
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString(" John"))
                 )
             });
         }
@@ -22,10 +22,10 @@ namespace Veil.Handlebars
         {
             var template = Parse("Hello {{#if Conditional }}John{{else}}Jim{{/if}}", typeof(TestModel));
             AssertSyntaxTree(template, new SyntaxTreeNode[] {
-                SyntaxTreeNode.StringLiteral("Hello "),
+                SyntaxTreeNode.WriteString("Hello "),
                 SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(TestModel), "Conditional"),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("John")),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("Jim"))
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("John")),
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Jim"))
                 )
             });
         }

@@ -16,11 +16,11 @@ namespace Veil.Compiler
                 if (nodeType == typeof(SyntaxTreeNode.WriteLiteralNode))
                     EmitWriteLiteral(state, (SyntaxTreeNode.WriteLiteralNode)node);
                 else if (nodeType == typeof(SyntaxTreeNode.WriteExpressionNode))
-                    EmitWriteModelProperty(state, (SyntaxTreeNode.WriteExpressionNode)node);
-                else if (nodeType == typeof(SyntaxTreeNode.ConditionalOnExpressionNode))
-                    EmitConditionalOnExpression(state, (SyntaxTreeNode.ConditionalOnExpressionNode)node);
-                else if (nodeType == typeof(SyntaxTreeNode.EachNode))
-                    EmitEach(state, (SyntaxTreeNode.EachNode)node);
+                    EmitWriteExpression(state, (SyntaxTreeNode.WriteExpressionNode)node);
+                else if (nodeType == typeof(SyntaxTreeNode.ConditionalNode))
+                    EmitConditional(state, (SyntaxTreeNode.ConditionalNode)node);
+                else if (nodeType == typeof(SyntaxTreeNode.IterateNode))
+                    EmitIterate(state, (SyntaxTreeNode.IterateNode)node);
                 else
                     throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(nodeType.Name));
             }

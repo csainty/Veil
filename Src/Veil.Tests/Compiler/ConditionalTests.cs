@@ -3,15 +3,15 @@
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class ConditionalOnExpressionTests : CompilerTestBase
+    internal class ConditionalTests : CompilerTestBase
     {
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_property<T>(T model, string expectedResult)
         {
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Conditional(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Condition"),
-                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True")),
-                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False"))));
+                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
+                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -22,8 +22,8 @@ namespace Veil.Compiler
         {
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Conditional(
                 SyntaxTreeNode.ExpressionNode.ModelField(model.GetType(), "ConditionField"),
-                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True")),
-                SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False"))));
+                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
+                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -37,27 +37,27 @@ namespace Veil.Compiler
         {
             var model = new { Condition1 = c1, Condition2 = c2 };
             var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.StringLiteral("Start "),
+                SyntaxTreeNode.WriteString("Start "),
                 SyntaxTreeNode.Conditional(
                     SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Condition1"),
                     SyntaxTreeNode.Block(
-                        SyntaxTreeNode.StringLiteral("True1 "),
+                        SyntaxTreeNode.WriteString("True1 "),
                         SyntaxTreeNode.Conditional(
                             SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Condition2"),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True2 ")),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False2 "))
+                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True2 ")),
+                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False2 "))
                         )
                     ),
                     SyntaxTreeNode.Block(
-                        SyntaxTreeNode.StringLiteral("False1 "),
+                        SyntaxTreeNode.WriteString("False1 "),
                         SyntaxTreeNode.Conditional(
                             SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Condition2"),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("True2 ")),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("False2 "))
+                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True2 ")),
+                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False2 "))
                         )
                     )
                 ),
-                SyntaxTreeNode.StringLiteral("End"));
+                SyntaxTreeNode.WriteString("End"));
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -86,7 +86,7 @@ namespace Veil.Compiler
             var template = SyntaxTreeNode.Block(
                 SyntaxTreeNode.Conditional(
                     SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "X"),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.StringLiteral("Hello")),
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Hello")),
                     falseBlock)
                 );
             var result = this.ExecuteTemplate(template, model);
@@ -98,7 +98,7 @@ namespace Veil.Compiler
         {
             var model = new { RootConditional = true, Values = new[] { 1, 2, 3 } };
             var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Each(
+                SyntaxTreeNode.Iterate(
                     SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Values"),
                     SyntaxTreeNode.Block(
                         SyntaxTreeNode.Conditional(
