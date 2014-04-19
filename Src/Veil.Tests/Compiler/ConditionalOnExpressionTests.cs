@@ -3,7 +3,7 @@
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class ConditionalOnModelExpressionTests : CompilerTestBase
+    internal class ConditionalOnExpressionTests : CompilerTestBase
     {
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_property<T>(T model, string expectedResult)
@@ -68,8 +68,8 @@ namespace Veil.Compiler
             var model = new { X = true };
             var template = SyntaxTreeNode.Block(
                 SyntaxTreeNode.Conditional(
-                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "X"), 
-                trueNode, 
+                SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "X"),
+                trueNode,
                 SyntaxTreeNode.Block()
             ));
 
@@ -91,6 +91,25 @@ namespace Veil.Compiler
                 );
             var result = this.ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello"));
+        }
+
+        [Test]
+        public void Should_handle_conditional_on_root_scope()
+        {
+            var model = new { RootConditional = true, Values = new[] { 1, 2, 3 } };
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.Each(
+                    SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Values"),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.Conditional(
+                            SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "RootConditional", SyntaxTreeNode.ExpressionScope.RootModel),
+                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(int))))
+                        )
+                    )
+                )
+            );
+            var result = this.ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("123"));
         }
 
         public object[] TruthyFalseyCases()

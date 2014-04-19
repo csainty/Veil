@@ -29,11 +29,11 @@ namespace Veil
         }
 
         /// <summary>
-        /// Evaluate an expression against the currently scoped model and write the value to the TextWriter
+        /// Evaluate an expression and write the value to the TextWriter
         /// </summary>
-        public static WriteModelExpressionNode Expression(ExpressionNode expression)
+        public static WriteExpressionNode WriteExpression(ExpressionNode expression)
         {
-            return new WriteModelExpressionNode
+            return new WriteExpressionNode
             {
                 Expression = expression
             };
@@ -60,9 +60,9 @@ namespace Veil
         /// <param name="trueBlock">The block to execute when the expression is true</param>
         /// <param name="falseBlock">The block to evaluate when the expression is false</param>
         /// <returns></returns>
-        public static ConditionalOnModelExpressionNode Conditional(ExpressionNode expression, BlockNode trueBlock, BlockNode falseBlock = null)
+        public static ConditionalOnExpressionNode Conditional(ExpressionNode expression, BlockNode trueBlock, BlockNode falseBlock = null)
         {
-            return new ConditionalOnModelExpressionNode
+            return new ConditionalOnExpressionNode
             {
                 Expression = expression,
                 TrueBlock = trueBlock,
@@ -99,12 +99,12 @@ namespace Veil
             public object LiteralContent { get; set; }
         }
 
-        public class WriteModelExpressionNode : SyntaxTreeNode
+        public class WriteExpressionNode : SyntaxTreeNode
         {
             public ExpressionNode Expression { get; set; }
         }
 
-        public class ConditionalOnModelExpressionNode : SyntaxTreeNode
+        public class ConditionalOnExpressionNode : SyntaxTreeNode
         {
             public ExpressionNode Expression { get; set; }
 

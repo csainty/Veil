@@ -43,7 +43,7 @@ namespace Veil.Compiler
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
-                    SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(ItemModel), "Name"))
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(typeof(ItemModel), "Name"))
                 )
             ));
             var result = ExecuteTemplate(template, model);
@@ -57,7 +57,7 @@ namespace Veil.Compiler
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Each(
                 SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
-                    SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)))
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)))
                 )
             ));
 

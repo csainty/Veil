@@ -41,5 +41,22 @@ namespace Veil.Compiler
         {
             this.scopeStack.First.Value.Invoke(this.emitter);
         }
+
+        internal void PushExpressionScopeOnStack(SyntaxTreeNode.ExpressionNode node)
+        {
+            switch (node.Scope)
+            {
+                case SyntaxTreeNode.ExpressionScope.CurrentModelOnStack:
+                    this.scopeStack.First.Value.Invoke(this.emitter);
+                    break;
+
+                case SyntaxTreeNode.ExpressionScope.RootModel:
+                    this.scopeStack.Last.Value.Invoke(this.emitter);
+                    break;
+
+                default:
+                    throw new VeilCompilerException("Uknown expression scope '{0}'".FormatInvariant(node.Scope));
+            }
+        }
     }
 }

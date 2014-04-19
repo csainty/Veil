@@ -13,7 +13,7 @@ namespace Veil.Compiler
             var loop = state.Emitter.DefineLabel();
             var done = state.Emitter.DefineLabel();
 
-            state.PushCurrentModelOnStack();
+            state.PushExpressionScopeOnStack(node.Collection);
             state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Collection);
             using (var item = state.Emitter.DeclareLocal(node.ItemType))
             using (var en = state.Emitter.DeclareLocal(getEnumerator.ReturnType))

@@ -47,7 +47,7 @@
     <Compile Include="Compiler\ITemplateCompiler.cs" />
     <Compile Include="VeilCompilerException.cs" />
     <Compile Include="Compiler\VeilCompilerState.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitConditionalOnModelProperty.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitConditionalOnExpression.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitEach.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitNode.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteLiteral.cs" />

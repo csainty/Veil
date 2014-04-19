@@ -40,7 +40,7 @@ namespace Veil.Handlebars
                     AssertInsideConditionalOnModelBlock(blockStack, "{{else}}");
                     blockStack.Pop();
                     var block = SyntaxTreeNode.Block();
-                    ((SyntaxTreeNode.ConditionalOnModelExpressionNode)blockStack.Peek().Nodes.Last()).FalseBlock = block;
+                    ((SyntaxTreeNode.ConditionalOnExpressionNode)blockStack.Peek().Nodes.Last()).FalseBlock = block;
                     blockStack.Push(block);
                 }
                 else if (token == "/if")
@@ -50,7 +50,7 @@ namespace Veil.Handlebars
                 }
                 else
                 {
-                    blockStack.Peek().Add(SyntaxTreeNode.Expression(HandlebarsExpressionParser.Parse(modelType, token)));
+                    blockStack.Peek().Add(SyntaxTreeNode.WriteExpression(HandlebarsExpressionParser.Parse(modelType, token)));
                 }
             }
             if (index < template.Length)
@@ -79,7 +79,7 @@ namespace Veil.Handlebars
             if (!faulted)
             {
                 var block = blockStack.Pop();
-                faulted = !(blockStack.Peek().Nodes.Last() is SyntaxTreeNode.ConditionalOnModelExpressionNode);
+                faulted = !(blockStack.Peek().Nodes.Last() is SyntaxTreeNode.ConditionalOnExpressionNode);
                 blockStack.Push(block);
             }
 

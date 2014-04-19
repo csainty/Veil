@@ -4,7 +4,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
-        private static void EmitConditionalOnModelProperty<T>(VeilCompilerState<T> state, SyntaxTreeNode.ConditionalOnModelExpressionNode node)
+        private static void EmitConditionalOnExpression<T>(VeilCompilerState<T> state, SyntaxTreeNode.ConditionalOnExpressionNode node)
         {
             if (node.TrueBlock == null || !node.TrueBlock.Nodes.Any())
             {
@@ -14,7 +14,7 @@ namespace Veil.Compiler
             if (node.FalseBlock == null || !node.FalseBlock.Nodes.Any())
             {
                 var done = state.Emitter.DefineLabel();
-                state.PushCurrentModelOnStack();
+                state.PushExpressionScopeOnStack(node.Expression);
                 state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
                 state.Emitter.BranchIfFalse(done);
                 EmitNode(state, node.TrueBlock);
@@ -25,7 +25,7 @@ namespace Veil.Compiler
                 var done = state.Emitter.DefineLabel();
                 var falseBlock = state.Emitter.DefineLabel();
 
-                state.PushCurrentModelOnStack();
+                state.PushExpressionScopeOnStack(node.Expression);
                 state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
                 state.Emitter.BranchIfFalse(falseBlock);
                 EmitNode(state, node.TrueBlock);

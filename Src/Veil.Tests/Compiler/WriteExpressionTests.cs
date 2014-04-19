@@ -3,13 +3,13 @@
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class WriteModelExpressionTests : CompilerTestBase
+    internal class WriteExpressionTests : CompilerTestBase
     {
         [SetCulture("en-US")]
         [TestCaseSource("TestCases")]
-        public void Should_be_able_to_output_model_property<T>(T model, string expectedResult)
+        public void Should_be_able_to_write_model_property<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Data")));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Data")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -17,9 +17,9 @@ namespace Veil.Compiler
 
         [SetCulture("en-US")]
         [TestCaseSource("TestCases")]
-        public void Should_be_able_to_output_model_field<T>(T model, string expectedResult)
+        public void Should_be_able_to_write_model_field<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelField(model.GetType(), "DataField")));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelField(model.GetType(), "DataField")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -27,12 +27,23 @@ namespace Veil.Compiler
 
         [SetCulture("en-US")]
         [TestCaseSource("TestCases")]
-        public void Should_be_able_to_output_model_from_sub_model<T>(T model, string expectedResult)
+        public void Should_be_able_to_write_from_sub_model<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Expression(SyntaxTreeNode.ExpressionNode.ModelSubModel(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Sub"), SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelSubModel(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Sub"), SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [Test]
+        public void Should_be_able_to_write_from_root_model()
+        {
+            var model = new { Text = "Hello!" };
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.ModelProperty(model.GetType(), "Text", SyntaxTreeNode.ExpressionScope.RootModel))
+            );
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Hello!"));
         }
 
         public object[] TestCases()

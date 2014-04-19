@@ -5,8 +5,16 @@ namespace Veil
 {
     public abstract partial class SyntaxTreeNode
     {
+        public enum ExpressionScope
+        {
+            CurrentModelOnStack,
+            RootModel
+        }
+
         public abstract class ExpressionNode : SyntaxTreeNode
         {
+            public ExpressionScope Scope { get; set; }
+
             public abstract Type ResultType { get; }
 
             /// <summary>
@@ -14,11 +22,13 @@ namespace Veil
             /// </summary>
             /// <param name="modelType">The type of the scoped model</param>
             /// <param name="propertyName">The name of the property</param>
-            public static ModelPropertyExpressionNode ModelProperty(Type modelType, string propertyName)
+            /// <param name="scope">The scope this expression evaluated in</param>
+            public static ModelPropertyExpressionNode ModelProperty(Type modelType, string propertyName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new ModelPropertyExpressionNode
                 {
-                    Property = modelType.GetProperty(propertyName)
+                    Property = modelType.GetProperty(propertyName),
+                    Scope = scope
                 };
             }
 
@@ -27,11 +37,13 @@ namespace Veil
             /// </summary>
             /// <param name="modelType">The type of the scoped model</param>
             /// <param name="fieldName">The name of the field</param>
-            public static ModelFieldExpressionNode ModelField(Type modelType, string fieldName)
+            /// <param name="scope">The scope this expression evaluated in</param>
+            public static ModelFieldExpressionNode ModelField(Type modelType, string fieldName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new ModelFieldExpressionNode
                 {
-                    Field = modelType.GetField(fieldName)
+                    Field = modelType.GetField(fieldName),
+                    Scope = scope
                 };
             }
 
@@ -40,12 +52,14 @@ namespace Veil
             /// </summary>
             /// <param name="modelExpression">An expression referencing the model to traverse to</param>
             /// <param name="subModelExpression">An expression to evaluate in the scope of the model that has been traversed to</param>
-            public static SubModelExpressionNode ModelSubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression)
+            /// <param name="scope">The scope this expression evaluated in</param>
+            public static SubModelExpressionNode ModelSubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new SubModelExpressionNode
                 {
                     ModelExpression = modelExpression,
-                    SubModelExpression = subModelExpression
+                    SubModelExpression = subModelExpression,
+                    Scope = scope
                 };
             }
 
@@ -54,11 +68,13 @@ namespace Veil
             /// </summary>
             /// <param name="modelType">The type of the scoped model</param>
             /// <param name="functionName">The name of the function</param>
-            public static FunctionCallExpressionNode ModelFunction(Type modelType, string functionName)
+            /// <param name="scope">The scope this expression evaluated in</param>
+            public static FunctionCallExpressionNode ModelFunction(Type modelType, string functionName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new FunctionCallExpressionNode
                 {
-                    Function = modelType.GetMethod(functionName)
+                    Function = modelType.GetMethod(functionName),
+                    Scope = scope
                 };
             }
 
@@ -66,11 +82,13 @@ namespace Veil
             /// Evaluate the model itself e.g. Value types
             /// </summary>
             /// <param name="modelType">The type of the scoped model</param>
-            public static SelfExpressionNode Self(Type modelType)
+            /// <param name="scope">The scope this expression evaluated in</param>
+            public static SelfExpressionNode Self(Type modelType, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
                 return new SelfExpressionNode
                 {
-                    ModelType = modelType
+                    ModelType = modelType,
+                    Scope = scope
                 };
             }
 
