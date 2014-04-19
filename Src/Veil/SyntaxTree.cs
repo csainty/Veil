@@ -120,6 +120,8 @@ namespace Veil
             public BlockNode Body { get; set; }
 
             public Type ItemType { get { return Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0]; } }
+
+            public bool CollectionIsValid { get { return Collection.ResultType.HasEnumerableInterface(); } }
         }
     }
 }

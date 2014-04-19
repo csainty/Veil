@@ -12,12 +12,19 @@ namespace Veil
             return String.Format(CultureInfo.InvariantCulture, format, args);
         }
 
+        private static bool IsEnumerableType(Type t)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        }
+
+        public static bool HasEnumerableInterface(this Type t)
+        {
+            return IsEnumerableType(t) || t.GetInterfaces().Any(IsEnumerableType);
+        }
+
         public static Type GetEnumerableInterface(this Type t)
         {
-            return
-                (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ?
-                t :
-                t.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            return IsEnumerableType(t) ? t : t.GetInterfaces().First(IsEnumerableType);
         }
     }
 }
