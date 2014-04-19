@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using RazorEngine;
 using SimpleSpeedTester.Core;
 using Veil.Handlebars;
+using Veil.SuperSimple;
 
 namespace Veil.Benchmark
 {
@@ -17,14 +18,14 @@ namespace Veil.Benchmark
             var razorTemplate = ReadTemplate("cshtml");
             var ssTemplate = ReadTemplate("sshtml");
 
-            VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
+            VeilEngine.RegisterParser("haml", new HandlebarsParser());
+            VeilEngine.RegisterParser("sshtml", new SuperSimpleParser());
+            var veilEngine = new VeilEngine();
 
             {
-                Console.WriteLine("Testing Veil.Hail...");
-                var veilEngine = new VeilEngine();
-                var veilTemplate = veilEngine.Compile<ViewModel>("handlebars", new StringReader(handlebarsTemplate));
+                var veilTemplate = veilEngine.Compile<ViewModel>("haml", new StringReader(handlebarsTemplate));
                 AssertTemplateSample(Unwrap(veilTemplate, model));
-                var veilGroup = new TestGroup("Veil.Hail").PlanAndExecute("Template", () =>
+                var veilGroup = new TestGroup("Veil.Handlebars").PlanAndExecute("Template", () =>
                 {
                     veilTemplate(new StringWriter(), model);
                 }, 5000);
@@ -33,7 +34,6 @@ namespace Veil.Benchmark
 
             using (var handlebars = new Chevron.Handlebars())
             {
-                Console.WriteLine("Testing Chevron.IE.Merged...");
                 handlebars.RegisterTemplate("default", handlebarsTemplate);
                 AssertTemplateSample(handlebars.Transform("default", model));
                 var chevronGroup = new TestGroup("Chevron.IE.Merged").PlanAndExecute("Template", () =>
@@ -44,7 +44,6 @@ namespace Veil.Benchmark
             }
 
             {
-                Console.WriteLine("Testing Razor...");
                 Razor.Compile<ViewModel>(razorTemplate, "Test");
                 AssertTemplateSample(Razor.Run<ViewModel>("Test", model));
                 var razorGroup = new TestGroup("Razor").PlanAndExecute("Template", () =>
@@ -55,7 +54,16 @@ namespace Veil.Benchmark
             }
 
             {
-                Console.WriteLine("Testing Super Simple View Engine...");
+                var veilTemplate = veilEngine.Compile<ViewModel>("sshtml", new StringReader(ssTemplate));
+                AssertTemplateSample(Unwrap(veilTemplate, model));
+                var ssGroup = new TestGroup("Veil.SuperSimple").PlanAndExecute("Template", () =>
+                {
+                    veilTemplate(new StringWriter(), model);
+                }, 5000);
+                Console.WriteLine(ssGroup);
+            }
+
+            {
                 var engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();
                 var host = new TestHost();
                 AssertTemplateSample(engine.Render(ssTemplate, model, host));

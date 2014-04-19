@@ -73,6 +73,10 @@
       <Project>{3335691a-38b6-4dd1-96cb-a1c262cef4cc}</Project>
       <Name>Veil.Handlebars</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Veil.SuperSimple\Veil.SuperSimple.csproj">
+      <Project>{3478795d-95e0-45d8-bf31-b85f95b1e160}</Project>
+      <Name>Veil.SuperSimple</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Veil\Veil.csproj">
       <Project>{97d96b66-edfe-474b-bc72-d8439830fc76}</Project>
       <Name>Veil</Name>
