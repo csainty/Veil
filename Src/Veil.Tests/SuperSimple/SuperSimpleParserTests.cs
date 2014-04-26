@@ -2,6 +2,8 @@
 using System.Linq;
 using NUnit.Framework;
 using Veil.SuperSimple;
+using E = Veil.SyntaxTreeNode.ExpressionNode;
+using S = Veil.SyntaxTreeNode;
 
 namespace Veil.Tests.SuperSimple
 {
@@ -14,9 +16,9 @@ namespace Veil.Tests.SuperSimple
             var input = @"<html><head></head><body>Hello there @Model</body></html>";
             var output = Parse(input, typeof(string));
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString("</body></html>")
+                S.WriteString("<html><head></head><body>Hello there "),
+                S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.RootModel)),
+                S.WriteString("</body></html>")
             );
         }
 
@@ -26,9 +28,9 @@ namespace Veil.Tests.SuperSimple
             var input = @"<html><head></head><body>Hello there @Model;</body></html>";
             var output = Parse(input, typeof(string));
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString("</body></html>")
+                S.WriteString("<html><head></head><body>Hello there "),
+                S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.RootModel)),
+                S.WriteString("</body></html>")
             );
         }
 
@@ -39,9 +41,9 @@ namespace Veil.Tests.SuperSimple
             var model = new { Name = "bob" };
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString("</body></html>")
+                S.WriteString("<html><head></head><body>Hello there "),
+                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                S.WriteString("</body></html>")
             );
         }
 
@@ -52,11 +54,11 @@ namespace Veil.Tests.SuperSimple
             var model = new { Name = "bob" };
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString(", nice to see you "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString("</body></html>")
+                S.WriteString("<html><head></head><body>Hello there "),
+                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                S.WriteString(", nice to see you "),
+                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                S.WriteString("</body></html>")
             );
         }
 
@@ -72,11 +74,11 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
 
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString(" - welcome to "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "SiteName", SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString("</body></html>")
+                S.WriteString("<html><head></head><body>Hello there "),
+                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                S.WriteString(" - welcome to "),
+                S.WriteExpression(E.Property(model.GetType(), "SiteName", S.ExpressionScope.RootModel)),
+                S.WriteString("</body></html>")
             );
         }
 
@@ -87,16 +89,16 @@ namespace Veil.Tests.SuperSimple
             var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" } };
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("<li>"),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                        SyntaxTreeNode.WriteString("</li>")
+                S.WriteString("<html><head></head><body><ul>"),
+                S.Iterate(
+                    E.Property(model.GetType(), "Users"),
+                    S.Block(
+                        S.WriteString("<li>"),
+                        S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.CurrentModelOnStack)),
+                        S.WriteString("</li>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("</ul></body></html>")
+                S.WriteString("</ul></body></html>")
             );
         }
 
@@ -108,18 +110,18 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
 
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("<li id=\""),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                        SyntaxTreeNode.WriteString("\">"),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                        SyntaxTreeNode.WriteString("</li>")
+                S.WriteString("<html><head></head><body><ul>"),
+                S.Iterate(
+                    E.Property(model.GetType(), "Users"),
+                    S.Block(
+                        S.WriteString("<li id=\""),
+                        S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.CurrentModelOnStack)),
+                        S.WriteString("\">"),
+                        S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.CurrentModelOnStack)),
+                        S.WriteString("</li>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("</ul></body></html>")
+                S.WriteString("</ul></body></html>")
             );
         }
 
@@ -146,18 +148,18 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
 
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body><ul>"),
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("<li>Hello "),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                        SyntaxTreeNode.WriteString(", "),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                        SyntaxTreeNode.WriteString(" says hello!</li>")
+                S.WriteString("<html><head></head><body><ul>"),
+                S.Iterate(
+                    E.Property(model.GetType(), "Users"),
+                    S.Block(
+                        S.WriteString("<li>Hello "),
+                        S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.CurrentModelOnStack)),
+                        S.WriteString(", "),
+                        S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                        S.WriteString(" says hello!</li>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("</ul></body></html>")
+                S.WriteString("</ul></body></html>")
             );
         }
 
@@ -168,9 +170,9 @@ namespace Veil.Tests.SuperSimple
             var model = new { Name = "Bob" };
             var output = Parse(input, model.GetType());
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>Hello there "),
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                SyntaxTreeNode.WriteString("\n</body></html>")
+                S.WriteString("<html><head></head><body>Hello there "),
+                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                S.WriteString("\n</body></html>")
             );
         }
 
@@ -182,16 +184,16 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
 
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>"),
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("\n\t\t\t<li>"),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
-                        SyntaxTreeNode.WriteString("</li>")
+                S.WriteString("<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>"),
+                S.Iterate(
+                    E.Property(model.GetType(), "Users"),
+                    S.Block(
+                        S.WriteString("\n\t\t\t<li>"),
+                        S.WriteExpression(E.Self(typeof(string))),
+                        S.WriteString("</li>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("\n\t\t</ul>\n\t</body>\n</html>")
+                S.WriteString("\n\t\t</ul>\n\t</body>\n</html>")
             );
         }
 
@@ -203,25 +205,25 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
 
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>"),
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "HasUsers"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("<ul>"),
-                        SyntaxTreeNode.Iterate(
-                            SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
-                            SyntaxTreeNode.Block(
-                                SyntaxTreeNode.WriteString("<li>Hello "),
-                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
-                                SyntaxTreeNode.WriteString(", "),
-                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                                SyntaxTreeNode.WriteString(" says hello!</li>")
+                S.WriteString("<html><head></head><body>"),
+                S.Conditional(
+                    E.Property(model.GetType(), "HasUsers"),
+                    S.Block(
+                        S.WriteString("<ul>"),
+                        S.Iterate(
+                            E.Property(model.GetType(), "Users"),
+                            S.Block(
+                                S.WriteString("<li>Hello "),
+                                S.WriteExpression(E.Self(typeof(string))),
+                                S.WriteString(", "),
+                                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                                S.WriteString(" says hello!</li>")
                             )
                         ),
-                        SyntaxTreeNode.WriteString("</ul>")
+                        S.WriteString("</ul>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("</body></html>")
+                S.WriteString("</body></html>")
             );
         }
 
@@ -233,26 +235,26 @@ namespace Veil.Tests.SuperSimple
             var output = Parse(input, model.GetType());
 
             AssertSyntaxTree(output,
-                SyntaxTreeNode.WriteString("<html><head></head><body>"),
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "HasUsers"),
-                    SyntaxTreeNode.Block(),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("<p>No users found!</p>")
+                S.WriteString("<html><head></head><body>"),
+                S.Conditional(
+                    E.Property(model.GetType(), "HasUsers"),
+                    S.Block(),
+                    S.Block(
+                        S.WriteString("<p>No users found!</p>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("<ul>"),
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Users"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("<li>Hello "),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string))),
-                        SyntaxTreeNode.WriteString(", "),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel)),
-                        SyntaxTreeNode.WriteString(" says hello!</li>")
+                S.WriteString("<ul>"),
+                S.Iterate(
+                    E.Property(model.GetType(), "Users"),
+                    S.Block(
+                        S.WriteString("<li>Hello "),
+                        S.WriteExpression(E.Self(typeof(string))),
+                        S.WriteString(", "),
+                        S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                        S.WriteString(" says hello!</li>")
                     )
                 ),
-                SyntaxTreeNode.WriteString("</ul></body></html>")
+                S.WriteString("</ul></body></html>")
             );
         }
 
