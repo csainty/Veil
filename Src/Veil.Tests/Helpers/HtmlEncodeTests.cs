@@ -24,6 +24,8 @@ namespace Veil.HelperTests
                 new object[] { "Hello>Goodbye", "Hello&gt;Goodbye" },
                 new object[] { "Hello\"Goodbye", "Hello&quot;Goodbye" },
                 new object[] { "Hello'Goodbye", "Hello&#39;Goodbye" },
+                new object[] { "&Hello", "&amp;Hello" },
+                new object[] { "Hello&", "Hello&amp;" },
             };
         }
     }
