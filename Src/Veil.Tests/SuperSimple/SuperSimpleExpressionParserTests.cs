@@ -40,6 +40,53 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.HasItems(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items")));
         }
 
+        [Test]
+        public void Should_give_precedence_to_property_over_hasitems()
+        {
+            var model = new { Items = new[] { 1, 2, 3 }, HasItems = true };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "HasItems");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "HasItems"));
+        }
+
+        [Test]
+        public void Should_parse_sub_model_expression_from_root_model()
+        {
+            var model = new { User = new { Name = "Bob" } };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.User.Name");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "User", SyntaxTreeNode.ExpressionScope.RootModel),
+                SyntaxTreeNode.ExpressionNode.Property(model.User.GetType(), "Name")
+            ));
+        }
+
+        [Test]
+        public void Should_parse_sub_model_expression_from_current_model()
+        {
+            var model = new { User = new { Name = "Bob" } };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Current.User.Name");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "User"),
+                SyntaxTreeNode.ExpressionNode.Property(model.User.GetType(), "Name")
+            ));
+        }
+
+        [Test]
+        public void Should_parse_multiple_sub_model_expressions()
+        {
+            var model = new { User = new { Department = new { Company = new { Name = "Foo" } } } };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.User.Department.Company.Name");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "User", SyntaxTreeNode.ExpressionScope.RootModel),
+                SyntaxTreeNode.ExpressionNode.SubModel(
+                    SyntaxTreeNode.ExpressionNode.Property(model.User.GetType(), "Department"),
+                    SyntaxTreeNode.ExpressionNode.SubModel(
+                        SyntaxTreeNode.ExpressionNode.Property(model.User.Department.GetType(), "Company"),
+                        SyntaxTreeNode.ExpressionNode.Property(model.User.Department.Company.GetType(), "Name")
+                    )
+                )
+            ));
+        }
+
         [TestCase("Model.Wrong")]
         [TestCase("Model.name")]
         public void Should_throw_for_invalid_expressions(string expression)

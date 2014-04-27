@@ -32,21 +32,31 @@ namespace Veil.SuperSimple
                 expressionScope = SyntaxTreeNode.ExpressionScope.RootModel;
             }
 
-            var propertyInfo = chosenScope.ModelType.GetProperty(expression);
-            if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(chosenScope.ModelType, expression, expressionScope);
+            return ParseAgainstModel(originalExpression, expression, chosenScope, expressionScope);
+        }
+
+        private static SyntaxTreeNode.ExpressionNode ParseAgainstModel(string originalExpression, string expression, SuperSimpleParser.ParserScope scope, SyntaxTreeNode.ExpressionScope expressionScope)
+        {
+            var subModelIndex = expression.IndexOf('.');
+            if (subModelIndex >= 0)
+            {
+                var subModel = ParseAgainstModel(originalExpression, expression.Substring(0, subModelIndex), scope, expressionScope);
+                return SyntaxTreeNode.ExpressionNode.SubModel(
+                    subModel,
+                    ParseAgainstModel(originalExpression, expression.Substring(subModelIndex + 1), new SuperSimpleParser.ParserScope { Block = scope.Block, ModelType = subModel.ResultType }, SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)
+                );
+            }
+
+            var propertyInfo = scope.ModelType.GetProperty(expression);
+            if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(scope.ModelType, expression, expressionScope);
 
             if (expression.StartsWith("Has"))
             {
-                var collectionExpression = Parse(CreateSingleScope(chosenScope), expression.Substring(3));
+                var collectionExpression = ParseAgainstModel(originalExpression, expression.Substring(3), scope, expressionScope);
                 return SyntaxTreeNode.ExpressionNode.HasItems(collectionExpression);
             }
 
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}'", originalExpression));
-        }
-
-        private static LinkedList<SuperSimpleParser.ParserScope> CreateSingleScope(SuperSimpleParser.ParserScope scope)
-        {
-            return new LinkedList<SuperSimpleParser.ParserScope>(new[] { scope });
         }
     }
 }
