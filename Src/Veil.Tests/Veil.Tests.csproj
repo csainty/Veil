@@ -52,6 +52,7 @@
     <Compile Include="Compiler\BlockTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
     <Compile Include="Compiler\WriteExpressionTests.cs" />
+    <Compile Include="Expressions\CollectionHasItemsNodeTests.cs" />
     <Compile Include="Handlebars\ConditionalTests.cs" />
     <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
     <Compile Include="Handlebars\IterationTests.cs" />

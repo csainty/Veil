@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
 
 namespace Veil
@@ -92,6 +93,15 @@ namespace Veil
                 };
             }
 
+            public static CollectionHasItemsNode HasItems(ExpressionNode collectionExpression)
+            {
+                return new CollectionHasItemsNode
+                {
+                    CollectionExpression = collectionExpression,
+                    Scope = collectionExpression.Scope
+                };
+            }
+
             public class PropertyExpressionNode : ExpressionNode
             {
                 public PropertyInfo Property { get; set; }
@@ -139,6 +149,32 @@ namespace Veil
                 public Type ModelType { get; set; }
 
                 public override Type ResultType { get { return this.ModelType; } }
+            }
+
+            public class CollectionHasItemsNode : ExpressionNode
+            {
+                private ExpressionNode collectionExpression;
+
+                public ExpressionNode CollectionExpression
+                {
+                    get
+                    {
+                        return this.collectionExpression;
+                    }
+                    set
+                    {
+                        this.collectionExpression = value;
+                        this.Validate();
+                    }
+                }
+
+                private void Validate()
+                {
+                    if (this.collectionExpression == null) throw new ArgumentNullException("CollectionExpression");
+                    if (!typeof(ICollection).IsAssignableFrom(this.collectionExpression.ResultType)) throw new VeilParserException("Expression assigned to CollectionHasItemsNode.CollectionExpression is not an ICollection");
+                }
+
+                public override Type ResultType { get { return typeof(bool); } }
             }
         }
     }

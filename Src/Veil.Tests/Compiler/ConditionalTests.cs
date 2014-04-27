@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Veil.Compiler
 {
@@ -126,6 +127,20 @@ namespace Veil.Compiler
             Assert.That(result, Is.EqualTo("123"));
         }
 
+        [TestCaseSource("HasItemsCases")]
+        public void Should_handle_has_items_expression<T>(T model, string expectedResult)
+        {
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.Conditional(
+                    SyntaxTreeNode.ExpressionNode.HasItems(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items")),
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("HasItems")),
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("HasNoItems"))
+                )
+            );
+            var result = this.ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         public object[] TruthyFalseyCases()
         {
             return new object[] {
@@ -143,6 +158,14 @@ namespace Veil.Compiler
             return new object[] {
                 new object[] { null },
                 new object[] { SyntaxTreeNode.Block() }
+            };
+        }
+
+        public object[] HasItemsCases()
+        {
+            return new object[] {
+                new object[] { new { Items = new[] { "Hello" } }, "HasItems" },
+                new object[] { new { Items = new List<int>() }, "HasNoItems" }
             };
         }
 

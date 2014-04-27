@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -108,6 +109,17 @@ namespace Veil.Compiler
             else if (expression is SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)
             {
                 emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)expression).Function);
+            }
+            else if (expression is SyntaxTreeNode.ExpressionNode.CollectionHasItemsNode)
+            {
+                var hasItems = (SyntaxTreeNode.ExpressionNode.CollectionHasItemsNode)expression;
+                var count = typeof(ICollection).GetProperty("Count");
+                emitter.LoadExpressionFromCurrentModelOnStack(hasItems.CollectionExpression);
+                emitter.CallMethod(count.GetGetMethod());
+                emitter.LoadConstant(0);
+                emitter.CompareEqual();
+                emitter.LoadConstant(0);
+                emitter.CompareEqual();
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.SelfExpressionNode)
             {
