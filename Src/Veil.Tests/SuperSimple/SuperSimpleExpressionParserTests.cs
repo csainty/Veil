@@ -32,6 +32,14 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel));
         }
 
+        [Test]
+        public void Should_parse_hasitems_expression()
+        {
+            var model = new { Items = new[] { 1, 2, 3 } };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "HasItems");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.HasItems(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items")));
+        }
+
         [TestCase("Model.Wrong")]
         [TestCase("Model.name")]
         public void Should_throw_for_invalid_expressions(string expression)

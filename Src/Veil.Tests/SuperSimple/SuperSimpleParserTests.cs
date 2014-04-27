@@ -258,34 +258,43 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_return_true_for_ifhascollection_when_if_model_has_a_collection_with_items_but_no_bool()
+        {
+            var input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
+            var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" }, Name = "Nancy" };
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(
+                output,
+                S.WriteString("<html><head></head><body>"),
+                S.Conditional(
+                    E.HasItems(E.Property(model.GetType(), "Users")),
+                    S.Block(
+                        S.WriteString("<ul>"),
+                        S.Iterate(
+                            E.Property(model.GetType(), "Users"),
+                            S.Block(
+                                S.WriteString("<li>Hello "),
+                                S.WriteExpression(E.Self(typeof(string))),
+                                S.WriteString(", "),
+                                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                                S.WriteString(" says hello!</li>")
+                            )
+                        ),
+                        S.WriteString("</ul>")
+                    )
+                ),
+                S.WriteString("</body></html>")
+            );
+        }
+
         /*
-                [Test]
-                public void Should_return_true_for_ifhascollection_when_if_model_has_a_collection_with_items_but_no_bool()
-                {
-                    const string input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
-                    var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" }, Name = "Nancy" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
                 [Test]
                 public void Should_return_false_for_ifnot_hascollection_when_model_has_a_collection_with_items_but_no_bool()
                 {
                     const string input = @"<html><head></head><body>@IfNot.HasUsers;<p>No Users!</p>@EndIf;</body></html>";
                     var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" } };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body></body></html>", output);
-                }
-
-                [Test]
-                public void Should_ignore_item_for_implicit_has_support_when_item_isnt_a_collection()
-                {
-                    const string input = @"<html><head></head><body>@If.HasUsers;<p>Users!</p>@EndIf;</body></html>";
-                    var model = new { Users = new object() };
 
                     var output = viewEngine.Render(input, model, this.fakeHost);
 
