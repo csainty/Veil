@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using Sigil;
-
-namespace Veil.Compiler
+﻿namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler
     {
@@ -11,7 +7,16 @@ namespace Veil.Compiler
             state.Emitter.LoadWriterToStack();
             state.PushExpressionScopeOnStack(node.Expression);
             state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
-            state.Emitter.CallWriteFor(node.Expression.ResultType);
+
+            if (node.HtmlEncode && node.Expression.ResultType == typeof(string))
+            {
+                var method = typeof(Helpers).GetMethod("HtmlEncode");
+                state.Emitter.Call(method);
+            }
+            else
+            {
+                state.Emitter.CallWriteFor(node.Expression.ResultType);
+            }
         }
     }
 }

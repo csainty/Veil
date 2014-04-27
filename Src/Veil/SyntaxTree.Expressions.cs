@@ -93,6 +93,10 @@ namespace Veil
                 };
             }
 
+            /// <summary>
+            /// Evaluate whether the collectionExpression has Count > 0
+            /// </summary>
+            /// <param name="collectionExpression">An expression referencing a Collection</param>
             public static CollectionHasItemsNode HasItems(ExpressionNode collectionExpression)
             {
                 return new CollectionHasItemsNode

@@ -46,6 +46,17 @@ namespace Veil.Compiler
             Assert.That(result, Is.EqualTo("Hello!"));
         }
 
+        [Test]
+        public void Should_apply_html_encoding_when_requested()
+        {
+            var model = new { Text = "<h1>Hello</h1>" };
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Text", SyntaxTreeNode.ExpressionScope.RootModel), true)
+            );
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("&lt;h1&gt;Hello&lt;/h1&gt;"));
+        }
+
         public object[] TestCases()
         {
             return new object[] {

@@ -31,11 +31,14 @@ namespace Veil
         /// <summary>
         /// Evaluate an expression and write the value to the TextWriter
         /// </summary>
-        public static WriteExpressionNode WriteExpression(ExpressionNode expression)
+        /// <param name="expression">The expression to be written</param>
+        /// <param name="htmlEncode">Indicates whether the content should be html encoded before being written</param>
+        public static WriteExpressionNode WriteExpression(ExpressionNode expression, bool htmlEncode = false)
         {
             return new WriteExpressionNode
             {
-                Expression = expression
+                Expression = expression,
+                HtmlEncode = htmlEncode
             };
         }
 
@@ -102,6 +105,8 @@ namespace Veil
         public class WriteExpressionNode : SyntaxTreeNode
         {
             public ExpressionNode Expression { get; set; }
+
+            public bool HtmlEncode { get; set; }
         }
 
         public class ConditionalNode : SyntaxTreeNode
