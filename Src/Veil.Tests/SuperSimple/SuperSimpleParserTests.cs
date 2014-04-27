@@ -13,18 +13,6 @@ namespace Veil.Tests.SuperSimple
         [Test]
         public void Should_replace_primitive_model_with_value()
         {
-            var input = @"<html><head></head><body>Hello there @Model</body></html>";
-            var output = Parse(input, typeof(string));
-            AssertSyntaxTree(output,
-                S.WriteString("<html><head></head><body>Hello there "),
-                S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.RootModel)),
-                S.WriteString("</body></html>")
-            );
-        }
-
-        [Test]
-        public void Should_replace_primitive_model_with_value_when_followed_by_closing_tag()
-        {
             var input = @"<html><head></head><body>Hello there @Model;</body></html>";
             var output = Parse(input, typeof(string));
             AssertSyntaxTree(output,
@@ -35,7 +23,7 @@ namespace Veil.Tests.SuperSimple
         }
 
         [Test]
-        public void Should_replaces_valid_property_when_followed_by_closing_tag()
+        public void Should_replaces_valid_property()
         {
             var input = @"<html><head></head><body>Hello there @Model.Name;</body></html>";
             var model = new { Name = "bob" };
@@ -289,77 +277,25 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [TestCase("Hello @Model.Name")]
+        [TestCase("@Model.Name says hello")]
+        [TestCase("Hello @Model.Name, welcome")]
+        [TestCase("<b>Hello @Model.Name</b>")]
+        [TestCase("Hello @Model.Name?")]
+        [TestCase("Hello @Model.Name!")]
+        [TestCase("Hello \"@Model.Name\"")]
+        [TestCase("Hello '@Model.Name'")]
+        public void Should_handle_expression_without_closing_tag(string input)
+        {
+            var model = new { Name = "Bob" };
+            var template = Parse(input, model.GetType());
+            var result = ((S.BlockNode)template).Nodes.OfType<S.WriteExpressionNode>().Single().Expression as E.PropertyExpressionNode;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Property, Is.EqualTo(model.GetType().GetProperty("Name")));
+        }
+
         /*
-                [Test]
-                public void Should_allow_Model_substitutions_wihout_semi_colon()
-                {
-                    const string input = @"<html><head></head><body>Hello there @Model.Name</body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Name = "Bob";
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body>Hello there Bob</body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_each_without_semi_colon()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users<li>@Current;</li>@EndEach;</ul></body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Users = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Bob</li><li>Jim</li><li>Bill</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_each_and_end_each_without_semi_colon()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users<li>@Current;</li>@EndEach</ul></body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Users = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Bob</li><li>Jim</li><li>Bill</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_current_within_each_without_semi_colon()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users;<li>@Current</li>@EndEach;</ul></body></html>";
-                    dynamic model = new ExpandoObject();
-                    model.Users = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Bob</li><li>Jim</li><li>Bill</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_if_and_endif_without_semi_colon()
-                {
-                    const string input = @"<html><head></head><body>@If.HasUsers<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf</body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_ifnot_and_endif_without_semi_colon()
-                {
-                    const string input = @"<html><head></head><body>@IfNot.HasUsers<p>No users found!</p>@EndIf<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
                 [Test]
                 public void Should_allow_each_without_a_variable_and_iterate_over_the_model_if_it_is_enumerable()
                 {
