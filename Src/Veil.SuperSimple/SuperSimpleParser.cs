@@ -29,14 +29,22 @@ namespace Veil.SuperSimple
                 index = match.Index + match.Length;
 
                 var token = match.Value.Trim(new[] { '@', ';' });
-                if (token.StartsWith("Each."))
+                if (token == "Each")
+                {
+                    var each = SyntaxTreeNode.Iterate(
+                        SyntaxTreeNode.ExpressionNode.Self(scopeStack.First.Value.ModelType),
+                        SyntaxTreeNode.Block()
+                    );
+                    scopeStack.First.Value.Block.Add(each);
+                    scopeStack.AddFirst(new ParserScope { Block = each.Body, ModelType = each.ItemType });
+                }
+                else if (token.StartsWith("Each."))
                 {
                     token = token.Substring(5);
                     var each = SyntaxTreeNode.Iterate(
                         SuperSimpleExpressionParser.Parse(scopeStack, token),
                         SyntaxTreeNode.Block()
                     );
-                    if (!each.CollectionIsValid) throw new VeilParserException(String.Format("The expression '{0}' does not evaluate to a valid collection type", token));
                     scopeStack.First.Value.Block.Add(each);
                     scopeStack.AddFirst(new ParserScope { Block = each.Body, ModelType = each.ItemType });
                 }

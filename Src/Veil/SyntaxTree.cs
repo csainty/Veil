@@ -115,13 +115,21 @@ namespace Veil
 
         public class IterateNode : SyntaxTreeNode
         {
-            public ExpressionNode Collection { get; set; }
+            private ExpressionNode collection;
+
+            public ExpressionNode Collection { get { return this.collection; } set { this.collection = value; this.ValidateCollection(); } }
+
+            private void ValidateCollection()
+            {
+                if (!this.collection.ResultType.HasEnumerableInterface())
+                {
+                    throw new VeilParserException("Expression used as iteration collection is not IEnumerable<>");
+                }
+            }
 
             public BlockNode Body { get; set; }
 
             public Type ItemType { get { return Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0]; } }
-
-            public bool CollectionIsValid { get { return Collection.ResultType.HasEnumerableInterface(); } }
         }
     }
 }

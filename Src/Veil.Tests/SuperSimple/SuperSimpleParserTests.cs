@@ -295,29 +295,29 @@ namespace Veil.Tests.SuperSimple
             Assert.That(result.Property, Is.EqualTo(model.GetType().GetProperty("Name")));
         }
 
+        [TestCase(@"<html><head></head><body><ul>@Each;<li>Hello @Current;</li>@EndEach;</ul></body></html>")]
+        [TestCase(@"<html><head></head><body><ul>@Each<li>Hello @Current</li>@EndEach</ul></body></html>")]
+        public void Should_allow_each_without_a_variable_and_iterate_over_the_model_if_it_is_enumerable(string input)
+        {
+            var model = new List<string>() { "Bob", "Jim", "Bill" };
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(
+                output,
+                S.WriteString("<html><head></head><body><ul>"),
+                S.Iterate(
+                    E.Self(model.GetType()),
+                    S.Block(
+                        S.WriteString("<li>Hello "),
+                        S.WriteExpression(E.Self(typeof(string))),
+                        S.WriteString("</li>")
+                    )
+                ),
+                S.WriteString("</ul></body></html>")
+            );
+        }
+
         /*
-                [Test]
-                public void Should_allow_each_without_a_variable_and_iterate_over_the_model_if_it_is_enumerable()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each<li>Hello @Current</li>@EndEach</ul></body></html>";
-                    var model = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob</li><li>Hello Jim</li><li>Hello Bill</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_variableless_each_with_semicolon()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each;<li>Hello @Current</li>@EndEach</ul></body></html>";
-                    var model = new List<string>() { "Bob", "Jim", "Bill" };
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob</li><li>Hello Jim</li><li>Hello Bill</li></ul></body></html>", output);
-                }
-
                 [Test]
                 public void Model_with_exclaimation_should_html_encode()
                 {
