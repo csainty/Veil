@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using RazorEngine;
@@ -29,73 +30,73 @@ namespace Veil.Benchmark
             var veilEngine = new VeilEngine();
 
             {
-                var veilTemplate = veilEngine.Compile<ViewModel>("haml", new StringReader(handlebarsTemplate));
-                AssertTemplateSample(Unwrap(veilTemplate, model), "Veil.Handlebars");
-                var veilGroup = new TestGroup("Veil.Handlebars").PlanAndExecute("Template", () =>
+                var template = veilEngine.Compile<ViewModel>("haml", new StringReader(handlebarsTemplate));
+                Execute("Veil.Handlebars", () =>
                 {
-                    veilTemplate(new StringWriter(), model);
-                }, 5000);
-                Console.WriteLine(veilGroup);
-                Console.WriteLine("---------");
+                    using (var writer = new StringWriter())
+                    {
+                        template(writer, model);
+                        return writer.ToString();
+                    }
+                });
             }
 
             using (var handlebars = new Chevron.Handlebars())
             {
                 handlebars.RegisterTemplate("default", handlebarsTemplate);
-                AssertTemplateSample(handlebars.Transform("default", model), "Chevron.IE.Merged");
-                var chevronGroup = new TestGroup("Chevron.IE.Merged").PlanAndExecute("Template", () =>
+                Execute("Chevron.IE.Merged", () =>
                 {
-                    handlebars.Transform("default", model);
-                }, 5000);
-                Console.WriteLine(chevronGroup);
-                Console.WriteLine("---------");
+                    return handlebars.Transform("default", model);
+                });
             }
 
             {
                 Razor.Compile<ViewModel>(razorTemplate, "Test");
-                AssertTemplateSample(Razor.Run<ViewModel>("Test", model), "Razor");
-                var razorGroup = new TestGroup("Razor").PlanAndExecute("Template", () =>
+                Execute("Razor", () =>
                 {
-                    Razor.Run<ViewModel>("Test", model);
-                }, 5000);
-                Console.WriteLine(razorGroup);
-                Console.WriteLine("---------");
+                    return Razor.Run<ViewModel>("Test", model);
+                });
             }
 
             {
-                var veilTemplate = veilEngine.Compile<ViewModel>("sshtml", new StringReader(ssTemplate));
-                AssertTemplateSample(Unwrap(veilTemplate, model), "Veil.SuperSimple");
-                var ssGroup = new TestGroup("Veil.SuperSimple").PlanAndExecute("Template", () =>
+                var template = veilEngine.Compile<ViewModel>("sshtml", new StringReader(ssTemplate));
+                Execute("Veil.SuperSimple", () =>
                 {
-                    veilTemplate(new StringWriter(), model);
-                }, 5000);
-                Console.WriteLine(ssGroup);
-                Console.WriteLine("---------");
+                    using (var writer = new StringWriter())
+                    {
+                        template(writer, model);
+                        return writer.ToString();
+                    }
+                });
             }
 
             {
                 var engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();
                 var host = new TestHost();
-                AssertTemplateSample(engine.Render(ssTemplate, model, host), "SuperSimpleViewEngine");
-                var ssGroup = new TestGroup("SuperSimpleViewEngine").PlanAndExecute("Template", () =>
+                Execute("SuperSimpleViewEngine", () =>
                 {
-                    engine.Render(ssTemplate, model, host);
-                }, 5000);
-                Console.WriteLine(ssGroup);
-                Console.WriteLine("---------");
+                    return engine.Render(ssTemplate, model, host);
+                });
             }
 
             Console.WriteLine("Done");
             Console.ReadKey();
         }
 
-        private static string Unwrap<T>(Action<TextWriter, T> template, T model)
+        private static void Execute(string name, Func<string> sample)
         {
-            using (var writer = new StringWriter())
+            Console.WriteLine("Executing " + name);
+            AssertTemplateSample(sample(), name);
+            var testGroup = new TestGroup(name).Plan("Execute", () => sample(), 10000).GetResult();
+            Console.WriteLine("Total: {0}ms (10000 runs)", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Sum());
+            Console.WriteLine("Avg  : {0}ms", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Average());
+            Console.WriteLine("Min  : {0}ms", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Min());
+            Console.WriteLine("Max  : {0}ms", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Max());
+            if (testGroup.Outcomes.Any(x => x.Exception != null))
             {
-                template(writer, model);
-                return writer.ToString();
+                Console.WriteLine("!!! -- Exception thrown by one or more test samples -- !!!");
             }
+            Console.WriteLine("------------------------------------------");
         }
 
         private static void AssertTemplateSample(string sample, string engine)
