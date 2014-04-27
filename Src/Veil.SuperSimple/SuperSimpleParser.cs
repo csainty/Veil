@@ -17,7 +17,7 @@ namespace Veil.SuperSimple
             var scopeStack = new LinkedList<ParserScope>();
             scopeStack.AddFirst(new ParserScope { Block = SyntaxTreeNode.Block(), ModelType = modelType });
 
-            var matcher = new Regex(@"@[A-Za-z0-9\.]*;?");
+            var matcher = new Regex(@"@!?[A-Za-z0-9\.]*;?");
             var matches = matcher.Matches(template);
             var index = 0;
             foreach (Match match in matches)
@@ -76,6 +76,11 @@ namespace Veil.SuperSimple
                 else if (token == "EndIf")
                 {
                     scopeStack.RemoveFirst();
+                }
+                else if (token.StartsWith("!"))
+                {
+                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, token.Substring(1));
+                    scopeStack.First.Value.Block.Add(SyntaxTreeNode.WriteExpression(expression, true));
                 }
                 else
                 {
