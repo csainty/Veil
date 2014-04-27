@@ -65,7 +65,8 @@ namespace Veil.Handlebars
                 }
                 else
                 {
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token)));
+                    var expression = HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token);
+                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression, expression.ResultType == typeof(string)));
                 }
             }
             if (index < template.Length)

@@ -14,7 +14,7 @@ namespace Veil.Handlebars
                 SyntaxTreeNode.Iterate(
                     SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Items"),
                     SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)))
+                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)), true)
                     )
                 )
             );
