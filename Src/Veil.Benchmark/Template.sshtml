@@ -4,7 +4,7 @@
 	<title>Test Template</title>
 </head>
 <body>
-	<h1>@Model.Name</h1>
+	<h1>@!Model.Name</h1>
 
 	<nav>
         @If.IsLoggedIn
@@ -16,7 +16,7 @@
 	</nav>
 	<ul>
 		@Each.Roles
-			<li>@Current</li>
+			<li>@!Current</li>
 		@EndEach
 	</ul>
 </body>

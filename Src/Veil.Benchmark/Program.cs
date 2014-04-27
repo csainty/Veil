@@ -14,7 +14,8 @@ namespace Veil.Benchmark
     {
         private static void Main(string[] args)
         {
-            var model = new ViewModel {
+            var model = new ViewModel
+            {
                 Name = "Test Template",
                 IsLoggedIn = true,
                 Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader" }
@@ -150,7 +151,7 @@ namespace Veil.Benchmark
 
         public string HtmlEncode(string input)
         {
-            throw new NotImplementedException();
+            return HttpEncoder.HtmlEncode(input);
         }
     }
 }
