@@ -18,7 +18,7 @@ namespace Veil.Benchmark
             {
                 Name = "Test Template",
                 IsLoggedIn = true,
-                Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader" }
+                Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader", "Pick & Pack" }
             };
             var handlebarsTemplate = ReadTemplate("haml");
             var razorTemplate = ReadTemplate("cshtml");
@@ -30,54 +30,59 @@ namespace Veil.Benchmark
 
             {
                 var veilTemplate = veilEngine.Compile<ViewModel>("haml", new StringReader(handlebarsTemplate));
-                AssertTemplateSample(Unwrap(veilTemplate, model));
+                AssertTemplateSample(Unwrap(veilTemplate, model), "Veil.Handlebars");
                 var veilGroup = new TestGroup("Veil.Handlebars").PlanAndExecute("Template", () =>
                 {
                     veilTemplate(new StringWriter(), model);
                 }, 5000);
                 Console.WriteLine(veilGroup);
+                Console.WriteLine("---------");
             }
 
             using (var handlebars = new Chevron.Handlebars())
             {
                 handlebars.RegisterTemplate("default", handlebarsTemplate);
-                AssertTemplateSample(handlebars.Transform("default", model));
+                AssertTemplateSample(handlebars.Transform("default", model), "Chevron.IE.Merged");
                 var chevronGroup = new TestGroup("Chevron.IE.Merged").PlanAndExecute("Template", () =>
                 {
                     handlebars.Transform("default", model);
                 }, 5000);
                 Console.WriteLine(chevronGroup);
+                Console.WriteLine("---------");
             }
 
             {
                 Razor.Compile<ViewModel>(razorTemplate, "Test");
-                AssertTemplateSample(Razor.Run<ViewModel>("Test", model));
+                AssertTemplateSample(Razor.Run<ViewModel>("Test", model), "Razor");
                 var razorGroup = new TestGroup("Razor").PlanAndExecute("Template", () =>
                 {
                     Razor.Run<ViewModel>("Test", model);
                 }, 5000);
                 Console.WriteLine(razorGroup);
+                Console.WriteLine("---------");
             }
 
             {
                 var veilTemplate = veilEngine.Compile<ViewModel>("sshtml", new StringReader(ssTemplate));
-                AssertTemplateSample(Unwrap(veilTemplate, model));
+                AssertTemplateSample(Unwrap(veilTemplate, model), "Veil.SuperSimple");
                 var ssGroup = new TestGroup("Veil.SuperSimple").PlanAndExecute("Template", () =>
                 {
                     veilTemplate(new StringWriter(), model);
                 }, 5000);
                 Console.WriteLine(ssGroup);
+                Console.WriteLine("---------");
             }
 
             {
                 var engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();
                 var host = new TestHost();
-                AssertTemplateSample(engine.Render(ssTemplate, model, host));
+                AssertTemplateSample(engine.Render(ssTemplate, model, host), "SuperSimpleViewEngine");
                 var ssGroup = new TestGroup("SuperSimpleViewEngine").PlanAndExecute("Template", () =>
                 {
                     engine.Render(ssTemplate, model, host);
                 }, 5000);
                 Console.WriteLine(ssGroup);
+                Console.WriteLine("---------");
             }
 
             Console.WriteLine("Done");
@@ -93,14 +98,14 @@ namespace Veil.Benchmark
             }
         }
 
-        private static void AssertTemplateSample(string sample)
+        private static void AssertTemplateSample(string sample, string engine)
         {
             string expectedResult = ReadTemplate("txt");
             expectedResult = Regex.Replace(expectedResult, @"\s", "");
             sample = Regex.Replace(sample, @"\s", "");
             if (!String.Equals(expectedResult, sample))
             {
-                throw new InvalidOperationException("Sample didn't match");
+                Console.WriteLine("!!! -- Sample didn't match for test " + engine + " -- !!!");
             }
         }
 
