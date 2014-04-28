@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Veil.Handlebars;
+using Veil.SuperSimple;
 
 namespace Veil
 {
@@ -10,6 +11,7 @@ namespace Veil
         public void SetUp()
         {
             VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
+            VeilEngine.RegisterParser("supersimple", new SuperSimpleParser());
         }
     }
 }
