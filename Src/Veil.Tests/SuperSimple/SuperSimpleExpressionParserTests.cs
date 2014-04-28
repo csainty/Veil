@@ -10,7 +10,7 @@ namespace Veil.SuperSimple
     internal class SuperSimpleExpressionParserTests
     {
         [Test]
-        public void Should_parse_model_keywords_as_self_expression()
+        public void Should_parse_model_keywords_as_self_expression_scoped_to_root()
         {
             var model = new { };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model");
@@ -88,6 +88,13 @@ namespace Veil.SuperSimple
             ));
         }
 
+        [Test]
+        public void Should_parse_field_references()
+        {
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(ViewModel)), "Model.FieldName");
+            result.ShouldDeepEqual(E.Field(typeof(ViewModel), "FieldName", SyntaxTreeNode.ExpressionScope.RootModel));
+        }
+
         [TestCase("Model.Wrong")]
         [TestCase("Model.name")]
         public void Should_throw_for_invalid_expressions(string expression)
@@ -108,6 +115,11 @@ namespace Veil.SuperSimple
                 scopes.AddFirst(new SuperSimpleParser.ParserScope { ModelType = currentScope });
             }
             return scopes;
+        }
+
+        private class ViewModel
+        {
+            public bool FieldName = true;
         }
     }
 }

@@ -50,6 +50,9 @@ namespace Veil.SuperSimple
             var propertyInfo = scope.ModelType.GetProperty(expression);
             if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(scope.ModelType, expression, expressionScope);
 
+            var fieldInfo = scope.ModelType.GetField(expression);
+            if (fieldInfo != null) return SyntaxTreeNode.ExpressionNode.Field(scope.ModelType, expression, expressionScope);
+
             if (expression.StartsWith("Has"))
             {
                 var collectionExpression = ParseAgainstModel(originalExpression, expression.Substring(3), scope, expressionScope);
