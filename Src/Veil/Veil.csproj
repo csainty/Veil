@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteExpression.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitBlock.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
