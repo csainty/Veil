@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Sigil;
+﻿using System.Collections.Generic;
 
 namespace Veil.Compiler
 {
-    internal partial class VeilTemplateCompiler
+    internal partial class VeilTemplateCompiler<T>
     {
-        private static void EmitNode<T>(VeilCompilerState<T> state, SyntaxTreeNode rootNode)
+        private void EmitNode(SyntaxTreeNode rootNode)
         {
             var nodes = GetIndividualNodes(rootNode);
             foreach (var node in nodes)
             {
                 var nodeType = node.GetType();
                 if (nodeType == typeof(SyntaxTreeNode.WriteLiteralNode))
-                    EmitWriteLiteral(state, (SyntaxTreeNode.WriteLiteralNode)node);
+                    EmitWriteLiteral((SyntaxTreeNode.WriteLiteralNode)node);
                 else if (nodeType == typeof(SyntaxTreeNode.WriteExpressionNode))
-                    EmitWriteExpression(state, (SyntaxTreeNode.WriteExpressionNode)node);
+                    EmitWriteExpression((SyntaxTreeNode.WriteExpressionNode)node);
                 else if (nodeType == typeof(SyntaxTreeNode.ConditionalNode))
-                    EmitConditional(state, (SyntaxTreeNode.ConditionalNode)node);
+                    EmitConditional((SyntaxTreeNode.ConditionalNode)node);
                 else if (nodeType == typeof(SyntaxTreeNode.IterateNode))
-                    EmitIterate(state, (SyntaxTreeNode.IterateNode)node);
+                    EmitIterate((SyntaxTreeNode.IterateNode)node);
                 else
                     throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(nodeType.Name));
             }

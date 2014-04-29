@@ -2,24 +2,24 @@
 
 namespace Veil.Compiler
 {
-    internal partial class VeilTemplateCompiler
+    internal partial class VeilTemplateCompiler<T>
     {
         private static MethodInfo htmlEncodeMethod = typeof(Helpers).GetMethod("HtmlEncode");
 
-        private static void EmitWriteExpression<T>(VeilCompilerState<T> state, SyntaxTreeNode.WriteExpressionNode node)
+        private void EmitWriteExpression(SyntaxTreeNode.WriteExpressionNode node)
         {
-            state.Emitter.LoadWriterToStack();
-            state.PushExpressionScopeOnStack(node.Expression);
-            state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+            emitter.LoadWriterToStack();
+            PushExpressionScopeOnStack(node.Expression);
+            emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
 
             if (node.HtmlEncode)
             {
                 if (node.Expression.ResultType != typeof(string)) throw new VeilCompilerException("Tried to HtmlEncode an expression that does not evaluate to a string");
-                state.Emitter.Call(htmlEncodeMethod);
+                emitter.Call(htmlEncodeMethod);
             }
             else
             {
-                state.Emitter.CallWriteFor(node.Expression.ResultType);
+                emitter.CallWriteFor(node.Expression.ResultType);
             }
         }
     }

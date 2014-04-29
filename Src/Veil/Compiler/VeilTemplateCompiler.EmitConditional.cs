@@ -2,9 +2,9 @@
 
 namespace Veil.Compiler
 {
-    internal partial class VeilTemplateCompiler
+    internal partial class VeilTemplateCompiler<T>
     {
-        private static void EmitConditional<T>(VeilCompilerState<T> state, SyntaxTreeNode.ConditionalNode node)
+        private void EmitConditional(SyntaxTreeNode.ConditionalNode node)
         {
             var hasTrueBlock = node.TrueBlock != null && node.TrueBlock.Nodes.Any();
             var hasFalseBlock = node.FalseBlock != null && node.FalseBlock.Nodes.Any();
@@ -16,37 +16,37 @@ namespace Veil.Compiler
 
             if (!hasTrueBlock)
             {
-                var done = state.Emitter.DefineLabel();
-                state.PushExpressionScopeOnStack(node.Expression);
-                state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
-                state.Emitter.BranchIfTrue(done);
-                EmitNode(state, node.FalseBlock);
-                state.Emitter.MarkLabel(done);
+                var done = emitter.DefineLabel();
+                PushExpressionScopeOnStack(node.Expression);
+                emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                emitter.BranchIfTrue(done);
+                EmitNode(node.FalseBlock);
+                emitter.MarkLabel(done);
             }
             else if (!hasFalseBlock)
             {
-                var done = state.Emitter.DefineLabel();
-                state.PushExpressionScopeOnStack(node.Expression);
-                state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
-                state.Emitter.BranchIfFalse(done);
-                EmitNode(state, node.TrueBlock);
-                state.Emitter.MarkLabel(done);
+                var done = emitter.DefineLabel();
+                PushExpressionScopeOnStack(node.Expression);
+                emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                emitter.BranchIfFalse(done);
+                EmitNode(node.TrueBlock);
+                emitter.MarkLabel(done);
             }
             else
             {
-                var done = state.Emitter.DefineLabel();
-                var falseBlock = state.Emitter.DefineLabel();
+                var done = emitter.DefineLabel();
+                var falseBlock = emitter.DefineLabel();
 
-                state.PushExpressionScopeOnStack(node.Expression);
-                state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
-                state.Emitter.BranchIfFalse(falseBlock);
-                EmitNode(state, node.TrueBlock);
-                state.Emitter.Branch(done);
+                PushExpressionScopeOnStack(node.Expression);
+                emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                emitter.BranchIfFalse(falseBlock);
+                EmitNode(node.TrueBlock);
+                emitter.Branch(done);
 
-                state.Emitter.MarkLabel(falseBlock);
-                EmitNode(state, node.FalseBlock);
+                emitter.MarkLabel(falseBlock);
+                EmitNode(node.FalseBlock);
 
-                state.Emitter.MarkLabel(done);
+                emitter.MarkLabel(done);
             }
         }
     }

@@ -9,13 +9,6 @@ namespace Veil
     {
         private static IDictionary<string, ITemplateParser> Parsers = new Dictionary<string, ITemplateParser>();
 
-        private readonly ITemplateCompiler compiler;
-
-        public VeilEngine()
-        {
-            this.compiler = new VeilTemplateCompiler();
-        }
-
         public Action<TextWriter, T> Compile<T>(string templateType, TextReader templateContents)
         {
             if (String.IsNullOrEmpty(templateType)) throw new ArgumentNullException("templateType");
@@ -23,7 +16,7 @@ namespace Veil
             if (!Parsers.ContainsKey(templateType)) throw new ArgumentException("A parser for templateType '{0}' is not registered.".FormatInvariant(templateType), "templateType");
 
             var syntaxTree = Parsers[templateType].Parse(templateContents, typeof(T));
-            return this.compiler.Compile<T>(syntaxTree);
+            return new VeilTemplateCompiler<T>().Compile(syntaxTree);
         }
 
         public static void RegisterParser(string templateType, ITemplateParser parser)

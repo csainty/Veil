@@ -1,51 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Veil.Compiler
 {
     // TODO: mimic a using block for the disposable
-    internal partial class VeilTemplateCompiler
+    internal partial class VeilTemplateCompiler<T>
     {
-        private static void EmitIterate<T>(VeilCompilerState<T> state, SyntaxTreeNode.IterateNode node)
+        private static MethodInfo moveNextMethod = typeof(System.Collections.IEnumerator).GetMethod("MoveNext");
+        private static MethodInfo disposeMethod = typeof(IDisposable).GetMethod("Dispose");
+
+        private void EmitIterate(SyntaxTreeNode.IterateNode node)
         {
             var enumerable = typeof(IEnumerable<>).MakeGenericType(node.ItemType);
             var getEnumerator = enumerable.GetMethod("GetEnumerator");
-            var moveNext = typeof(System.Collections.IEnumerator).GetMethod("MoveNext");
             var getCurrent = getEnumerator.ReturnType.GetProperty("Current").GetGetMethod();
             var disposeEnumerator = typeof(IDisposable).IsAssignableFrom(getEnumerator.ReturnType);
-            var dispose = typeof(IDisposable).GetMethod("Dispose");
-            var loop = state.Emitter.DefineLabel();
-            var done = state.Emitter.DefineLabel();
+            var loop = emitter.DefineLabel();
+            var done = emitter.DefineLabel();
 
-            state.PushExpressionScopeOnStack(node.Collection);
-            state.Emitter.LoadExpressionFromCurrentModelOnStack(node.Collection);
-            using (var item = state.Emitter.DeclareLocal(node.ItemType))
-            using (var en = state.Emitter.DeclareLocal(getEnumerator.ReturnType))
+            PushExpressionScopeOnStack(node.Collection);
+            emitter.LoadExpressionFromCurrentModelOnStack(node.Collection);
+            using (var item = emitter.DeclareLocal(node.ItemType))
+            using (var en = emitter.DeclareLocal(getEnumerator.ReturnType))
             {
-                state.Emitter.CallMethod(getEnumerator);
-                state.Emitter.StoreLocal(en);
+                emitter.CallMethod(getEnumerator);
+                emitter.StoreLocal(en);
 
-                state.Emitter.MarkLabel(loop);
-                state.Emitter.LoadLocal(en);
-                state.Emitter.CallMethod(moveNext);
-                state.Emitter.BranchIfFalse(done);
+                emitter.MarkLabel(loop);
+                emitter.LoadLocal(en);
+                emitter.CallMethod(moveNextMethod);
+                emitter.BranchIfFalse(done);
 
-                state.Emitter.LoadLocal(en);
-                state.Emitter.CallMethod(getCurrent);
-                state.Emitter.StoreLocal(item);
+                emitter.LoadLocal(en);
+                emitter.CallMethod(getCurrent);
+                emitter.StoreLocal(item);
 
-                state.AddModelScope(e => e.LoadLocal(item));
-                EmitNode(state, node.Body);
-                state.RemoveModelScope();
+                AddModelScope(e => e.LoadLocal(item));
+                EmitNode(node.Body);
+                RemoveModelScope();
 
-                state.Emitter.Branch(loop);
+                emitter.Branch(loop);
 
-                state.Emitter.MarkLabel(done);
+                emitter.MarkLabel(done);
 
                 if (disposeEnumerator)
                 {
-                    state.Emitter.LoadLocal(en);
-                    state.Emitter.Call(dispose);
+                    emitter.LoadLocal(en);
+                    emitter.Call(disposeMethod);
                 }
             }
         }

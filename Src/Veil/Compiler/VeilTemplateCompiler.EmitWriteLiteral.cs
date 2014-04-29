@@ -1,40 +1,36 @@
-﻿using System;
-using System.IO;
-using Sigil;
-
-namespace Veil.Compiler
+﻿namespace Veil.Compiler
 {
-    internal partial class VeilTemplateCompiler
+    internal partial class VeilTemplateCompiler<T>
     {
-        private static void EmitWriteLiteral<T>(VeilCompilerState<T> state, SyntaxTreeNode.WriteLiteralNode node)
+        private void EmitWriteLiteral(SyntaxTreeNode.WriteLiteralNode node)
         {
             if (node.LiteralType == typeof(string))
             {
-                state.Emitter.OutputLiteral((string)node.LiteralContent);
+                emitter.OutputLiteral((string)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(int))
             {
-                state.Emitter.OutputLiteral((int)node.LiteralContent);
+                emitter.OutputLiteral((int)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(double))
             {
-                state.Emitter.OutputLiteral((double)node.LiteralContent);
+                emitter.OutputLiteral((double)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(float))
             {
-                state.Emitter.OutputLiteral((float)node.LiteralContent);
+                emitter.OutputLiteral((float)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(long))
             {
-                state.Emitter.OutputLiteral((long)node.LiteralContent);
+                emitter.OutputLiteral((long)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(uint))
             {
-                state.Emitter.OutputLiteral((uint)node.LiteralContent);
+                emitter.OutputLiteral((uint)node.LiteralContent);
             }
             else if (node.LiteralType == typeof(ulong))
             {
-                state.Emitter.OutputLiteral((ulong)node.LiteralContent);
+                emitter.OutputLiteral((ulong)node.LiteralContent);
             }
             else
             {

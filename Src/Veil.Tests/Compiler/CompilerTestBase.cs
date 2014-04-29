@@ -4,11 +4,9 @@ namespace Veil.Compiler
 {
     internal class CompilerTestBase
     {
-        private readonly ITemplateCompiler compiler = new VeilTemplateCompiler();
-
         protected string ExecuteTemplate<T>(SyntaxTreeNode syntaxTree, T model)
         {
-            var template = this.compiler.Compile<T>(syntaxTree);
+            var template = new VeilTemplateCompiler<T>().Compile(syntaxTree);
             using (var writer = new StringWriter())
             {
                 template(writer, model);

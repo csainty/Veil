@@ -1,19 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Sigil;
 
 namespace Veil.Compiler
 {
-    internal partial class VeilTemplateCompiler : ITemplateCompiler
+    internal partial class VeilTemplateCompiler<T>
     {
-        public Action<TextWriter, T> Compile<T>(SyntaxTreeNode templateSyntaxTree)
+        private readonly LinkedList<Action<Emit<Action<TextWriter, T>>>> scopeStack;
+        private readonly Emit<Action<TextWriter, T>> emitter;
+
+        public VeilTemplateCompiler()
         {
-            var state = new VeilCompilerState<T>();
+            scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
+            emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
+        }
 
-            EmitNode(state, templateSyntaxTree);
+        public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)
+        {
+            AddModelScope(e => e.LoadArgument(1));
+            EmitNode(templateSyntaxTree);
 
-            state.Emitter.Return();
-            return state.Emitter.CreateDelegate();
+            emitter.Return();
+            return emitter.CreateDelegate();
+        }
+
+        private void AddModelScope(Action<Emit<Action<TextWriter, T>>> scope)
+        {
+            scopeStack.AddFirst(scope);
+        }
+
+        private void RemoveModelScope()
+        {
+            scopeStack.RemoveFirst();
+        }
+
+        private void PushCurrentModelOnStack()
+        {
+            scopeStack.First.Value.Invoke(emitter);
+        }
+
+        private void PushExpressionScopeOnStack(SyntaxTreeNode.ExpressionNode node)
+        {
+            switch (node.Scope)
+            {
+                case SyntaxTreeNode.ExpressionScope.CurrentModelOnStack:
+                    scopeStack.First.Value.Invoke(emitter);
+                    break;
+
+                case SyntaxTreeNode.ExpressionScope.RootModel:
+                    scopeStack.Last.Value.Invoke(emitter);
+                    break;
+
+                default:
+                    throw new VeilCompilerException("Uknown expression scope '{0}'".FormatInvariant(node.Scope));
+            }
         }
     }
 }
