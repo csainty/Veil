@@ -65,6 +65,7 @@
     <Compile Include="SuperSimple\SuperSimpleExpressionParserTests.cs" />
     <Compile Include="SuperSimple\SuperSimpleParserTests.cs" />
     <Compile Include="TestSuiteSetUp.cs" />
+    <Compile Include="TestVeilContext.cs" />
     <Compile Include="VeilEngineTests.cs" />
   </ItemGroup>
   <ItemGroup>

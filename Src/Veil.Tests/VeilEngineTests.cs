@@ -8,7 +8,7 @@ namespace Veil
     [TestFixture]
     public class VeilEngineTests
     {
-        private readonly IVeilEngine engine = new VeilEngine();
+        private readonly IVeilEngine engine = new VeilEngine(new TestVeilContext());
 
         private ViewModel viewModel = new ViewModel
         {

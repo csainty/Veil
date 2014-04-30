@@ -9,11 +9,13 @@ namespace Veil.Compiler
     {
         private readonly LinkedList<Action<Emit<Action<TextWriter, T>>>> scopeStack;
         private readonly Emit<Action<TextWriter, T>> emitter;
+        private readonly Func<string, Type, SyntaxTreeNode> includeParser;
 
-        public VeilTemplateCompiler()
+        public VeilTemplateCompiler(Func<string, Type, SyntaxTreeNode> includeParser)
         {
             scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
             emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
+            includeParser = includeParser;
         }
 
         public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Compiler\EmitterExtensions.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="IVeilContext.cs" />
     <Compile Include="VeilCompilerException.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitConditional.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitIterate.cs" />

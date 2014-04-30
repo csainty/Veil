@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Veil.Compiler
 {
@@ -6,12 +7,17 @@ namespace Veil.Compiler
     {
         protected string ExecuteTemplate<T>(SyntaxTreeNode syntaxTree, T model)
         {
-            var template = new VeilTemplateCompiler<T>().Compile(syntaxTree);
+            var template = new VeilTemplateCompiler<T>(GetTemplateByName).Compile(syntaxTree);
             using (var writer = new StringWriter())
             {
                 template(writer, model);
                 return writer.ToString();
             }
+        }
+
+        public SyntaxTreeNode GetTemplateByName(string name, Type modelType)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

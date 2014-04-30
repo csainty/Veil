@@ -27,7 +27,7 @@ namespace Veil.Benchmark
 
             VeilEngine.RegisterParser("haml", new HandlebarsParser());
             VeilEngine.RegisterParser("sshtml", new SuperSimpleParser());
-            var veilEngine = new VeilEngine();
+            var veilEngine = new VeilEngine(new BenchmarkVeilContext());
 
             {
                 var template = veilEngine.Compile<ViewModel>("haml", new StringReader(handlebarsTemplate));
@@ -72,7 +72,7 @@ namespace Veil.Benchmark
 
             {
                 var engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();
-                var host = new TestHost();
+                var host = new BenchmarkHost();
                 Execute("SuperSimpleViewEngine", () =>
                 {
                     return engine.Render(ssTemplate, model, host);
@@ -128,7 +128,7 @@ namespace Veil.Benchmark
         public IEnumerable<string> Roles { get; set; }
     }
 
-    public class TestHost : SuperSimpleViewEngine.IViewEngineHost
+    public class BenchmarkHost : SuperSimpleViewEngine.IViewEngineHost
     {
         public string AntiForgeryToken()
         {
@@ -158,6 +158,14 @@ namespace Veil.Benchmark
         public string HtmlEncode(string input)
         {
             return HttpEncoder.HtmlEncode(input);
+        }
+    }
+
+    public class BenchmarkVeilContext : IVeilContext
+    {
+        public TextReader GetTemplateByName(string name, string templateType)
+        {
+            throw new NotImplementedException();
         }
     }
 }
