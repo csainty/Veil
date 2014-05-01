@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using Veil.Handlebars;
+using Veil.SuperSimple;
 
 namespace Veil
 {
@@ -30,6 +32,10 @@ namespace Veil
         [SetUp]
         public void SetUp()
         {
+            VeilEngine.ClearParserRegistrations();
+            VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
+            VeilEngine.RegisterParser("supersimple", new SuperSimpleParser());
+
             context = new TestVeilContext();
             engine = new VeilEngine(context);
         }

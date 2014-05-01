@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5584FBD-6E00-499A-A6E3-784DB92B3180}</ProjectGuid>
+    <ProjectGuid>{0CE12322-8186-4521-9420-ECC63BB243AF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Veil</RootNamespace>
-    <AssemblyName>Veil.Tests</AssemblyName>
+    <RootNamespace>Nancy.ViewEngines.Veil.SuperSimple</RootNamespace>
+    <AssemblyName>Nancy.ViewEngines.Veil.SuperSimple</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,20 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CsQuery">
-      <HintPath>..\packages\CsQuery.1.3.3\lib\net40\CsQuery.dll</HintPath>
-    </Reference>
-    <Reference Include="DeepEqual">
-      <HintPath>..\packages\DeepEqual.0.12.0.0\lib\net40\DeepEqual.dll</HintPath>
-    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Testing">
-      <HintPath>..\packages\Nancy.Testing.0.22.2\lib\net40\Nancy.Testing.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,44 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compiler\CompilerTestBase.cs" />
-    <Compile Include="Compiler\ConditionalTests.cs" />
-    <Compile Include="Compiler\IncludeTests.cs" />
-    <Compile Include="Compiler\IterateTests.cs" />
-    <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
-    <Compile Include="Compiler\BlockTests.cs" />
-    <Compile Include="Compiler\WriteLiteralTests.cs" />
-    <Compile Include="Compiler\WriteExpressionTests.cs" />
-    <Compile Include="Expressions\CollectionHasItemsNodeTests.cs" />
-    <Compile Include="Expressions\IterateNodeTests.cs" />
-    <Compile Include="Handlebars\ConditionalTests.cs" />
-    <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
-    <Compile Include="Handlebars\IterationTests.cs" />
-    <Compile Include="Handlebars\WriteLiteralTests.cs" />
-    <Compile Include="Handlebars\WriteExpressionTests.cs" />
-    <Compile Include="Helpers\HtmlEncodeTests.cs" />
-    <Compile Include="NancyViewEngines\SuperSimple.cs" />
-    <Compile Include="ParserTestBase.cs" />
+    <Compile Include="NancyVeilContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SuperSimple\SuperSimpleExpressionParserTests.cs" />
-    <Compile Include="SuperSimple\SuperSimpleParserTests.cs" />
-    <Compile Include="TestVeilContext.cs" />
-    <Compile Include="VeilEngineTests.cs" />
+    <Compile Include="VeilSuperSimpleViewEngine.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NancyViewEngines\Views\Header.vsshtml" />
-    <None Include="NancyViewEngines\Views\Index.vsshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nancy.ViewEngines.Veil.SuperSimple\Nancy.ViewEngines.Veil.SuperSimple.csproj">
-      <Project>{0ce12322-8186-4521-9420-ecc63bb243af}</Project>
-      <Name>Nancy.ViewEngines.Veil.SuperSimple</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
-      <Project>{3335691a-38b6-4dd1-96cb-a1c262cef4cc}</Project>
-      <Name>Veil.Handlebars</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Veil.SuperSimple\Veil.SuperSimple.csproj">
       <Project>{3478795d-95e0-45d8-bf31-b85f95b1e160}</Project>
       <Name>Veil.SuperSimple</Name>
@@ -101,7 +59,6 @@
       <Name>Veil</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

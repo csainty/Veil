@@ -1,0 +1,9 @@
+﻿<!DOCTYPE html />
+<html>
+<head>
+</head>
+<body>
+	@Partial['Header'];
+	<h1>Hello @Model.Name</h1>
+</body>
+</html>
