@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using DeepEqual.Syntax;
+using Veil.Parser;
 
 namespace Veil
 {

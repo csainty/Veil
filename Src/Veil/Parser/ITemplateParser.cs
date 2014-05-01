@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Veil
+namespace Veil.Parser
 {
     public interface ITemplateParser
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Veil.Compiler;
+using Veil.Parser;
 
 namespace Veil
 {
