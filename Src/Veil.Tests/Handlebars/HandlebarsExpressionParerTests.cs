@@ -1,5 +1,6 @@
 ﻿using DeepEqual.Syntax;
 using NUnit.Framework;
+using Veil.Parser;
 
 namespace Veil.Handlebars
 {

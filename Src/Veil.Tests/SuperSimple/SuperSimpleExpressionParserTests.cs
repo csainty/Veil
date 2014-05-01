@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using DeepEqual.Syntax;
 using NUnit.Framework;
-using E = Veil.SyntaxTreeNode.ExpressionNode;
+using Veil.Parser;
+using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
 
 namespace Veil.SuperSimple
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Veil
+namespace Veil.Parser
 {
     public abstract partial class SyntaxTreeNode
     {

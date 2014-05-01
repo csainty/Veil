@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Veil.Parser;
 
 namespace Veil.Expressions
 {

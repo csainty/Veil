@@ -58,8 +58,8 @@
     <Compile Include="Parser\ITemplateParser.cs" />
     <Compile Include="VeilParserException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyntaxTree.cs" />
-    <Compile Include="SyntaxTree.Expressions.cs" />
+    <Compile Include="Parser\SyntaxTree.cs" />
+    <Compile Include="Parser\SyntaxTree.Expressions.cs" />
     <Compile Include="VeilEngine.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.cs" />
   </ItemGroup>

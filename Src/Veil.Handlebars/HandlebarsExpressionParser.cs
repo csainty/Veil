@@ -1,4 +1,5 @@
 ﻿using System;
+using Veil.Parser;
 
 namespace Veil.Handlebars
 {

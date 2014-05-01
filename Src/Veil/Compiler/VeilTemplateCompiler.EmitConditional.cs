@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Veil.Parser;
 
 namespace Veil.Compiler
 {

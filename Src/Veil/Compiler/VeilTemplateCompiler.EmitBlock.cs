@@ -1,4 +1,6 @@
-﻿namespace Veil.Compiler
+﻿using Veil.Parser;
+
+namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {

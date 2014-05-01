@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Veil.Parser;
 
 namespace Veil.SuperSimple
 {

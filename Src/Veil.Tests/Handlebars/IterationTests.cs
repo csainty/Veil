@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using Veil.Parser;
 
 namespace Veil.Handlebars
 {

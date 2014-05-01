@@ -2,8 +2,8 @@
 using System.Linq;
 using NUnit.Framework;
 using Veil.SuperSimple;
-using E = Veil.SyntaxTreeNode.ExpressionNode;
-using S = Veil.SyntaxTreeNode;
+using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
+using S = Veil.Parser.SyntaxTreeNode;
 
 namespace Veil.Tests.SuperSimple
 {
