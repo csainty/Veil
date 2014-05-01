@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerTestBase.cs" />
     <Compile Include="Compiler\ConditionalTests.cs" />
+    <Compile Include="Compiler\IncludeTests.cs" />
     <Compile Include="Compiler\IterateTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
     <Compile Include="Compiler\BlockTests.cs" />

@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using NUnit.Framework;
 
 namespace Veil.Compiler
 {
     internal class CompilerTestBase
     {
+        private readonly Dictionary<string, SyntaxTreeNode> templates = new Dictionary<string, SyntaxTreeNode>();
+
+        [SetUp]
+        public void SetUp()
+        {
+            templates.Clear();
+        }
+
         protected string ExecuteTemplate<T>(SyntaxTreeNode syntaxTree, T model)
         {
             var template = new VeilTemplateCompiler<T>(GetTemplateByName).Compile(syntaxTree);
@@ -15,9 +25,16 @@ namespace Veil.Compiler
             }
         }
 
+        protected void RegisterTemplate(string name, SyntaxTreeNode syntaxTree)
+        {
+            templates.Add(name, syntaxTree);
+        }
+
         public SyntaxTreeNode GetTemplateByName(string name, Type modelType)
         {
-            throw new System.NotImplementedException();
+            if (!templates.ContainsKey(name))
+                return null;
+            return templates[name];
         }
     }
 }

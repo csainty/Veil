@@ -73,6 +73,20 @@ namespace Veil
             };
         }
 
+        /// <summary>
+        /// Execute another template with the provided model and output the result
+        /// </summary>
+        /// <param name="templateName">The name of the template to execute. It will be loaded from the <see cref="IVeilContext"/></param>
+        /// <param name="modelExpression">An expression for the model to be used as the root scope when executing the template</param>
+        public static IncludeTemplateNode Include(string templateName, ExpressionNode modelExpression)
+        {
+            return new IncludeTemplateNode
+            {
+                ModelExpression = modelExpression,
+                TemplateName = templateName
+            };
+        }
+
         public class BlockNode : SyntaxTreeNode
         {
             private List<SyntaxTreeNode> nodes;
@@ -135,6 +149,13 @@ namespace Veil
             public BlockNode Body { get; set; }
 
             public Type ItemType { get { return Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0]; } }
+        }
+
+        public class IncludeTemplateNode : SyntaxTreeNode
+        {
+            public ExpressionNode ModelExpression { get; set; }
+
+            public string TemplateName { get; set; }
         }
     }
 }

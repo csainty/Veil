@@ -15,6 +15,8 @@
                 EmitIterate((SyntaxTreeNode.IterateNode)node);
             else if (nodeType == typeof(SyntaxTreeNode.BlockNode))
                 EmitBlock((SyntaxTreeNode.BlockNode)node);
+            else if (nodeType == typeof(SyntaxTreeNode.IncludeTemplateNode))
+                EmitInclude((SyntaxTreeNode.IncludeTemplateNode)node);
             else
                 throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(nodeType.Name));
         }
