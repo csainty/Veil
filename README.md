@@ -16,7 +16,7 @@ Veil is a prototype .NET template renderer / view engine. It is designed as a to
 * Generic Models
 * Automatic property conversion to string
 * Support for encoding or escaping output
-* Master pages
+* Master pages inc. multi region
 * Partials / Includes
 * Conditional Logic
 * Loops / Iterators
@@ -29,4 +29,3 @@ Veil is a prototype .NET template renderer / view engine. It is designed as a to
 
 ### Not supported or not prioritised at this time
 * Arbitrary code in templates
-* Multi-region master pages
