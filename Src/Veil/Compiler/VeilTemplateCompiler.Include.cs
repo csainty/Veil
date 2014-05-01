@@ -13,14 +13,14 @@
                 emitter.LoadExpressionFromCurrentModelOnStack(node.ModelExpression);
                 emitter.StoreLocal(model);
 
-                var oldScopeStack = scopeStack;
-                scopeStack = CreateScopeStack();
-                AddModelScope(e => e.LoadLocal(model));
+                using (CreateLocalScopeStack())
+                {
+                    AddModelScope(e => e.LoadLocal(model));
 
-                EmitNode(template);
+                    EmitNode(template);
 
-                RemoveModelScope();
-                this.scopeStack = oldScopeStack;
+                    RemoveModelScope();
+                }
             }
         }
     }

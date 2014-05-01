@@ -13,7 +13,7 @@ namespace Veil.Compiler
 
         public VeilTemplateCompiler(Func<string, Type, SyntaxTreeNode> includeParser)
         {
-            scopeStack = this.CreateScopeStack();
+            scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
             emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
             this.includeParser = includeParser;
         }
@@ -27,9 +27,14 @@ namespace Veil.Compiler
             return emitter.CreateDelegate();
         }
 
-        private LinkedList<Action<Emit<Action<TextWriter, T>>>> CreateScopeStack()
+        private IDisposable CreateLocalScopeStack()
         {
-            return new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
+            var oldScopeStack = scopeStack;
+            scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
+            return new ActionDisposable(() =>
+            {
+                scopeStack = oldScopeStack;
+            });
         }
 
         private void AddModelScope(Action<Emit<Action<TextWriter, T>>> scope)
