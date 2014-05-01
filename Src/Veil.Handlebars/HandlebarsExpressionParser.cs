@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Veil
+namespace Veil.Handlebars
 {
     public static class HandlebarsExpressionParser
     {
