@@ -1,0 +1,5 @@
+﻿<ul>
+	@Each.Roles
+		<li>@!Current;</li>
+	@EndEach
+</ul>

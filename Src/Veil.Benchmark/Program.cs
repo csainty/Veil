@@ -21,13 +21,18 @@ namespace Veil.Benchmark
                 IsLoggedIn = true,
                 Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader", "Pick & Pack" }
             };
-            var handlebarsTemplate = ReadTemplate("haml");
-            var razorTemplate = ReadTemplate("cshtml");
-            var ssTemplate = ReadTemplate("sshtml");
+            var handlebarsTemplate = ReadTemplate("Template.haml");
+            var razorTemplate = ReadTemplate("Template.cshtml");
+            var ssTemplate = ReadTemplate("Template.sshtml");
 
             VeilEngine.RegisterParser("haml", new HandlebarsParser());
             VeilEngine.RegisterParser("sshtml", new SuperSimpleParser());
-            var veilEngine = new VeilEngine(new BenchmarkVeilContext());
+            var veilContext = new BenchmarkVeilContext();
+            var veilEngine = new VeilEngine(veilContext);
+            var superSimpleHost = new BenchmarkHost();
+
+            veilContext.RegisterTemplate("Roles", ReadTemplate("Roles.sshtml"));
+            superSimpleHost.RegisterTemplate("Roles", ReadTemplate("Roles.sshtml"));
 
             {
                 var template = veilEngine.Compile<ViewModel>("haml", new StringReader(handlebarsTemplate));
@@ -72,10 +77,9 @@ namespace Veil.Benchmark
 
             {
                 var engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();
-                var host = new BenchmarkHost();
                 Execute("SuperSimpleViewEngine", () =>
                 {
-                    return engine.Render(ssTemplate, model, host);
+                    return engine.Render(ssTemplate, model, superSimpleHost);
                 });
             }
 
@@ -101,18 +105,19 @@ namespace Veil.Benchmark
 
         private static void AssertTemplateSample(string sample, string engine)
         {
-            string expectedResult = ReadTemplate("txt");
+            string expectedResult = ReadTemplate("Template.txt");
             expectedResult = Regex.Replace(expectedResult, @"\s", "");
             sample = Regex.Replace(sample, @"\s", "");
             if (!String.Equals(expectedResult, sample))
             {
                 Console.WriteLine("!!! -- Sample didn't match for test " + engine + " -- !!!");
+                Console.WriteLine(sample.Replace("\r\n", " "));
             }
         }
 
-        private static string ReadTemplate(string extension)
+        private static string ReadTemplate(string templateName)
         {
-            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Veil.Benchmark.Template." + extension)))
+            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Veil.Benchmark." + templateName)))
             {
                 return reader.ReadToEnd();
             }
@@ -130,6 +135,13 @@ namespace Veil.Benchmark
 
     public class BenchmarkHost : SuperSimpleViewEngine.IViewEngineHost
     {
+        private Dictionary<string, string> registeredTemplates = new Dictionary<string, string>();
+
+        public void RegisterTemplate(string name, string content)
+        {
+            registeredTemplates.Add(name, content);
+        }
+
         public string AntiForgeryToken()
         {
             return "";
@@ -147,7 +159,7 @@ namespace Veil.Benchmark
 
         public string GetTemplate(string templateName, object model)
         {
-            throw new NotImplementedException();
+            return registeredTemplates[templateName];
         }
 
         public string GetUriString(string name, params string[] parameters)
@@ -163,9 +175,16 @@ namespace Veil.Benchmark
 
     public class BenchmarkVeilContext : IVeilContext
     {
+        private Dictionary<string, string> registeredTemplates = new Dictionary<string, string>();
+
+        public void RegisterTemplate(string name, string content)
+        {
+            registeredTemplates.Add(name, content);
+        }
+
         public TextReader GetTemplateByName(string name, string templateType)
         {
-            throw new NotImplementedException();
+            return new StringReader(registeredTemplates[name]);
         }
     }
 }

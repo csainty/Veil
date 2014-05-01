@@ -68,6 +68,7 @@
     <EmbeddedResource Include="Template.haml" />
     <EmbeddedResource Include="Template.cshtml" />
     <EmbeddedResource Include="Template.sshtml" />
+    <EmbeddedResource Include="Roles.sshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">

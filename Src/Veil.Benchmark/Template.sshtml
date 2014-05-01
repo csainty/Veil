@@ -14,10 +14,6 @@
 			<a>Sign In</a>
 		@EndIf
 	</nav>
-	<ul>
-		@Each.Roles
-			<li>@!Current</li>
-		@EndEach
-	</ul>
+	@Partial['Roles'];
 </body>
 </html>
