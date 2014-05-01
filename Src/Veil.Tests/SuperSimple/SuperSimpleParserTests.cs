@@ -376,66 +376,36 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_parse_basic_partials()
+        {
+            var input = @"<html><head></head><body>@Partial['testing'];</body></html>";
+            var result = Parse(input, typeof(object));
+
+            AssertSyntaxTree(
+                result,
+                S.WriteString("<html><head></head><body>"),
+                S.Include("testing", E.Self(typeof(object))),
+                S.WriteString("</body></html>")
+            );
+        }
+
+        [Test]
+        public void Should_parse_partial_with_specified_model_property()
+        {
+            var input = @"<html><head></head><body>@Partial['testing', Model.User];</body></html>";
+            var model = new { Name = "Jim", User = new { Name = "Bob" } };
+            var result = Parse(input, model.GetType());
+
+            AssertSyntaxTree(
+                result,
+                S.WriteString("<html><head></head><body>"),
+                S.Include("testing", E.Property(model.GetType(), "User", S.ExpressionScope.RootModel)),
+                S.WriteString("</body></html>")
+            );
+        }
+
         /*
-                [Test]
-                public void Should_expand_basic_partials()
-                {
-                    const string input = @"<html><head></head><body>@Partial['testing'];</body></html>";
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => "Test partial content";
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, new object(), fakeViewEngineHost);
-
-                    Assert.Equal(@"<html><head></head><body>Test partial content</body></html>", result);
-                }
-
-                [Test]
-                public void Should_expand_partial_content_with_model_if_no_model_specified()
-                {
-                    const string input = @"<html><head></head><body>@Partial['testing'];</body></html>";
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => "Hello @Model.Name";
-                    dynamic model = new ExpandoObject();
-                    model.Name = "Bob";
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, model, fakeViewEngineHost);
-
-                    Assert.Equal(@"<html><head></head><body>Hello Bob</body></html>", result);
-                }
-
-                [Test]
-                public void Should_expand_partial_content_with_specified_model_property_if_specified()
-                {
-                    const string input = @"<html><head></head><body>@Partial['testing', Model.User];</body></html>";
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => "Hello @Model.Name";
-                    dynamic model = new ExpandoObject();
-                    dynamic subModel = new ExpandoObject();
-                    model.Name = "Jim";
-                    subModel.Name = "Bob";
-                    model.User = subModel;
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, model, fakeViewEngineHost);
-
-                    Assert.Equal(@"<html><head></head><body>Hello Bob</body></html>", result);
-                }
-
-                [Test]
-                public void Should_expand_partial_content_even_with_no_model()
-                {
-                    const string input = @"<html><head></head><body>@Partial['testing'];</body></html>";
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => "Test partial content";
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, null, fakeViewEngineHost);
-
-                    Assert.Equal(@"<html><head></head><body>Test partial content</body></html>", result);
-                }
-
                 [Test]
                 public void Should_try_to_locate_master_page_if_one_specified()
                 {

@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Veil
 {
     internal class TestVeilContext : IVeilContext
     {
-        public System.IO.TextReader GetTemplateByName(string name, string templateType)
+        private readonly Dictionary<string, string> registeredTemplates = new Dictionary<string, string>();
+
+        public TextReader GetTemplateByName(string name, string templateType)
         {
-            throw new NotImplementedException();
+            return new StringReader(registeredTemplates[name]);
+        }
+
+        public void RegisterTemplate(string name, string content)
+        {
+            registeredTemplates.Add(name, content);
         }
     }
 }
