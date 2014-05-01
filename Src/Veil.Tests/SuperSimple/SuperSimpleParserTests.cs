@@ -292,7 +292,7 @@ namespace Veil.Tests.SuperSimple
             var result = ((S.BlockNode)template).Nodes.OfType<S.WriteExpressionNode>().Single().Expression as E.PropertyExpressionNode;
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Property, Is.EqualTo(model.GetType().GetProperty("Name")));
+            Assert.That(result.PropertyInfo, Is.EqualTo(model.GetType().GetProperty("Name")));
         }
 
         [TestCase(@"<html><head></head><body><ul>@Each;<li>Hello @Current;</li>@EndEach;</ul></body></html>")]

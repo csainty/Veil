@@ -95,11 +95,11 @@ namespace Veil.Compiler
         {
             if (expression is SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)
             {
-                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)expression).Property.GetGetMethod());
+                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)expression).PropertyInfo.GetGetMethod());
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.FieldExpressionNode)
             {
-                emitter.LoadField(((SyntaxTreeNode.ExpressionNode.FieldExpressionNode)expression).Field);
+                emitter.LoadField(((SyntaxTreeNode.ExpressionNode.FieldExpressionNode)expression).FieldInfo);
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)
             {
@@ -108,7 +108,7 @@ namespace Veil.Compiler
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)
             {
-                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)expression).Function);
+                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)expression).MethodInfo);
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.CollectionHasItemsNode)
             {

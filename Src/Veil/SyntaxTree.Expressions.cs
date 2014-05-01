@@ -28,7 +28,7 @@ namespace Veil
             {
                 return new PropertyExpressionNode
                 {
-                    Property = modelType.GetProperty(propertyName),
+                    PropertyInfo = modelType.GetProperty(propertyName),
                     Scope = scope
                 };
             }
@@ -43,7 +43,7 @@ namespace Veil
             {
                 return new FieldExpressionNode
                 {
-                    Field = modelType.GetField(fieldName),
+                    FieldInfo = modelType.GetField(fieldName),
                     Scope = scope
                 };
             }
@@ -74,7 +74,7 @@ namespace Veil
             {
                 return new FunctionCallExpressionNode
                 {
-                    Function = modelType.GetMethod(functionName),
+                    MethodInfo = modelType.GetMethod(functionName),
                     Scope = scope
                 };
             }
@@ -108,21 +108,21 @@ namespace Veil
 
             public class PropertyExpressionNode : ExpressionNode
             {
-                public PropertyInfo Property { get; set; }
+                public PropertyInfo PropertyInfo { get; set; }
 
                 public override Type ResultType
                 {
-                    get { return this.Property.PropertyType; }
+                    get { return this.PropertyInfo.PropertyType; }
                 }
             }
 
             public class FieldExpressionNode : ExpressionNode
             {
-                public FieldInfo Field { get; set; }
+                public FieldInfo FieldInfo { get; set; }
 
                 public override Type ResultType
                 {
-                    get { return this.Field.FieldType; }
+                    get { return this.FieldInfo.FieldType; }
                 }
             }
 
@@ -140,11 +140,11 @@ namespace Veil
 
             public class FunctionCallExpressionNode : ExpressionNode
             {
-                public MethodInfo Function { get; set; }
+                public MethodInfo MethodInfo { get; set; }
 
                 public override Type ResultType
                 {
-                    get { return this.Function.ReturnType; }
+                    get { return this.MethodInfo.ReturnType; }
                 }
             }
 
