@@ -18,8 +18,7 @@ namespace Veil.Compiler
             if (!hasTrueBlock)
             {
                 var done = emitter.DefineLabel();
-                PushExpressionScopeOnStack(node.Expression);
-                emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                EvaluateExpression(node.Expression);
                 emitter.BranchIfTrue(done);
                 EmitNode(node.FalseBlock);
                 emitter.MarkLabel(done);
@@ -27,8 +26,7 @@ namespace Veil.Compiler
             else if (!hasFalseBlock)
             {
                 var done = emitter.DefineLabel();
-                PushExpressionScopeOnStack(node.Expression);
-                emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                EvaluateExpression(node.Expression);
                 emitter.BranchIfFalse(done);
                 EmitNode(node.TrueBlock);
                 emitter.MarkLabel(done);
@@ -38,8 +36,7 @@ namespace Veil.Compiler
                 var done = emitter.DefineLabel();
                 var falseBlock = emitter.DefineLabel();
 
-                PushExpressionScopeOnStack(node.Expression);
-                emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+                EvaluateExpression(node.Expression);
                 emitter.BranchIfFalse(falseBlock);
                 EmitNode(node.TrueBlock);
                 emitter.Branch(done);

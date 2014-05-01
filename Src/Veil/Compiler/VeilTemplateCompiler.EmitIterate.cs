@@ -20,8 +20,7 @@ namespace Veil.Compiler
             var loop = emitter.DefineLabel();
             var done = emitter.DefineLabel();
 
-            PushExpressionScopeOnStack(node.Collection);
-            emitter.LoadExpressionFromCurrentModelOnStack(node.Collection);
+            EvaluateExpression(node.Collection);
             using (var item = emitter.DeclareLocal(node.ItemType))
             using (var en = emitter.DeclareLocal(getEnumerator.ReturnType))
             {

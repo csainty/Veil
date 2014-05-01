@@ -11,8 +11,7 @@ namespace Veil.Compiler
 
             using (var model = emitter.DeclareLocal(node.ModelExpression.ResultType))
             {
-                PushExpressionScopeOnStack(node.ModelExpression);
-                emitter.LoadExpressionFromCurrentModelOnStack(node.ModelExpression);
+                EvaluateExpression(node.ModelExpression);
                 emitter.StoreLocal(model);
 
                 using (CreateLocalScopeStack())

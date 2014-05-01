@@ -9,9 +9,8 @@ namespace Veil.Compiler
 
         private void EmitWriteExpression(SyntaxTreeNode.WriteExpressionNode node)
         {
-            emitter.LoadWriterToStack();
-            PushExpressionScopeOnStack(node.Expression);
-            emitter.LoadExpressionFromCurrentModelOnStack(node.Expression);
+            LoadWriterToStack();
+            EvaluateExpression(node.Expression);
 
             if (node.HtmlEncode)
             {
@@ -20,7 +19,7 @@ namespace Veil.Compiler
             }
             else
             {
-                emitter.CallWriteFor(node.Expression.ResultType);
+                CallWriteFor(node.Expression.ResultType);
             }
         }
     }
