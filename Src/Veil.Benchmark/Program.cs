@@ -83,6 +83,18 @@ namespace Veil.Benchmark
                 });
             }
 
+            {
+                var template = veilEngine.CompileNonGeneric("sshtml", new StringReader(ssTemplate), typeof(ViewModel));
+                Execute("Veil.NonGeneric.SuperSimple", () =>
+                {
+                    using (var writer = new StringWriter())
+                    {
+                        template(writer, model);
+                        return writer.ToString();
+                    }
+                });
+            }
+
             Console.WriteLine("Done");
             Console.ReadKey();
         }

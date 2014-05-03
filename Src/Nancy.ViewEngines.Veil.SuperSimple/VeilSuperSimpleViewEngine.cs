@@ -34,15 +34,14 @@ namespace Nancy.ViewEngines.Veil.SuperSimple
             var template = renderContext.ViewCache.GetOrAdd(viewLocationResult, result =>
             {
                 Type modelType = model.GetType();
-                var typedCompileMethod = compileMethod.MakeGenericMethod(modelType);
-                return typedCompileMethod.Invoke(this.engine, new object[] { "supersimple", result.Contents() }) as Delegate;
+                return this.engine.CompileNonGeneric("supersimple", result.Contents(), modelType);
             });
 
             var response = new Response();
             response.Contents = s =>
             {
                 var writer = new StreamWriter(s);
-                template.DynamicInvoke(writer, model);
+                template(writer, model);
                 writer.Flush();
             };
             return response;

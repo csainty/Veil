@@ -9,5 +9,7 @@ namespace Veil
     public interface IVeilEngine
     {
         Action<TextWriter, T> Compile<T>(string templateType, TextReader templateContents);
+
+        Action<TextWriter, object> CompileNonGeneric(string templateType, TextReader templateContents, Type modelType);
     }
 }

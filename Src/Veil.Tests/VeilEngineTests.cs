@@ -48,6 +48,14 @@ namespace Veil
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [TestCaseSource("HandlebarsTemplates")]
+        public void Should_render_handlebars_template_nongeneric(string template, string expectedResult)
+        {
+            var view = CompileNonGeneric(template, "handlebars");
+            var result = Execute(view, viewModel);
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         [TestCaseSource("SuperSimpleTemplates")]
         public void Should_render_supersimple_template(string template, string expectedResult)
         {
@@ -55,6 +63,17 @@ namespace Veil
             context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
             context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
             var view = Compile(template, "supersimple");
+            var result = Execute(view, viewModel);
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [TestCaseSource("SuperSimpleTemplates")]
+        public void Should_render_supersimple_template_nongeneric(string template, string expectedResult)
+        {
+            context.RegisterTemplate("Role", "@Current;");
+            context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
+            context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
+            var view = CompileNonGeneric(template, "supersimple");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -94,6 +113,14 @@ namespace Veil
             using (var reader = new StringReader(template))
             {
                 return engine.Compile<ViewModel>(templateType, reader);
+            }
+        }
+
+        private Action<TextWriter, object> CompileNonGeneric(string template, string templateType)
+        {
+            using (var reader = new StringReader(template))
+            {
+                return engine.CompileNonGeneric(templateType, reader, typeof(ViewModel));
             }
         }
 

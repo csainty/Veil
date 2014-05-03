@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using Sigil;
 using Veil.Compiler;
 using Veil.Parser;
 
@@ -11,6 +13,7 @@ namespace Veil
     /// </summary>
     public class VeilEngine : IVeilEngine
     {
+        private static readonly MethodInfo compileMethod = typeof(VeilEngine).GetMethod("Compile");
         private static IDictionary<string, ITemplateParser> Parsers = new Dictionary<string, ITemplateParser>();
         private readonly IVeilContext context;
 
@@ -34,6 +37,31 @@ namespace Veil
 
             var syntaxTree = Parsers[templateType].Parse(templateContents, typeof(T));
             return new VeilTemplateCompiler<T>(CreateIncludeParser(templateType, context)).Compile(syntaxTree);
+        }
+
+        /// <summary>
+        /// Parses and compiles the specified template when the model type is not known
+        /// </summary>
+        /// <param name="templateType">Name of the <see cref="ITemplateParser"/> to use to parse the template. See <see cref="VeilEngine.RegisterParser"/></param>
+        /// <param name="templateContents">The contents of the template to compile</param>
+        /// <param name="modelType">The type of the model that will be passed to the template</param>
+        /// <returns>A compiled action that will cast the model before execution</returns>
+        public Action<TextWriter, object> CompileNonGeneric(string templateType, TextReader templateContents, Type modelType)
+        {
+            var typedCompileMethod = compileMethod.MakeGenericMethod(modelType);
+            var compiledTemplate = typedCompileMethod.Invoke(this, new object[] { templateType, templateContents });
+            var compiledTemplateType = compiledTemplate.GetType();
+
+            var emitter = Emit<Action<TextWriter, object, object>>.NewDynamicMethod();
+            emitter.LoadArgument(2);
+            emitter.CastClass(compiledTemplateType);
+            emitter.LoadArgument(0);
+            emitter.LoadArgument(1);
+            emitter.CastClass(modelType);
+            emitter.Call(compiledTemplateType.GetMethod("Invoke"));
+            emitter.Return();
+            var del = emitter.CreateDelegate();
+            return new Action<TextWriter, object>((w, m) => del(w, m, compiledTemplate));
         }
 
         /// <summary>
