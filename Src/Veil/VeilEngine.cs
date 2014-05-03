@@ -17,6 +17,17 @@ namespace Veil
         private static IDictionary<string, ITemplateParser> Parsers = new Dictionary<string, ITemplateParser>();
         private readonly IVeilContext context;
 
+        /// <summary>
+        /// Creates a VeilEngine that does not support Includes/Partials/MasterPages.
+        /// </summary>
+        public VeilEngine()
+            : this(new NullVeilContext())
+        {
+        }
+
+        /// <summary>
+        /// Creates a VeilEngine with an <see cref="IVeilContext"/> to enable support for Includes/Partials/MasterPages.
+        /// </summary>
         public VeilEngine(IVeilContext context)
         {
             this.context = context;

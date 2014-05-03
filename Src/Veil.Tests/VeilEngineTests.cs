@@ -78,6 +78,40 @@ namespace Veil
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [Test]
+        public void Should_work_with_no_veilcontext()
+        {
+            var view = new VeilEngine().Compile<ViewModel>("supersimple", new StringReader("Hello @Model.Name"));
+            using (var writer = new StringWriter())
+            {
+                view(writer, new ViewModel { Name = "Joe" });
+                Assert.That(writer.ToString(), Is.EqualTo("Hello Joe"));
+            }
+        }
+
+        [Test]
+        public void Should_throw_if_attempt_to_use_partials_without_veilcontext()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var view = new VeilEngine().Compile<ViewModel>("supersimple", new StringReader("Hello @Partial['Person'];"));
+            });
+
+// Register your parsers
+VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
+
+
+// Compile your template once with the chosen parser
+var template = "Hello {{ Name }}";
+var compiledTemplate = new VeilEngine().Compile<ViewModel>("handlebars", new StringReader(template));
+
+
+            using (var writer = new StringWriter()){
+                compiledTemplate(writer, new ViewModel { Name = "Bob" });
+            }
+
+        }
+
         public object[] HandlebarsTemplates()
         {
             return new object[] {
