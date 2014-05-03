@@ -96,20 +96,6 @@ namespace Veil
             {
                 var view = new VeilEngine().Compile<ViewModel>("supersimple", new StringReader("Hello @Partial['Person'];"));
             });
-
-// Register your parsers
-VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
-
-
-// Compile your template once with the chosen parser
-var template = "Hello {{ Name }}";
-var compiledTemplate = new VeilEngine().Compile<ViewModel>("handlebars", new StringReader(template));
-
-
-            using (var writer = new StringWriter()){
-                compiledTemplate(writer, new ViewModel { Name = "Bob" });
-            }
-
         }
 
         public object[] HandlebarsTemplates()
