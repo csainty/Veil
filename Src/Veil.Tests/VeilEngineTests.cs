@@ -40,14 +40,7 @@ namespace Veil
             engine = new VeilEngine(context);
         }
 
-        [TestCase("Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!")]
-        [TestCase("{{#if Name}}Hello {{Name}}{{/if}}", "Hello Chris")]
-        [TestCase("{{#if ViewCount}}Count: {{ViewCount}}{{/if}}", "Count: 10")]
-        [TestCase("{{#if IsAdmin}}Yo Admin!{{/if}}", "")]
-        [TestCase("{{#if IsAdmin}}Yo Admin!{{else}}Sorry{{/if}}", "Sorry")]
-        [TestCase("Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil")]
-        [TestCase("Department: {{ Department.GetDepartmentNumber() }}", "Department: 10")]
-        [TestCase("Hey {{ Name }}, You are in roles{{#each Roles}} {{ this }}{{/each}}", "Hey Chris, You are in roles User Browser")]
+        [TestCaseSource("HandlebarsTemplates")]
         public void Should_render_handlebars_template(string template, string expectedResult)
         {
             var view = Compile(template, "handlebars");
@@ -55,16 +48,7 @@ namespace Veil
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
-        [TestCase("Hello @Model.Name;. You have visited us @Model.ViewCount times!", "Hello Chris. You have visited us 10 times!")]
-        [TestCase("@If.Name;Hello @Model.Name;@EndIf", "Hello Chris")]
-        [TestCase("@If.ViewCount;Count: @Model.ViewCount;@EndIf", "Count: 10")]
-        [TestCase("@If.IsAdmin;Yo Admin!@EndIf", "")]
-        [TestCase("@If.IsAdmin;Yo Admin!@EndIf;@IfNot.IsAdmin;Sorry@EndIf", "Sorry")]
-        [TestCase("Hey @Name;, @Department.DepartmentName; @If.Department.Company;@Model.Department.Company.CompanyName;@EndIf", "Hey Chris, Developers Veil")]
-        [TestCase("Hey @Name, You are in roles@Each.Roles; @Current;@EndEach;", "Hey Chris, You are in roles User Browser")]
-        [TestCase("Hey @Name, You are in roles @Each.Roles;@Partial['Role'];@EndEach;", "Hey Chris, You are in roles UserBrowser")]
-        [TestCase("Hey @Name, You are in roles @Partial['Roles', Model.Roles];", "Hey Chris, You are in roles <ul><li>User</li><li>Browser</li></ul>")]
-        [TestCase("Hey @Name from @Partial['Department', Department]", "Hey Chris from Developers Veil")]
+        [TestCaseSource("SuperSimpleTemplates")]
         public void Should_render_supersimple_template(string template, string expectedResult)
         {
             context.RegisterTemplate("Role", "@Current;");
@@ -73,6 +57,36 @@ namespace Veil
             var view = Compile(template, "supersimple");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        public object[] HandlebarsTemplates()
+        {
+            return new object[] {
+                new object[] {"Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!"},
+                new object[] {"{{#if Name}}Hello {{Name}}{{/if}}", "Hello Chris"},
+                new object[] {"{{#if ViewCount}}Count: {{ViewCount}}{{/if}}", "Count: 10"},
+                new object[] {"{{#if IsAdmin}}Yo Admin!{{/if}}", ""},
+                new object[] {"{{#if IsAdmin}}Yo Admin!{{else}}Sorry{{/if}}", "Sorry"},
+                new object[] {"Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil"},
+                new object[] {"Department: {{ Department.GetDepartmentNumber() }}", "Department: 10"},
+                new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{ this }}{{/each}}", "Hey Chris, You are in roles User Browser"}
+            };
+        }
+
+        public object[] SuperSimpleTemplates()
+        {
+            return new object[] {
+                new object[] {"Hello @Model.Name;. You have visited us @Model.ViewCount times!", "Hello Chris. You have visited us 10 times!"},
+                new object[] {"@If.Name;Hello @Model.Name;@EndIf", "Hello Chris"},
+                new object[] {"@If.ViewCount;Count: @Model.ViewCount;@EndIf", "Count: 10"},
+                new object[] {"@If.IsAdmin;Yo Admin!@EndIf", ""},
+                new object[] {"@If.IsAdmin;Yo Admin!@EndIf;@IfNot.IsAdmin;Sorry@EndIf", "Sorry"},
+                new object[] {"Hey @Name;, @Department.DepartmentName; @If.Department.Company;@Model.Department.Company.CompanyName;@EndIf", "Hey Chris, Developers Veil"},
+                new object[] {"Hey @Name, You are in roles@Each.Roles; @Current;@EndEach;", "Hey Chris, You are in roles User Browser"},
+                new object[] {"Hey @Name, You are in roles @Each.Roles;@Partial['Role'];@EndEach;", "Hey Chris, You are in roles UserBrowser"},
+                new object[] {"Hey @Name, You are in roles @Partial['Roles', Model.Roles];", "Hey Chris, You are in roles <ul><li>User</li><li>Browser</li></ul>"},
+                new object[] {"Hey @Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"}
+            };
         }
 
         private Action<TextWriter, ViewModel> Compile(string template, string templateType)
