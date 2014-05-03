@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chevron.IE, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Chevron.IE, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Chevron.IE.Merged.0.4.0\Lib\NET40\Chevron.IE.dll</HintPath>
+      <HintPath>..\packages\Chevron.IE.Merged.0.4.1\Lib\NET40\Chevron.IE.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine">
       <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
@@ -49,7 +49,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.1.2\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
