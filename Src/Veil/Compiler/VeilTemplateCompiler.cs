@@ -25,7 +25,7 @@ namespace Veil.Compiler
 
         public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)
         {
-            if (templateSyntaxTree is SyntaxTreeNode.ExtendTemplateNode)
+            while (templateSyntaxTree is SyntaxTreeNode.ExtendTemplateNode)
             {
                 templateSyntaxTree = Extend((SyntaxTreeNode.ExtendTemplateNode)templateSyntaxTree);
             }
@@ -41,6 +41,8 @@ namespace Veil.Compiler
         {
             foreach (var o in extendNode.Overrides)
             {
+                if (overrideSections.ContainsKey(o.Key)) continue;
+
                 overrideSections.Add(o.Key, o.Value);
             }
             return includeParser(extendNode.TemplateName, typeof(T));

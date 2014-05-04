@@ -63,5 +63,24 @@ namespace Veil.Compiler
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello World"));
         }
+
+        [Test]
+        public void Should_be_able_to_nest_extends()
+        {
+            var model = new { };
+            RegisterTemplate("one", S.Block(S.Override("start"), S.Override("middle"), S.Override("end")));
+            RegisterTemplate("two", S.Extend("one", new Dictionary<string, S> {
+                {"start", S.WriteString("Hello ")},
+                {"middle", S.WriteString("there ")},
+                {"end", S.Override("name", S.WriteString("world"))}
+            }));
+            var template = S.Extend("two", new Dictionary<string, S>
+            {
+                {"start", S.WriteString("Well hello ")},
+                {"name", S.WriteString("Bob")}
+            });
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Well hello there Bob"));
+        }
     }
 }
