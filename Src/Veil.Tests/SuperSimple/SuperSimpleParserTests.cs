@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DeepEqual.Syntax;
 using NUnit.Framework;
 using Veil.SuperSimple;
 using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
@@ -405,25 +406,22 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        /*
-                [Test]
-                public void Should_try_to_locate_master_page_if_one_specified()
+        [Test]
+        public void Should_parse_master_page_if_one_specified()
+        {
+            var input = "@Master['myMaster']\r\n@Section['Header'];\r\nHeader\r\n@EndSection\r\n@Section['Footer']\r\nFooter\r\n@EndSection";
+            var output = Parse(input, typeof(object));
+
+            output.ShouldDeepEqual(
+                S.Extend("myMaster", new Dictionary<string, S>
                 {
-                    const string input = "@Master['myMaster']\r\n@Section['Header'];\r\nHeader\r\n@EndSection\r\n@Section['Footer']\r\nFooter\r\n@EndSection";
-                    var called = false;
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) =>
-                        {
-                            called = (s == "myMaster");
-                            return "";
-                        };
-                    var viewEngine = new SuperSimpleViewEngine();
+                    { "Header", S.Block(S.WriteString("Header")) },
+                    { "Footer", S.Block(S.WriteString("Footer")) }
+                })
+            );
+        }
 
-                    viewEngine.Render(input, null, fakeViewEngineHost);
-
-                    Assert.True(called);
-                }
-
+        /*
                 [Test]
                 public void Should_replace_sections_in_master_page()
                 {

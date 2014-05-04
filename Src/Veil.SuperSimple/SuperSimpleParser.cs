@@ -12,14 +12,17 @@ namespace Veil.SuperSimple
     // - Stack assertions for @Each
     public class SuperSimpleParser : ITemplateParser
     {
+        private static Regex SuperSimpleMatcher = new Regex(@"@!?[A-Za-z0-9\.]*(\[.*?\])?;?", RegexOptions.Compiled);
+
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
-            var template = templateReader.ReadToEnd();
+            var template = templateReader.ReadToEnd().Trim();
+            if (template.StartsWith("@Master")) return ParseMaster(template, modelType);
+
             var scopeStack = new LinkedList<ParserScope>();
             scopeStack.AddFirst(new ParserScope { Block = SyntaxTreeNode.Block(), ModelType = modelType });
 
-            var matcher = new Regex(@"@!?[A-Za-z0-9\.]*(\[.*?\])?;?");
-            var matches = matcher.Matches(template);
+            var matches = SuperSimpleMatcher.Matches(template);
             var index = 0;
             foreach (Match match in matches)
             {
@@ -108,6 +111,37 @@ namespace Veil.SuperSimple
             }
 
             return scopeStack.First.Value.Block;
+        }
+
+        private SyntaxTreeNode.ExtendTemplateNode ParseMaster(string template, Type modelType)
+        {
+            var extendNode = new SyntaxTreeNode.ExtendTemplateNode { Overrides = new Dictionary<string, SyntaxTreeNode>() };
+            var matches = SuperSimpleMatcher.Matches(template);
+            var sectionStartindex = 0;
+            var sectionName = "";
+            var inSection = false;
+
+            foreach (Match match in matches)
+            {
+                var token = match.Value.Trim(new[] { '@', ';' });
+                if (token.StartsWith("Master["))
+                {
+                    extendNode.TemplateName = token.Substring(8).Trim('[', ']', '\'', ' ', '\t');
+                }
+                else if (token.StartsWith("Section["))
+                {
+                    sectionName = token.Substring(8).Trim('[', ']', '\'', ' ', '\t');
+                    sectionStartindex = match.Index + match.Length;
+                    inSection = true;
+                }
+                else if (token == "EndSection")
+                {
+                    var block = Parse(new StringReader(template.Substring(sectionStartindex, match.Index - sectionStartindex)), modelType);
+                    extendNode.Overrides.Add(sectionName, block);
+                    inSection = false;
+                }
+            }
+            return extendNode;
         }
 
         internal class ParserScope
