@@ -13,21 +13,37 @@ namespace Veil.Compiler
         private LinkedList<Action<Emit<Action<TextWriter, T>>>> scopeStack;
         private readonly Emit<Action<TextWriter, T>> emitter;
         private readonly Func<string, Type, SyntaxTreeNode> includeParser;
+        private readonly IDictionary<string, SyntaxTreeNode> overrideSections;
 
         public VeilTemplateCompiler(Func<string, Type, SyntaxTreeNode> includeParser)
         {
             scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
             emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
+            overrideSections = new Dictionary<string, SyntaxTreeNode>();
             this.includeParser = includeParser;
         }
 
         public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)
         {
+            if (templateSyntaxTree is SyntaxTreeNode.ExtendTemplateNode)
+            {
+                templateSyntaxTree = Extend((SyntaxTreeNode.ExtendTemplateNode)templateSyntaxTree);
+            }
+
             AddModelScope(e => e.LoadArgument(1));
             EmitNode(templateSyntaxTree);
 
             emitter.Return();
             return emitter.CreateDelegate();
+        }
+
+        private SyntaxTreeNode Extend(SyntaxTreeNode.ExtendTemplateNode extendNode)
+        {
+            foreach (var o in extendNode.Overrides)
+            {
+                overrideSections.Add(o.Key, o.Value);
+            }
+            return includeParser(extendNode.TemplateName, typeof(T));
         }
 
         private IDisposable CreateLocalScopeStack()

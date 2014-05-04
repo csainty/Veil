@@ -87,6 +87,51 @@ namespace Veil.Parser
             };
         }
 
+        /// <summary>
+        /// Defines a template that extends another template e.g. MasterPages
+        /// Extend nodes must be the root of a syntax tree
+        /// </summary>
+        /// <param name="templateName">The name of the template to extend. It will be loaded from the <see cref="IVeilContext"/></param>
+        /// <param name="overrides">A set of overrides for the <see cref="OverridePointNode"/> defined in the template being extended.</param>
+        public static ExtendTemplateNode Extend(string templateName, IDictionary<string, SyntaxTreeNode> overrides = null)
+        {
+            return new ExtendTemplateNode
+            {
+                TemplateName = templateName,
+                Overrides = overrides ?? new Dictionary<string, SyntaxTreeNode>()
+            };
+        }
+
+        /// <summary>
+        /// Defines a point in a template that can be overridden when the template is extended.
+        /// </summary>
+        /// <param name="overrideName">The name of the override which must match that specified in the overriding template</param>
+        /// <param name="isOptional">Indicates whether an exception should be thrown if the override is missing</param>
+        public static OverridePointNode Override(string overrideName, bool isOptional = false)
+        {
+            return new OverridePointNode
+            {
+                OverrideName = overrideName,
+                IsRequired = !isOptional
+            };
+        }
+
+        /// <summary>
+        /// Defines an optional point in a template that can be overridden when the template is extended.
+        /// If the point is not overridden then the specified content is used by default
+        /// </summary>
+        /// <param name="overrideName">The name of the override which must match that specified in the overriding template</param>
+        /// <param name="defaultContent">The content to use when the point is not overridden</param>
+        public static OverridePointNode Override(string overrideName, SyntaxTreeNode defaultContent)
+        {
+            return new OverridePointNode
+            {
+                OverrideName = overrideName,
+                IsRequired = false,
+                DefaultContent = defaultContent
+            };
+        }
+
         public class BlockNode : SyntaxTreeNode
         {
             private List<SyntaxTreeNode> nodes;
@@ -156,6 +201,22 @@ namespace Veil.Parser
             public ExpressionNode ModelExpression { get; set; }
 
             public string TemplateName { get; set; }
+        }
+
+        public class ExtendTemplateNode : SyntaxTreeNode
+        {
+            public string TemplateName { get; set; }
+
+            public IDictionary<string, SyntaxTreeNode> Overrides { get; set; }
+        }
+
+        public class OverridePointNode : SyntaxTreeNode
+        {
+            public string OverrideName { get; set; }
+
+            public bool IsRequired { get; set; }
+
+            public SyntaxTreeNode DefaultContent { get; set; }
         }
     }
 }

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="Compiler\EmitterExtensions.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitOverride.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.Include.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IVeilContext.cs" />
