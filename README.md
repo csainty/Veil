@@ -39,3 +39,8 @@ using (var writer = new StringWriter()) {
     compiledTemplate(writer, new ViewModel { Name = "Bob" });
 }
 ```` 
+
+### Binaries / Build
+Until nuget packages are released, you can grab pre-compiled binaries from [https://ci.appveyor.com/project/csainty/veil/build/artifacts](https://ci.appveyor.com/project/csainty/veil/build/artifacts)
+
+[![Build status](https://ci.appveyor.com/api/projects/status/cad383bewb58svi1)](https://ci.appveyor.com/project/csainty/veil)
