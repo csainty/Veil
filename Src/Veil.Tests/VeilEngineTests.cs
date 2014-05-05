@@ -59,9 +59,7 @@ namespace Veil
         [TestCaseSource("SuperSimpleTemplates")]
         public void Should_render_supersimple_template(string template, string expectedResult)
         {
-            context.RegisterTemplate("Role", "@Current;");
-            context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
-            context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
+            RegisterSuperSimpleTemplates();
             var view = Compile(template, "supersimple");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -70,9 +68,7 @@ namespace Veil
         [TestCaseSource("SuperSimpleTemplates")]
         public void Should_render_supersimple_template_nongeneric(string template, string expectedResult)
         {
-            context.RegisterTemplate("Role", "@Current;");
-            context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
-            context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
+            RegisterSuperSimpleTemplates();
             var view = CompileNonGeneric(template, "supersimple");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -124,8 +120,19 @@ namespace Veil
                 new object[] {"Hey @Name, You are in roles@Each.Roles; @Current;@EndEach;", "Hey Chris, You are in roles User Browser"},
                 new object[] {"Hey @Name, You are in roles @Each.Roles;@Partial['Role'];@EndEach;", "Hey Chris, You are in roles UserBrowser"},
                 new object[] {"Hey @Name, You are in roles @Partial['Roles', Model.Roles];", "Hey Chris, You are in roles <ul><li>User</li><li>Browser</li></ul>"},
-                new object[] {"Hey @Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"}
+                new object[] {"Hey @Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"},
+                new object[] {"@Master['Master']; @Section['Middle'];Testing 1.2.3@EndSection;", "Hello Chris Testing 1.2.3 See Ya!"},
+                new object[] {"@Master['MiddleMaster']; @Section['Content'];Testing 1.2.3@EndSection;", "Hello Chris from Developers Testing 1.2.3 See Ya!"}
             };
+        }
+
+        private void RegisterSuperSimpleTemplates()
+        {
+            context.RegisterTemplate("Role", "@Current;");
+            context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
+            context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
+            context.RegisterTemplate("Master", "Hello @Model.Name; @Section['Middle'] See Ya!");
+            context.RegisterTemplate("MiddleMaster", "@Master['Master'] @Section['Middle']from @Department.DepartmentName @Section['Content'];@EndSection");
         }
 
         private Action<TextWriter, ViewModel> Compile(string template, string templateType)
