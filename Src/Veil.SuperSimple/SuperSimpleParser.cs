@@ -18,8 +18,16 @@ namespace Veil.SuperSimple
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd().Trim();
-            if (template.StartsWith("@Master")) return ParseMaster(template, modelType);
+            if (template.StartsWith("@Master"))
+            {
+                return ParseMaster(template, modelType);
+            }
 
+            return ParseTemplate(template, modelType);
+        }
+
+        private SyntaxTreeNode ParseTemplate(string template, Type modelType)
+        {
             var scopeStack = new LinkedList<ParserScope>();
             scopeStack.AddFirst(new ParserScope { Block = SyntaxTreeNode.Block(), ModelType = modelType });
 
@@ -114,8 +122,9 @@ namespace Veil.SuperSimple
 
         private SyntaxTreeNode.ExtendTemplateNode ParseMaster(string template, Type modelType)
         {
-            var extendNode = new SyntaxTreeNode.ExtendTemplateNode { Overrides = new Dictionary<string, SyntaxTreeNode>() };
             var matches = SuperSimpleMatcher.Matches(template);
+            var masterName = "";
+            var sections = new Dictionary<string, SyntaxTreeNode>();
             var sectionStartindex = 0;
             var sectionName = "";
             var inSection = false;
@@ -125,7 +134,7 @@ namespace Veil.SuperSimple
                 var token = match.Value.Trim(new[] { '@', ';' });
                 if (token.StartsWith("Master["))
                 {
-                    extendNode.TemplateName = GetNameAndModelFromToken(token).Item1;
+                    masterName = GetNameAndModelFromToken(token).Item1;
                 }
                 else if (token.StartsWith("Section["))
                 {
@@ -136,11 +145,11 @@ namespace Veil.SuperSimple
                 else if (token == "EndSection")
                 {
                     var block = Parse(new StringReader(template.Substring(sectionStartindex, match.Index - sectionStartindex)), modelType);
-                    extendNode.Overrides.Add(sectionName, block);
+                    sections.Add(sectionName, block);
                     inSection = false;
                 }
             }
-            return extendNode;
+            return SyntaxTreeNode.Extend(masterName, sections);
         }
 
         public Tuple<string, string> GetNameAndModelFromToken(string token)
