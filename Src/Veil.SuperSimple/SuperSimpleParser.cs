@@ -101,6 +101,10 @@ namespace Veil.SuperSimple
                     }
                     scopeStack.First.Value.Block.Add(SyntaxTreeNode.Include(details.Item1, modelExpression));
                 }
+                else if (token.StartsWith("Section["))
+                {
+                    scopeStack.First.Value.Block.Add(SyntaxTreeNode.Override(GetNameAndModelFromToken(token).Item1));
+                }
                 else if (token.StartsWith("!"))
                 {
                     var expression = SuperSimpleExpressionParser.Parse(scopeStack, token.Substring(1));
@@ -138,6 +142,7 @@ namespace Veil.SuperSimple
                 }
                 else if (token.StartsWith("Section["))
                 {
+                    if (inSection) continue;
                     sectionName = GetNameAndModelFromToken(token).Item1;
                     sectionStartindex = match.Index + match.Length;
                     inSection = true;

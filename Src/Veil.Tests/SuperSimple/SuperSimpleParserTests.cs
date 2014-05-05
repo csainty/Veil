@@ -421,51 +421,43 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_parse_sections_in_master_page()
+        {
+            var input = @"<div id='header'>@Section['Header'];</div><div id='footer'>@Section['Footer'];</div>";
+            var result = Parse(input, typeof(object));
+
+            AssertSyntaxTree(
+                result,
+                S.WriteString("<div id='header'>"),
+                S.Override("Header"),
+                S.WriteString("</div><div id='footer'>"),
+                S.Override("Footer"),
+                S.WriteString("</div>")
+            );
+        }
+
+        [Test]
+        public void Should_handle_master_page_hierarchies()
+        {
+            var input = "@Master['top']\r\n@Section['TopContent']Top\r\n@Section['MiddleContent']@EndSection";
+            var result = Parse(input, typeof(object));
+
+            result.ShouldDeepEqual(
+                S.Extend("top", new Dictionary<string, S>()
+                {
+                    {
+                        "TopContent",
+                        S.Block(
+                            S.WriteString("Top\r\n"),
+                            S.Override("MiddleContent")
+                        )
+                    }
+                })
+            );
+        }
+
         /*
-                [Test]
-                public void Should_replace_sections_in_master_page()
-                {
-                    const string input = "@Master['myMaster']\r\n@Section['Header'];\r\nHeader\r\n@EndSection\r\n@Section['Footer']\r\nFooter\r\n@EndSection";
-                    const string master = @"<div id='header'>@Section['Header'];</div><div id='footer'>@Section['Footer'];</div>";
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => master;
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, null, fakeViewEngineHost);
-
-                    Assert.Equal("<div id='header'>\r\nHeader\r\n</div><div id='footer'>\r\nFooter\r\n</div>", result);
-                }
-
-                [Test]
-                public void Should_also_expand_master_page_with_same_model()
-                {
-                    const string input = "@Master['myMaster']\r\n@Section['Header'];\r\nHeader\r\n@EndSection\r\n@Section['Footer']\r\nFooter\r\n@EndSection";
-                    const string master = @"Hello @Model.Name!<div id='header'>@Section['Header'];</div><div id='footer'>@Section['Footer'];</div>";
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => master;
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, new { Name = "Bob" }, fakeViewEngineHost);
-
-                    Assert.Equal("Hello Bob!<div id='header'>\r\nHeader\r\n</div><div id='footer'>\r\nFooter\r\n</div>", result);
-                }
-
-                [Test]
-                public void Should_handle_master_page_hierarchies()
-                {
-                    const string input = "@Master['middle']\r\n@Section['MiddleContent']Middle@EndSection";
-                    const string middle = "@Master['top']\r\n@Section['TopContent']Top\r\n@Section['MiddleContent']@EndSection";
-                    const string top = "Top! @Section['TopContent']";
-
-                    var fakeViewEngineHost = new FakeViewEngineHost();
-                    fakeViewEngineHost.GetTemplateCallback = (s, m) => s == "middle" ? middle : top;
-                    var viewEngine = new SuperSimpleViewEngine();
-
-                    var result = viewEngine.Render(input, null, fakeViewEngineHost);
-
-                    Assert.Equal("Top! Top\r\nMiddle", result);
-                }
-
                 [Test]
                 public void Should_call_to_expand_paths()
                 {
