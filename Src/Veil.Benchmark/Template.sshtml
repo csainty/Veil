@@ -1,19 +1,15 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-	<title>Test Template</title>
-</head>
-<body>
+﻿@Master['Master']
+
+@Section['Content']
 	<h1>@!Model.Name</h1>
 
 	<nav>
-        @If.IsLoggedIn
+		@If.IsLoggedIn
 			<a>Sign Out</a>
-        @EndIf
+		@EndIf
 		@IfNot.IsLoggedIn
 			<a>Sign In</a>
 		@EndIf
 	</nav>
 	@Partial['Roles'];
-</body>
-</html>
+@EndSection

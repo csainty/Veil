@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <EmbeddedResource Include="Master.sshtml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Template.haml" />
     <EmbeddedResource Include="Template.cshtml" />

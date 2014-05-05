@@ -31,7 +31,9 @@ namespace Veil.Benchmark
             var veilEngine = new VeilEngine(veilContext);
             var superSimpleHost = new BenchmarkHost();
 
+            veilContext.RegisterTemplate("Master", ReadTemplate("Master.sshtml"));
             veilContext.RegisterTemplate("Roles", ReadTemplate("Roles.sshtml"));
+            superSimpleHost.RegisterTemplate("Master", ReadTemplate("Master.sshtml"));
             superSimpleHost.RegisterTemplate("Roles", ReadTemplate("Roles.sshtml"));
 
             {
