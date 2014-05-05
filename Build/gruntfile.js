@@ -41,6 +41,14 @@ module.exports = function (grunt) {
                     target: ['Clean', 'Rebuild'],
                     stdout: true
                 }
+            },
+            nancysupersimple: {
+                src: ['../src/Nancy.ViewEngines.Veil.SuperSimple/Nancy.ViewEngines.Veil.SuperSimple.csproj'],
+                options: {
+                    projectConfiguration: 'Release',
+                    target: ['Clean', 'Rebuild'],
+                    stdout: true
+                }
             }
         },
         clean: {
@@ -78,6 +86,11 @@ module.exports = function (grunt) {
                     cwd: '../src/Veil.Handlebars/bin/Release/',
                     src: ['Veil.Handlebars.*'],
                     dest: 'dist/lib/net40'
+                },{
+                    expand: true,
+                    cwd: '../src/Nancy.ViewEngines.Veil.SuperSimple/bin/Release/',
+                    src: ['Nancy.ViewEngines.Veil.SuperSimple.*'],
+                    dest: 'dist/lib/net40'
                 }]
             }
         },
@@ -98,6 +111,13 @@ module.exports = function (grunt) {
             },
             handlebars: {
                 src: 'dist/Veil.Handlebars.nuspec',
+                dest: 'dist/',
+                options: {
+                    version: pkg.version
+                }                
+            },
+            nancysupersimple: {
+                src: 'dist/Nancy.ViewEngines.Veil.SuperSimple.nuspec',
                 dest: 'dist/',
                 options: {
                     version: pkg.version
