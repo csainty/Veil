@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Veil")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("An easy-to-use and highly optimized template renderer / view engine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Veil")]

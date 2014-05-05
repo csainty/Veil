@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Veil.SuperSimple")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A Veil parser for the SuperSimple syntax")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Veil.SuperSimple")]

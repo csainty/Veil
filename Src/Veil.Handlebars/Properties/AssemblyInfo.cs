@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Veil.Handlebars")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A Veil parser for the Handlebars syntax")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Veil.Handlebars")]

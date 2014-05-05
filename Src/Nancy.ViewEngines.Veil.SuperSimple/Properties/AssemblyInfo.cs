@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Nancy.ViewEngines.Veil.SuperSimple")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A Nancy ViewEngine that wraps Veil.SuperSimple")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Nancy.ViewEngines.Veil.SuperSimple")]

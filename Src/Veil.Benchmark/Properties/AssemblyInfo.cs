@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Veil.Benchmark")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A quick benchmark of the Veil compiler")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Veil.Benchmark")]
