@@ -116,11 +116,11 @@ namespace Veil
                 new object[] {"@If.ViewCount;Count: @Model.ViewCount;@EndIf", "Count: 10"},
                 new object[] {"@If.IsAdmin;Yo Admin!@EndIf", ""},
                 new object[] {"@If.IsAdmin;Yo Admin!@EndIf;@IfNot.IsAdmin;Sorry@EndIf", "Sorry"},
-                new object[] {"Hey @Name;, @Department.DepartmentName; @If.Department.Company;@Model.Department.Company.CompanyName;@EndIf", "Hey Chris, Developers Veil"},
-                new object[] {"Hey @Name, You are in roles@Each.Roles; @Current;@EndEach;", "Hey Chris, You are in roles User Browser"},
-                new object[] {"Hey @Name, You are in roles @Each.Roles;@Partial['Role'];@EndEach;", "Hey Chris, You are in roles UserBrowser"},
-                new object[] {"Hey @Name, You are in roles @Partial['Roles', Model.Roles];", "Hey Chris, You are in roles <ul><li>User</li><li>Browser</li></ul>"},
-                new object[] {"Hey @Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"},
+                new object[] {"Hey @Model.Name;, @Model.Department.DepartmentName; @If.Department.Company;@Model.Department.Company.CompanyName;@EndIf", "Hey Chris, Developers Veil"},
+                new object[] {"Hey @Model.Name, You are in roles@Each.Roles; @Current;@EndEach;", "Hey Chris, You are in roles User Browser"},
+                new object[] {"Hey @Model.Name, You are in roles @Each.Roles;@Partial['Role'];@EndEach;", "Hey Chris, You are in roles UserBrowser"},
+                new object[] {"Hey @Model.Name, You are in roles @Partial['Roles', Model.Roles];", "Hey Chris, You are in roles <ul><li>User</li><li>Browser</li></ul>"},
+                new object[] {"Hey @Model.Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"},
                 new object[] {"@Master['Master']; @Section['Middle'];Testing 1.2.3@EndSection;", "Hello Chris Testing 1.2.3 See Ya!"},
                 new object[] {"@Master['MiddleMaster']; @Section['Content'];Testing 1.2.3@EndSection;", "Hello Chris from Developers Testing 1.2.3 See Ya!"}
             };
@@ -132,7 +132,7 @@ namespace Veil
             context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
             context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
             context.RegisterTemplate("Master", "Hello @Model.Name; @Section['Middle'] See Ya!");
-            context.RegisterTemplate("MiddleMaster", "@Master['Master'] @Section['Middle']from @Department.DepartmentName @Section['Content'];@EndSection");
+            context.RegisterTemplate("MiddleMaster", "@Master['Master'] @Section['Middle']from @Model.Department.DepartmentName @Section['Content'];@EndSection");
         }
 
         private Action<TextWriter, ViewModel> Compile(string template, string templateType)

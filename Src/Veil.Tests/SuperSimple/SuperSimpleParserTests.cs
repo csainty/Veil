@@ -12,6 +12,17 @@ namespace Veil.Tests.SuperSimple
     internal class SuperSimpleParserTests : ParserTestBase<SuperSimpleParser>
     {
         [Test]
+        public void Should_not_choke_on_an_email_address()
+        {
+            var input = "<a href=\"mailto:foo@foo.com\">foo@foo.com</a>";
+            var output = Parse(input, typeof(object));
+            AssertSyntaxTree(
+                output,
+                S.WriteString("<a href=\"mailto:foo@foo.com\">foo@foo.com</a>")
+            );
+        }
+
+        [Test]
         public void Should_replace_primitive_model_with_value()
         {
             var input = @"<html><head></head><body>Hello there @Model;</body></html>";

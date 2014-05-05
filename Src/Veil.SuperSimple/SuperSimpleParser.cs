@@ -12,7 +12,7 @@ namespace Veil.SuperSimple
     // - Stack assertions for @Each
     public class SuperSimpleParser : ITemplateParser
     {
-        private static Regex SuperSimpleMatcher = new Regex(@"@!?[A-Za-z0-9\.]*(\[.*?\])?;?", RegexOptions.Compiled);
+        private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
         private static Regex NameMatcher = new Regex(@".*?\[\'(?<Name>.*?)\'(,(?<Model>.*))?\]", RegexOptions.Compiled);
 
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
