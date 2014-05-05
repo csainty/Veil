@@ -15,4 +15,9 @@
       <dependency id="Sigil" version="4.1.0" />
     </dependencies>
   </metadata>
+    <files>
+      <file src="lib\net40\Veil.dll" target="lib\net40" />
+      <file src="lib\net40\Veil.pdb" target="lib\net40" />
+      <file src="lib\net40\Veil.xml" target="lib\net40" />
+    </files>
 </package>

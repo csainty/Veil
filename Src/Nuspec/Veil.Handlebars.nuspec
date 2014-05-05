@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Veil.Handlebars</id>
+    <version>0.0.0</version>
+    <title>Veil.Handlebars</title>
+    <authors>csainty</authors>
+    <owners>csainty</owners>
+    <projectUrl>https://github.com/csainty/Veil</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A Veil parser for the Handlebars template syntax</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>veil template render format view engine handlebars</tags>
+    <dependencies>
+      <dependency id="Veil" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net40\Veil.Handlebars.dll" target="lib\net40" />
+    <file src="lib\net40\Veil.Handlebars.pdb" target="lib\net40" />
+  </files>
+</package>

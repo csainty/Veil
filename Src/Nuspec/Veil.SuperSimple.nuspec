@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Veil.SuperSimple</id>
+    <version>0.0.0</version>
+    <title>Veil.SuperSimple</title>
+    <authors>csainty</authors>
+    <owners>csainty</owners>
+    <projectUrl>https://github.com/csainty/Veil</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A Veil parser for the SuperSimple template syntax</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>veil template render format view engine supersimple</tags>
+    <dependencies>
+      <dependency id="Veil" version="$version$" />
+    </dependencies>    
+  </metadata>
+  <files>
+    <file src="lib\net40\Veil.SuperSimple.dll" target="lib\net40" />
+    <file src="lib\net40\Veil.SuperSimple.pdb" target="lib\net40" />
+  </files>  
+</package>

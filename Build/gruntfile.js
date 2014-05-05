@@ -25,6 +25,22 @@ module.exports = function (grunt) {
                         documentationFile: 'Veil.xml'
                     }
                 }
+            },
+            supersimple: {
+                src: ['../src/Veil.SuperSimple/Veil.SuperSimple.csproj'],
+                options: {
+                    projectConfiguration: 'Release',
+                    target: ['Clean', 'Rebuild'],
+                    stdout: true
+                }
+            },
+            handlebars: {
+                src: ['../src/Veil.Handlebars/Veil.Handlebars.csproj'],
+                options: {
+                    projectConfiguration: 'Release',
+                    target: ['Clean', 'Rebuild'],
+                    stdout: true
+                }
             }
         },
         clean: {
@@ -37,7 +53,7 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: '../Src/Nuspec/',
-                    src: ['Veil.nuspec'],
+                    src: ['*.nuspec'],
                     dest: 'dist/'
                 }]
             },
@@ -45,19 +61,48 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: '../src/Veil/bin/Release/',
-                    src: ['Veil.dll', 'Veil.pdb', 'Veil.xml'],
+                    src: ['Veil.*'],
+                    dest: 'dist/lib/net40'
+                },{
+                    expand: true,
+                    cwd: '../src/Veil/',
+                    src: ['Veil.xml'],
+                    dest: 'dist/lib/net40'
+                },{
+                    expand: true,
+                    cwd: '../src/Veil.SuperSimple/bin/Release/',
+                    src: ['Veil.SuperSimple.*'],
+                    dest: 'dist/lib/net40'
+                },{
+                    expand: true,
+                    cwd: '../src/Veil.Handlebars/bin/Release/',
+                    src: ['Veil.Handlebars.*'],
                     dest: 'dist/lib/net40'
                 }]
             }
         },
         nugetpack: {
-            dist: {
+            core: {
                 src: 'dist/Veil.nuspec',
                 dest: 'dist/',
                 options: {
                     version: pkg.version
                 }
-            }
+            },
+            supersimple: {
+                src: 'dist/Veil.SuperSimple.nuspec',
+                dest: 'dist/',
+                options: {
+                    version: pkg.version
+                }                
+            },
+            handlebars: {
+                src: 'dist/Veil.Handlebars.nuspec',
+                dest: 'dist/',
+                options: {
+                    version: pkg.version
+                }                
+            }            
         }
     });
     grunt.loadNpmTasks('grunt-nuget');
@@ -66,5 +111,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-dotnet-assembly-info');
  
-    grunt.registerTask("default", ["clean", "assemblyinfo", "msbuild", "copy:nuspec", "copy:lib", "nugetpack:dist"]);
+    grunt.registerTask("default", ["clean", "assemblyinfo", "msbuild", "copy", "nugetpack"]);
 };
