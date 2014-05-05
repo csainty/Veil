@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Veil</id>
+    <version>0.0.0</version>
+    <title>Veil</title>
+    <authors>csainty</authors>
+    <owners>csainty</owners>
+    <projectUrl>https://github.com/csainty/Veil</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An easy-to-use and highly optimized template renderer / view engine</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>veil template render format view engine</tags>
+    <dependencies>
+      <dependency id="Sigil" version="4.1.0" />
+    </dependencies>
+  </metadata>
+</package>
