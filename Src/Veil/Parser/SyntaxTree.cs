@@ -132,6 +132,15 @@ namespace Veil.Parser
             };
         }
 
+        /// <summary>
+        /// Flushes the TextWriter.
+        /// Used to optimize responses in web applications.
+        /// </summary>
+        public static FlushNode Flush()
+        {
+            return new FlushNode();
+        }
+
         public class BlockNode : SyntaxTreeNode
         {
             private List<SyntaxTreeNode> nodes;
@@ -217,6 +226,10 @@ namespace Veil.Parser
             public bool IsRequired { get; set; }
 
             public SyntaxTreeNode DefaultContent { get; set; }
+        }
+
+        public class FlushNode : SyntaxTreeNode
+        {
         }
     }
 }

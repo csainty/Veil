@@ -21,6 +21,8 @@ namespace Veil.Compiler
                 EmitInclude((SyntaxTreeNode.IncludeTemplateNode)node);
             else if (nodeType == typeof(SyntaxTreeNode.OverridePointNode))
                 EmitOverride((SyntaxTreeNode.OverridePointNode)node);
+            else if (nodeType == typeof(SyntaxTreeNode.FlushNode))
+                EmitFlush();
             else if (nodeType == typeof(SyntaxTreeNode.ExtendTemplateNode))
                 throw new VeilCompilerException("Found an ExtendTemplate node inside a SyntaxTree. Extend nodes must be the root of a tree.");
             else

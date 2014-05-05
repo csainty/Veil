@@ -468,6 +468,20 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_parse_flush()
+        {
+            var input = "Header@Flush;Footer";
+            var result = Parse(input, typeof(object));
+
+            AssertSyntaxTree(
+                result,
+                S.WriteString("Header"),
+                S.Flush(),
+                S.WriteString("Footer")
+            );
+        }
+
         /*
                 [Test]
                 public void Should_call_to_expand_paths()

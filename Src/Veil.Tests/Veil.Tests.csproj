@@ -37,6 +37,9 @@
     <Reference Include="DeepEqual">
       <HintPath>..\packages\DeepEqual.0.12.0.0\lib\net40\DeepEqual.dll</HintPath>
     </Reference>
+    <Reference Include="FakeItEasy">
+      <HintPath>..\packages\FakeItEasy.1.19.0\lib\net40\FakeItEasy.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
     </Reference>
@@ -58,6 +61,7 @@
     <Compile Include="Compiler\CompilerTestBase.cs" />
     <Compile Include="Compiler\ConditionalTests.cs" />
     <Compile Include="Compiler\ExtendTests.cs" />
+    <Compile Include="Compiler\FlushTests.cs" />
     <Compile Include="Compiler\IncludeTests.cs" />
     <Compile Include="Compiler\IterateTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />

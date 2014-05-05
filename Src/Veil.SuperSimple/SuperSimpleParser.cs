@@ -12,7 +12,7 @@ namespace Veil.SuperSimple
     // - Stack assertions for @Each
     public class SuperSimpleParser : ITemplateParser
     {
-        private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
+        private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection|Flush)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
         private static Regex NameMatcher = new Regex(@".*?\[\'(?<Name>.*?)\'(,(?<Model>.*))?\]", RegexOptions.Compiled);
 
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
@@ -51,7 +51,7 @@ namespace Veil.SuperSimple
                     scopeStack.First.Value.Block.Add(each);
                     scopeStack.AddFirst(new ParserScope { Block = each.Body, ModelType = each.ItemType });
                 }
-                else if (token.StartsWith("Each."))
+                else if (token.StartsWith("Each"))
                 {
                     token = token.Substring(5);
                     var each = SyntaxTreeNode.Iterate(
@@ -90,7 +90,7 @@ namespace Veil.SuperSimple
                 {
                     scopeStack.RemoveFirst();
                 }
-                else if (token.StartsWith("Partial["))
+                else if (token.StartsWith("Partial"))
                 {
                     var details = GetNameAndModelFromToken(token);
                     SyntaxTreeNode.ExpressionNode modelExpression = SyntaxTreeNode.ExpressionNode.Self(scopeStack.First.Value.ModelType);
@@ -101,9 +101,13 @@ namespace Veil.SuperSimple
                     }
                     scopeStack.First.Value.Block.Add(SyntaxTreeNode.Include(details.Item1, modelExpression));
                 }
-                else if (token.StartsWith("Section["))
+                else if (token.StartsWith("Section"))
                 {
                     scopeStack.First.Value.Block.Add(SyntaxTreeNode.Override(GetNameAndModelFromToken(token).Item1));
+                }
+                else if (token == "Flush")
+                {
+                    scopeStack.First.Value.Block.Add(SyntaxTreeNode.Flush());
                 }
                 else if (token.StartsWith("!"))
                 {
