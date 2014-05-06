@@ -142,6 +142,23 @@ namespace Veil.Compiler
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [TestCase(true, "True")]
+        [TestCase(false, "False")]
+        public void Should_handle_conditional_on_dictionary_item(bool value, string expectedResult)
+        {
+            var model = new Dictionary<string, object>();
+            model.Add("Bool", value);
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.Conditional(
+                    SyntaxTreeNode.ExpressionNode.DictionaryEntry("Bool"),
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
+                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))
+                )
+            );
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         public object[] TruthyFalseyCases()
         {
             return new object[] {

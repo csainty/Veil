@@ -1,10 +1,13 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Veil.Parser;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
+        private static MethodInfo getTypeMethod = typeof(object).GetMethod("GetType");
+
         private void EmitConditional(SyntaxTreeNode.ConditionalNode node)
         {
             var hasTrueBlock = node.TrueBlock != null && node.TrueBlock.Nodes.Any();
@@ -15,37 +18,37 @@ namespace Veil.Compiler
                 throw new VeilCompilerException("Conditionals must have a True or False block");
             }
 
+            var done = emitter.DefineLabel();
+            EvaluateExpression(node.Expression);
+
+            if (node.Expression.ResultType == typeof(UnknownType))
+            {
+                emitter.UnboxAny<bool>();
+            }
+
             if (!hasTrueBlock)
             {
-                var done = emitter.DefineLabel();
-                EvaluateExpression(node.Expression);
                 emitter.BranchIfTrue(done);
                 EmitNode(node.FalseBlock);
-                emitter.MarkLabel(done);
             }
             else if (!hasFalseBlock)
             {
-                var done = emitter.DefineLabel();
-                EvaluateExpression(node.Expression);
                 emitter.BranchIfFalse(done);
                 EmitNode(node.TrueBlock);
-                emitter.MarkLabel(done);
             }
             else
             {
-                var done = emitter.DefineLabel();
                 var falseBlock = emitter.DefineLabel();
 
-                EvaluateExpression(node.Expression);
                 emitter.BranchIfFalse(falseBlock);
                 EmitNode(node.TrueBlock);
                 emitter.Branch(done);
 
                 emitter.MarkLabel(falseBlock);
                 EmitNode(node.FalseBlock);
-
-                emitter.MarkLabel(done);
             }
+
+            emitter.MarkLabel(done);
         }
     }
 }
