@@ -43,6 +43,7 @@ using (var writer = new StringWriter()) {
 
 ### Build Status
 
-[![Build status](https://ci.appveyor.com/api/projects/status/cad383bewb58svi1)](https://ci.appveyor.com/project/csainty/veil)
 
-[Check Mono Build](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuous_Mono)
+Windows - [![Build Status](http://builds.nullreferenceexception.se/app/rest/builds/buildType:id:Veil_Continuos/statusIcon)](http://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuos&guest=1)
+
+Mono - [![Build Status](http://builds.nullreferenceexception.se/app/rest/builds/buildType:id:Veil_Continuous_Mono/statusIcon)](http://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuous_Mono&guest=1)
