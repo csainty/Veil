@@ -121,6 +121,12 @@ namespace Veil.Compiler
                 emitter.LoadConstant(0);
                 emitter.CompareEqual();
             }
+            else if (expression is SyntaxTreeNode.ExpressionNode.DictionaryEntryNode)
+            {
+                var getItem = typeof(Dictionary<string, object>).GetMethod("get_Item");
+                emitter.LoadConstant(((SyntaxTreeNode.ExpressionNode.DictionaryEntryNode)expression).Key);
+                emitter.CallMethod(getItem);
+            }
             else if (expression is SyntaxTreeNode.ExpressionNode.SelfExpressionNode)
             {
             }

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Veil.Parser;
 
 namespace Veil.Compiler
@@ -56,6 +57,18 @@ namespace Veil.Compiler
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("&lt;h1&gt;Hello&lt;/h1&gt;"));
+        }
+
+        [Test]
+        public void Should_be_able_to_write_item_from_dictionary()
+        {
+            var model = new Dictionary<string, object>();
+            model.Add("Name", "Joe");
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.DictionaryEntry("Name"))
+            );
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Joe"));
         }
 
         public object[] TestCases()

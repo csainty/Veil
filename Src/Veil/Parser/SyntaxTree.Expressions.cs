@@ -106,6 +106,20 @@ namespace Veil.Parser
                 };
             }
 
+            /// <summary>
+            /// Read an item from a dictionary
+            /// </summary>
+            /// <param name="key">The key of the item to load from the dictionary</param>
+            /// <param name="scope">The scope this expression evaluated in</param>
+            public static DictionaryEntryNode DictionaryEntry(string key, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+            {
+                return new DictionaryEntryNode
+                {
+                    Key = key,
+                    Scope = scope
+                };
+            }
+
             public class PropertyExpressionNode : ExpressionNode
             {
                 public PropertyInfo PropertyInfo { get; set; }
@@ -179,6 +193,16 @@ namespace Veil.Parser
                 }
 
                 public override Type ResultType { get { return typeof(bool); } }
+            }
+
+            public class DictionaryEntryNode : ExpressionNode
+            {
+                public string Key { get; set; }
+
+                public override Type ResultType
+                {
+                    get { return typeof(UnknownType); }
+                }
             }
         }
     }
