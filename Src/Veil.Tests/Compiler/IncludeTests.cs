@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
 using S = Veil.Parser.SyntaxTreeNode;
 
@@ -78,5 +79,24 @@ namespace Veil.Compiler
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Foo - FooFoo"));
         }
+
+        [Test]
+        public void Should_render_include_with_untyped_model()
+        {
+            var model = new Dictionary<string, object>();
+            model.Add("Name", "Joe");
+
+            RegisterTemplate("person", S.Block(
+                S.WriteExpression(E.DictionaryEntry("Name"))
+            ));
+            var template = S.Block(
+                S.WriteString("Hello "),
+                S.Include("person", E.Self(model.GetType()))
+            );
+
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Hello Joe"));
+        }
+
     }
 }
