@@ -52,7 +52,6 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="IVeilContext.cs" />
     <Compile Include="NullVeilContext.cs" />
-    <Compile Include="Parser\UnknownType.cs" />
     <Compile Include="VeilCompilerException.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitConditional.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitIterate.cs" />

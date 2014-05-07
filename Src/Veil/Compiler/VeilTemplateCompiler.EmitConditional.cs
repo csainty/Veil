@@ -22,7 +22,7 @@ namespace Veil.Compiler
             var done = emitter.DefineLabel();
             EvaluateExpression(node.Expression);
 
-            if (node.Expression.ResultType == typeof(UnknownType))
+            if (node.Expression.ResultType == typeof(object))
             {
                 emitter.CallMethod(boolifyMethod);
             }

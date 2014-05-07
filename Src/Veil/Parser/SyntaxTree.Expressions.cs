@@ -201,7 +201,7 @@ namespace Veil.Parser
 
                 public override Type ResultType
                 {
-                    get { return typeof(UnknownType); }
+                    get { return typeof(object); }
                 }
             }
         }

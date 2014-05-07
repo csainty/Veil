@@ -181,7 +181,7 @@ namespace Veil.Parser
         {
             private ExpressionNode expression;
 
-            public ExpressionNode Expression { get { return this.expression; } set { this.expression = value; this.Validate();  } }
+            public ExpressionNode Expression { get { return this.expression; } set { this.expression = value; this.Validate(); } }
 
             public BlockNode TrueBlock { get; set; }
 
@@ -191,7 +191,6 @@ namespace Veil.Parser
             {
                 if (expression.ResultType.IsValueType && expression.ResultType != typeof(bool)) throw new VeilParserException("Attempted to use a ValueType other than bool as the expression in a conditional.");
             }
-
         }
 
         public class IterateNode : SyntaxTreeNode

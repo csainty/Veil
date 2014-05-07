@@ -31,8 +31,7 @@ namespace Veil.Expressions
                 new object[] { new { Items = new object() } },
                 new object[] { new { Items = "" } },
                 new object[] { new { Items = (object)null } },
-                new object[] { new { Items = new { } } },
-                new object[] { new { Items = new UnknownType() } }
+                new object[] { new { Items = new { } } }
             };
         }
 
