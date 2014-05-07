@@ -121,11 +121,10 @@ namespace Veil.Compiler
                 emitter.LoadConstant(0);
                 emitter.CompareEqual();
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.DictionaryEntryNode)
+            else if (expression is SyntaxTreeNode.ExpressionNode.LateBoundNode)
             {
-                var getItem = typeof(Dictionary<string, object>).GetMethod("get_Item");
-                emitter.LoadConstant(((SyntaxTreeNode.ExpressionNode.DictionaryEntryNode)expression).Key);
-                emitter.CallMethod(getItem);
+                emitter.LoadConstant(((SyntaxTreeNode.ExpressionNode.LateBoundNode)expression).ItemName);
+                emitter.CallMethod(runtimeBindMethod);
             }
             else if (expression is SyntaxTreeNode.ExpressionNode.SelfExpressionNode)
             {
@@ -146,6 +145,8 @@ namespace Veil.Compiler
             if (!writers.ContainsKey(typeOfItemOnStack)) throw new VeilCompilerException("Unable to call TextWriter.Write() for item of type '{0}'".FormatInvariant(typeOfItemOnStack.Name));
             emitter.CallMethod(writers[typeOfItemOnStack]);
         }
+
+        private static readonly MethodInfo runtimeBindMethod = typeof(Helpers).GetMethod("RuntimeBind");
 
         private static readonly IDictionary<Type, MethodInfo> writers = new Dictionary<Type, MethodInfo>
         {

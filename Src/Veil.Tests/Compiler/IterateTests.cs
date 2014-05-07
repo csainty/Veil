@@ -72,7 +72,7 @@ namespace Veil.Compiler
             var model = new Dictionary<string, object>();
             model.Add("Items", new string[] { "1", "2" });
             var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.DictionaryEntry("Items"),
+                SyntaxTreeNode.ExpressionNode.LateBound("Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(object)))
                 )

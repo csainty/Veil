@@ -107,15 +107,15 @@ namespace Veil.Parser
             }
 
             /// <summary>
-            /// Read an item from a dictionary
+            /// Evaluate a proeprty at runtime against an unknown model type
             /// </summary>
-            /// <param name="key">The key of the item to load from the dictionary</param>
+            /// <param name="itemName">The name of the proeprty that will be searched for</param>
             /// <param name="scope">The scope this expression evaluated in</param>
-            public static DictionaryEntryNode DictionaryEntry(string key, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+            public static LateBoundNode LateBound(string itemName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
             {
-                return new DictionaryEntryNode
+                return new LateBoundNode
                 {
-                    Key = key,
+                    ItemName = itemName,
                     Scope = scope
                 };
             }
@@ -195,9 +195,9 @@ namespace Veil.Parser
                 public override Type ResultType { get { return typeof(bool); } }
             }
 
-            public class DictionaryEntryNode : ExpressionNode
+            public class LateBoundNode : ExpressionNode
             {
-                public string Key { get; set; }
+                public string ItemName { get; set; }
 
                 public override Type ResultType
                 {

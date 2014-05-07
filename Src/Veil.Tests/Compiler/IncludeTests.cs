@@ -87,11 +87,29 @@ namespace Veil.Compiler
             model.Add("Name", "Joe");
 
             RegisterTemplate("person", S.Block(
-                S.WriteExpression(E.DictionaryEntry("Name"))
+                S.WriteExpression(E.LateBound("Name"))
             ));
             var template = S.Block(
                 S.WriteString("Hello "),
                 S.Include("person", E.Self(model.GetType()))
+            );
+
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Hello Joe"));
+        }
+
+        [Test]
+        public void Should_render_include_with_untyped_sub_model()
+        {
+            var model = new Dictionary<string, object>();
+            model.Add("Person", new { Name = "Joe" });
+
+            RegisterTemplate("person", S.Block(
+                S.WriteExpression(E.LateBound("Name"))
+            ));
+            var template = S.Block(
+                S.WriteString("Hello "),
+                S.Include("person", E.LateBound("Person"))
             );
 
             var result = ExecuteTemplate(template, model);

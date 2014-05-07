@@ -149,7 +149,7 @@ namespace Veil.Compiler
             model.Add("Bool", testModel.GetType().GetProperty("Condition").GetValue(testModel));
             var template = SyntaxTreeNode.Block(
                 SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.DictionaryEntry("Bool"),
+                    SyntaxTreeNode.ExpressionNode.LateBound("Bool"),
                     SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
                     SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))
                 )

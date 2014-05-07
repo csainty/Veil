@@ -65,7 +65,7 @@ namespace Veil.Compiler
             var model = new Dictionary<string, object>();
             model.Add("Name", "Joe");
             var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.DictionaryEntry("Name"))
+                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Joe"));
