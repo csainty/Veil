@@ -66,6 +66,7 @@
     <Compile Include="Compiler\IterateTests.cs" />
     <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
     <Compile Include="Compiler\BlockTests.cs" />
+    <Compile Include="Compiler\LateBoundTests.cs" />
     <Compile Include="Compiler\WriteLiteralTests.cs" />
     <Compile Include="Compiler\WriteExpressionTests.cs" />
     <Compile Include="Expressions\CollectionHasItemsNodeTests.cs" />

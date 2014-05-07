@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace Veil
 {
@@ -46,15 +45,19 @@ namespace Veil
             return o != null;
         }
 
-        public static object RuntimeBind(object model, string propertyName)
+        public static object RuntimeBind(object model, string itemName)
         {
-            if (model is IDictionary<string, object>) return ((IDictionary<string, object>)model)[propertyName];
-
             var type = model.GetType();
-            
-            var property = type.GetProperty(propertyName);
+
+            var property = type.GetProperty(itemName);
             if (property != null) return property.GetValue(model, null);
-            
+
+            var field = type.GetField(itemName);
+            if (field != null) return field.GetValue(model);
+
+            var dictionaryType = type.GetDictionaryTypeWithKey<string>();
+            if (dictionaryType != null) return dictionaryType.GetMethod("get_Item").Invoke(model, new[] { itemName });
+
             return null;
         }
     }
