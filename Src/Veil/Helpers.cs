@@ -38,5 +38,11 @@ namespace Veil
             if (startIndex == 0) writer.Write(value);
             else if (length > 0) writer.Write(chars, startIndex, length);
         }
+
+        public static bool Boolify(object o)
+        {
+            if (o is bool) return (bool)o;
+            return o != null;
+        }
     }
 }

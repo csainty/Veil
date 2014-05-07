@@ -7,6 +7,7 @@ namespace Veil.Compiler
     internal partial class VeilTemplateCompiler<T>
     {
         private static MethodInfo getTypeMethod = typeof(object).GetMethod("GetType");
+        private static MethodInfo boolifyMethod = typeof(Helpers).GetMethod("Boolify");
 
         private void EmitConditional(SyntaxTreeNode.ConditionalNode node)
         {
@@ -23,7 +24,7 @@ namespace Veil.Compiler
 
             if (node.Expression.ResultType == typeof(UnknownType))
             {
-                emitter.UnboxAny<bool>();
+                emitter.CallMethod(boolifyMethod);
             }
 
             if (!hasTrueBlock)

@@ -99,7 +99,7 @@ namespace Veil
             return new object[] {
                 new object[] {"Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!"},
                 new object[] {"{{#if Name}}Hello {{Name}}{{/if}}", "Hello Chris"},
-                new object[] {"{{#if ViewCount}}Count: {{ViewCount}}{{/if}}", "Count: 10"},
+                new object[] {"{{#if HasViewCount}}Count: {{ViewCount}}{{/if}}", "Count: 10"},
                 new object[] {"{{#if IsAdmin}}Yo Admin!{{/if}}", ""},
                 new object[] {"{{#if IsAdmin}}Yo Admin!{{else}}Sorry{{/if}}", "Sorry"},
                 new object[] {"Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil"},
@@ -113,7 +113,7 @@ namespace Veil
             return new object[] {
                 new object[] {"Hello @Model.Name;. You have visited us @Model.ViewCount times!", "Hello Chris. You have visited us 10 times!"},
                 new object[] {"@If.Name;Hello @Model.Name;@EndIf", "Hello Chris"},
-                new object[] {"@If.ViewCount;Count: @Model.ViewCount;@EndIf", "Count: 10"},
+                new object[] {"@If.HasViewCount;Count: @Model.ViewCount;@EndIf", "Count: 10"},
                 new object[] {"@If.IsAdmin;Yo Admin!@EndIf", ""},
                 new object[] {"@If.IsAdmin;Yo Admin!@EndIf;@IfNot.IsAdmin;Sorry@EndIf", "Sorry"},
                 new object[] {"Hey @Model.Name;, @Model.Department.DepartmentName; @If.Department.Company;@Model.Department.Company.CompanyName;@EndIf", "Hey Chris, Developers Veil"},
@@ -167,6 +167,8 @@ namespace Veil
             public int ViewCount { get; set; }
 
             public bool IsAdmin = false;
+
+            public bool HasViewCount { get { return this.ViewCount > 0; } }
 
             public Department Department { get; set; }
 
