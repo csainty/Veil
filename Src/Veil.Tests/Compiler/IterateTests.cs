@@ -66,6 +66,22 @@ namespace Veil.Compiler
             Assert.That(result, Is.EqualTo("1234"));
         }
 
+        [Test]
+        public void Should_be_able_to_iterate_items_from_an_untyped_model()
+        {
+            var model = new Dictionary<string, object>();
+            model.Add("Items", new string[] { "1", "2" });
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
+                SyntaxTreeNode.ExpressionNode.DictionaryEntry("Items"),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(object)))
+                )
+            ));
+
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("12"));
+        }
+
         private class ItemModel
         {
             public string Name { get; set; }

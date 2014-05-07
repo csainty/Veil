@@ -201,6 +201,8 @@ namespace Veil.Parser
 
             private void ValidateCollection()
             {
+                if (this.collection.ResultType == typeof(object)) return;
+
                 if (!this.collection.ResultType.HasEnumerableInterface())
                 {
                     throw new VeilParserException("Expression used as iteration collection is not IEnumerable<>");
@@ -209,7 +211,14 @@ namespace Veil.Parser
 
             public BlockNode Body { get; set; }
 
-            public Type ItemType { get { return Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0]; } }
+            public Type ItemType
+            {
+                get
+                {
+                    if (Collection.ResultType == typeof(object)) return Collection.ResultType;
+                    return Collection.ResultType.GetEnumerableInterface().GetGenericArguments()[0];
+                }
+            }
         }
 
         public class IncludeTemplateNode : SyntaxTreeNode

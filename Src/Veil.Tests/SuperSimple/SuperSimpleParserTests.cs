@@ -129,7 +129,7 @@ namespace Veil.Tests.SuperSimple
         public void Should_throw_if_using_non_enumerable_type_for_each()
         {
             var input = @"<html><head></head><body><ul>@Each.Users;<li id=""@Current;"">@Current;</li>@EndEach;</ul></body></html>";
-            var model = new { Users = new object() };
+            var model = new { Users = new { } };
             Assert.Throws<VeilParserException>(() =>
             {
                 Parse(input, model.GetType());

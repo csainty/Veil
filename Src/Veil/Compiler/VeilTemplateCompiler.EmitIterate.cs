@@ -21,6 +21,12 @@ namespace Veil.Compiler
             var done = emitter.DefineLabel();
 
             EvaluateExpression(node.Collection);
+
+            if (node.Collection.ResultType == typeof(object))
+            {
+                emitter.CastClass(enumerable);
+            }
+
             using (var item = emitter.DeclareLocal(node.ItemType))
             using (var en = emitter.DeclareLocal(getEnumerator.ReturnType))
             {
