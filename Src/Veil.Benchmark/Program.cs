@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,8 @@ namespace Veil.Benchmark
 {
     public class Program
     {
+        private const int Test_Runs = 10000;
+
         private static void Main(string[] args)
         {
             var model = new ViewModel
@@ -21,6 +24,17 @@ namespace Veil.Benchmark
                 IsLoggedIn = true,
                 Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader", "Pick & Pack" }
             };
+
+            dynamic dynamicModel = new ExpandoObject();
+            dynamicModel.Name = "Test Template";
+            dynamicModel.IsLoggedIn = true;
+            dynamicModel.Roles = new[] { "User", "Admin", "Editor", "Viewer", "Uploader", "Pick & Pack" };
+
+            var dictionaryModel = new Dictionary<string, object>();
+            dictionaryModel.Add("Name", "Test Template");
+            dictionaryModel.Add("IsLoggedIn", true);
+            dictionaryModel.Add("Roles", new[] { "User", "Admin", "Editor", "Viewer", "Uploader", "Pick & Pack" });
+
             var handlebarsTemplate = ReadTemplate("Template.haml");
             var razorTemplate = ReadTemplate("Template.cshtml");
             var ssTemplate = ReadTemplate("Template.sshtml");
@@ -97,6 +111,30 @@ namespace Veil.Benchmark
                 });
             }
 
+            {
+                var template = veilEngine.Compile<dynamic>("sshtml", new StringReader(ssTemplate));
+                Execute("Veil.DynamicModel", () =>
+                {
+                    using (var writer = new StringWriter())
+                    {
+                        template(writer, dynamicModel);
+                        return writer.ToString();
+                    }
+                });
+            }
+
+            {
+                var template = veilEngine.Compile<IDictionary<string, object>>("sshtml", new StringReader(ssTemplate));
+                Execute("Veil.DictionaryModel", () =>
+                {
+                    using (var writer = new StringWriter())
+                    {
+                        template(writer, dictionaryModel);
+                        return writer.ToString();
+                    }
+                });
+            }
+
             Console.WriteLine("Done");
             Console.ReadKey();
         }
@@ -105,8 +143,8 @@ namespace Veil.Benchmark
         {
             Console.WriteLine("Executing " + name);
             AssertTemplateSample(sample(), name);
-            var testGroup = new TestGroup(name).Plan("Execute", () => sample(), 10000).GetResult();
-            Console.WriteLine("Total: {0}ms (10000 runs)", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Sum());
+            var testGroup = new TestGroup(name).Plan("Execute", () => sample(), Test_Runs).GetResult();
+            Console.WriteLine("Total: {0}ms (" + Test_Runs + " runs)", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Sum());
             Console.WriteLine("Avg  : {0}ms", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Average());
             Console.WriteLine("Min  : {0}ms", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Min());
             Console.WriteLine("Max  : {0}ms", testGroup.Outcomes.Select(x => x.Elapsed.TotalMilliseconds).Max());
