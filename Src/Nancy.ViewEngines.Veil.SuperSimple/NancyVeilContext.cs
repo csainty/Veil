@@ -11,7 +11,10 @@ namespace Nancy.ViewEngines.Veil.SuperSimple
 
         public NancyVeilContext(IViewLocator locator)
         {
-            this.views = locator.GetAllCurrentlyDiscoveredViews().ToDictionary(x => x.Name);
+            this.views = locator
+                .GetAllCurrentlyDiscoveredViews()
+                .Where(x => x.Extension == "vsshtml")
+                .ToDictionary(x => x.Name);
         }
 
         public TextReader GetTemplateByName(string name, string templateType)
