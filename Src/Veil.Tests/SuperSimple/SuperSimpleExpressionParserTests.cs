@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using DeepEqual.Syntax;
 using NUnit.Framework;
 using Veil.Parser;
@@ -96,6 +97,13 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(E.Field(typeof(ViewModel), "FieldName", SyntaxTreeNode.ExpressionScope.RootModel));
         }
 
+        [TestCaseSource("LateBoundTestCases")]
+        public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
+        {
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(T)), "Model.Name");
+            result.ShouldDeepEqual(E.LateBound("Name", SyntaxTreeNode.ExpressionScope.RootModel));
+        }
+
         [TestCase("Model.Wrong")]
         [TestCase("Model.name")]
         public void Should_throw_for_invalid_expressions(string expression)
@@ -105,6 +113,15 @@ namespace Veil.SuperSimple
             {
                 SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), expression);
             });
+        }
+
+        public object[] LateBoundTestCases()
+        {
+            return new object[] {
+                new object[] { new object() },
+                new object[] { new Dictionary<string, object>() },
+                new object[] { new ExpandoObject() }
+            };
         }
 
         private LinkedList<SuperSimpleParser.ParserScope> CreateScopes(Type rootScope, Type currentScope = null)

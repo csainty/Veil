@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Veil.Parser;
 
 namespace Veil.SuperSimple
@@ -60,7 +61,19 @@ namespace Veil.SuperSimple
                 return SyntaxTreeNode.ExpressionNode.HasItems(collectionExpression);
             }
 
+            if (IsLateBoundAcceptingType(scope.ModelType)) return SyntaxTreeNode.ExpressionNode.LateBound(expression, expressionScope);
+
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}'", originalExpression));
+        }
+
+        private static bool IsLateBoundAcceptingType(Type type)
+        {
+            return type == typeof(object) || (type.IsDictionary() || type.GetInterfaces().Any(IsDictionary));
+        }
+
+        private static bool IsDictionary(this Type t)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
         }
     }
 }
