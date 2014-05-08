@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Concurrent;
+using System.IO;
 
 namespace Veil
 {
@@ -45,20 +47,29 @@ namespace Veil
             return o != null;
         }
 
+        private static ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> lateBoundCache = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
+
         public static object RuntimeBind(object model, string itemName)
         {
-            var type = model.GetType();
+            var binder = lateBoundCache.GetOrAdd(Tuple.Create(model.GetType(), itemName), new Func<Tuple<Type, string>, Func<object, object>>(pair =>
+            {
+                var type = pair.Item1;
 
-            var property = type.GetProperty(itemName);
-            if (property != null) return property.GetValue(model, null);
+                var property = type.GetProperty(pair.Item2);
+                if (property != null) return o => property.GetValue(o, null);
 
-            var field = type.GetField(itemName);
-            if (field != null) return field.GetValue(model);
+                var field = type.GetField(pair.Item2);
+                if (field != null) return o => field.GetValue(o);
 
-            var dictionaryType = type.GetDictionaryTypeWithKey<string>();
-            if (dictionaryType != null) return dictionaryType.GetMethod("get_Item").Invoke(model, new[] { itemName });
+                var dictionaryType = type.GetDictionaryTypeWithKey<string>();
+                var getItem = dictionaryType.GetMethod("get_Item");
+                if (dictionaryType != null) return o => getItem.Invoke(o, new[] { pair.Item2 });
 
-            return null;
+                return null;
+            }));
+
+            if (binder == null) return null;
+            return binder(model);
         }
     }
 }
