@@ -14,7 +14,7 @@ namespace Veil
     public class VeilEngine : IVeilEngine
     {
         private static readonly MethodInfo compileMethod = typeof(VeilEngine).GetMethod("Compile");
-        private static IDictionary<string, ITemplateParser> Parsers = new Dictionary<string, ITemplateParser>();
+        private static IDictionary<string, Func<ITemplateParser>> parserFactories = new Dictionary<string, Func<ITemplateParser>>();
         private readonly IVeilContext context;
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace Veil
         {
             if (String.IsNullOrEmpty(templateType)) throw new ArgumentNullException("templateType");
             if (templateContents == null) throw new ArgumentNullException("templateContents");
-            if (!Parsers.ContainsKey(templateType)) throw new ArgumentException("A parser for templateType '{0}' is not registered.".FormatInvariant(templateType), "templateType");
+            if (!parserFactories.ContainsKey(templateType)) throw new ArgumentException("A parser for templateType '{0}' is not registered.".FormatInvariant(templateType), "templateType");
 
-            var syntaxTree = Parsers[templateType].Parse(templateContents, typeof(T));
+            var syntaxTree = parserFactories[templateType]().Parse(templateContents, typeof(T));
             return new VeilTemplateCompiler<T>(CreateIncludeParser(templateType, context)).Compile(syntaxTree);
         }
 
@@ -76,16 +76,26 @@ namespace Veil
         }
 
         /// <summary>
-        /// Registers a parser for use by instances of the engine
+        /// Registers a parser instance for use by the engine
         /// </summary>
         /// <param name="templateType">The key that will be used to signal the engine to use this parser. See <see cref="VeilEngine.Compile"/></param>
         /// <param name="parser">An instance of the parser that will be reused for each compile</param>
         public static void RegisterParser(string templateType, ITemplateParser parser)
         {
-            if (String.IsNullOrEmpty(templateType)) throw new ArgumentNullException("templateType");
-            if (Parsers.ContainsKey(templateType)) throw new ArgumentException("A parser for templateType '{0}' ({1}) is already registered.".FormatInvariant(templateType, Parsers[templateType].GetType().Name), "templateType");
+            RegisterParser(templateType, () => parser);
+        }
 
-            Parsers.Add(templateType, parser);
+        /// <summary>
+        /// Registers a parser factory for use by the engine
+        /// </summary>
+        /// <param name="templateType">The key that will be used to signal the engine to use this parser. See <see cref="VeilEngine.Compile"/></param>
+        /// <param name="parserFactory">A factory for the parser. The factory is invoked once for each compile</param>
+        public static void RegisterParser(string templateType, Func<ITemplateParser> parserFactory)
+        {
+            if (String.IsNullOrEmpty(templateType)) throw new ArgumentNullException("templateType");
+            if (parserFactories.ContainsKey(templateType)) throw new ArgumentException("A parser for templateType '{0}' ({1}) is already registered.".FormatInvariant(templateType, parserFactories[templateType].GetType().Name), "templateType");
+
+            parserFactories.Add(templateType, parserFactory);
         }
 
         /// <summary>
@@ -93,7 +103,7 @@ namespace Veil
         /// </summary>
         public static void ClearParserRegistrations()
         {
-            Parsers.Clear();
+            parserFactories.Clear();
         }
 
         private static Func<string, Type, SyntaxTreeNode> CreateIncludeParser(string templateType, IVeilContext context)
@@ -102,7 +112,7 @@ namespace Veil
             {
                 var template = context.GetTemplateByName(includeName, templateType);
                 if (template == null) throw new InvalidOperationException("Unable to load template '{0}' using parser '{1}'".FormatInvariant(includeName, templateType));
-                return Parsers[templateType].Parse(template, modelType);
+                return parserFactories[templateType]().Parse(template, modelType);
             };
         }
     }

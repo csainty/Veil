@@ -14,7 +14,7 @@ namespace Nancy.ViewEngines.Veil.SuperSimple
 
         static VeilSuperSimpleViewEngine()
         {
-            VeilEngine.RegisterParser(EngineKey, new SuperSimpleParser());
+            VeilEngine.RegisterParser(EngineKey, () => new SuperSimpleParser());
         }
 
         public IEnumerable<string> Extensions
