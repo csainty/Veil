@@ -16,11 +16,12 @@ A purist may argue this is actually a good thing :)
 
 
 ### Getting Started
-Until nuget packages are released, you can grab pre-compiled binaries from [https://ci.appveyor.com/project/csainty/veil/build/artifacts](https://ci.appveyor.com/project/csainty/veil/build/artifacts)  
+Veil is available as pre-release pacakges on nuget - https://www.nuget.org/packages?q=Veil  
+
 You have two options for using Veil :-
 
-1. Install a ViewEngine module in to your existing web framework. e.g. [Nancy.ViewEngines.Veils.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Nancy.ViewEngines.Veil.SuperSimple)
-2. Use [VeilEngine](https://github.com/csainty/Veil/blob/master/Src/Veil/IVeilEngine.cs) directly. E.g.
+1. If you are using [Nancy](https://github.com/NancyFx/Nancy) then install a ViewEngine module e.g. [Nancy.ViewEngines.Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Nancy.ViewEngines.Veil.SuperSimple)
+2. Alternatively you can use the [VeilEngine](https://github.com/csainty/Veil/blob/master/Src/Veil/IVeilEngine.cs) directly in any application e.g.
 
 ````
 // Register your parsers once at startup
@@ -46,3 +47,5 @@ using (var writer = new StringWriter()) {
 Windows - [![Build Status](http://builds.nullreferenceexception.se/app/rest/builds/buildType:id:Veil_Continuos/statusIcon)](http://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuos&guest=1)
 
 Mono - [![Build Status](http://builds.nullreferenceexception.se/app/rest/builds/buildType:id:Veil_Continuous_Mono/statusIcon)](http://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuous_Mono&guest=1)
+
+Pre-built binaries of the latest commit are always available at [https://ci.appveyor.com/project/csainty/veil/build/artifacts](https://ci.appveyor.com/project/csainty/veil/build/artifacts)
