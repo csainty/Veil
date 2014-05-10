@@ -123,6 +123,11 @@ module.exports = function (grunt) {
                     version: pkg.version
                 }                
             }            
+        },
+        nugetpush: {
+            dist: {
+                src: 'dist/*.nupkg'
+            }
         }
     });
     grunt.loadNpmTasks('grunt-nuget');
@@ -132,4 +137,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-dotnet-assembly-info');
  
     grunt.registerTask("default", ["clean", "assemblyinfo", "msbuild", "copy", "nugetpack"]);
+    grunt.registerTask("push", ["nugetpush"]);
 };
