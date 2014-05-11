@@ -19,7 +19,8 @@ namespace Veil.Handlebars
                 new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name"), true) } },
                 new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name"), true) } },
                 new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name"), true) } },
-                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name"), true), SyntaxTreeNode.WriteString(", "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Greeting"), true) } }
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteString("Hello "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name"), true), SyntaxTreeNode.WriteString(", "), SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Greeting"), true) } },
+                new object[] {"{{{ Name }}}", new SyntaxTreeNode[] { SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Name"), false) }}
             };
         }
 
@@ -43,9 +44,9 @@ namespace Veil.Handlebars
         [TestCase("Hello { name }}")]
         [TestCase("Hello { name }} World")]
         [TestCase("{{{ Name }}")]
-        [TestCase("{{{ Name }}}")]
-        [TestCase("Hello {{{ Name }}}")]
-        [TestCase("Hello {{{ Name }}} World")]
+        [TestCase("{{{{ Name }}}}")]
+        [TestCase("Hello {{{{ Name }}}}")]
+        [TestCase("Hello {{{{ Name }}}} World")]
         public void Should_handle_incomplete_identifier_marker(string testString)
         {
             var syntaxTree = Parse(testString, typeof(object));

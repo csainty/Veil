@@ -17,7 +17,7 @@ namespace Veil.Handlebars
             var blockStack = new Stack<ParserScope>();
             blockStack.Push(new ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = modelType });
 
-            var matcher = new Regex(@"(?<!{){{[^{}]+}}(?!})");
+            var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
             var matches = matcher.Matches(template);
             var index = 0;
             foreach (Match match in matches)
@@ -29,6 +29,7 @@ namespace Veil.Handlebars
 
                 index = match.Index + match.Length;
 
+                var htmlEscape = match.Value.Count(c => c == '{') == 2;
                 var token = match.Value.Trim(new[] { '{', '}', ' ', '\t' });
 
                 if (token.StartsWith("#if"))
@@ -67,7 +68,7 @@ namespace Veil.Handlebars
                 else
                 {
                     var expression = HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token);
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression, expression.ResultType == typeof(string)));
+                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape && expression.ResultType == typeof(string)));
                 }
             }
             if (index < template.Length)
