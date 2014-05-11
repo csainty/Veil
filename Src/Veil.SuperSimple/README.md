@@ -44,6 +44,9 @@ var model = new {
 `@Model.Name` is `@If.IsAdmin;`an Admin`@EndIf;``@IfNot.IsAdmin`a User`@EndIf` - Bob is a User  
 In additional to boolean values, conditionals also support null-checking reference types. 
 
+### @IfNull.* / @IfNotNull.*
+Aliases exist for the `@IfNull` and `@IfNotNull` expressions. These are mapped to regular Veil conditionals which support null checking for non-booleans.
+
 ### @Each.* / @Current.*
 Iteration is handled with the `@Each` expressions. Access to the current item in the iteration is provided through the `@Current` expression which supports the same syntax as `@Model` E.g.  
 ````

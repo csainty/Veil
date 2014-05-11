@@ -12,7 +12,7 @@ namespace Veil.SuperSimple
     // - Stack assertions for @Each
     public class SuperSimpleParser : ITemplateParser
     {
-        private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection|Flush)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
+        private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?(Null)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection|Flush)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
         private static Regex NameMatcher = new Regex(@".*?\[\'(?<Name>.*?)\'(,(?<Model>.*))?\]", RegexOptions.Compiled);
 
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
@@ -65,9 +65,9 @@ namespace Veil.SuperSimple
                 {
                     scopeStack.RemoveFirst();
                 }
-                else if (token.StartsWith("If."))
+                else if (token.StartsWith("If.") || token.StartsWith("IfNotNull."))
                 {
-                    token = token.Substring(3);
+                    token = token.Substring(token.IndexOf('.') + 1);
                     var condition = SyntaxTreeNode.Conditional(
                         SuperSimpleExpressionParser.Parse(scopeStack, token),
                         SyntaxTreeNode.Block()
@@ -75,9 +75,9 @@ namespace Veil.SuperSimple
                     scopeStack.First.Value.Block.Add(condition);
                     scopeStack.AddFirst(new ParserScope { Block = condition.TrueBlock, ModelType = scopeStack.First.Value.ModelType });
                 }
-                else if (token.StartsWith("IfNot."))
+                else if (token.StartsWith("IfNot.") || token.StartsWith("IfNull."))
                 {
-                    token = token.Substring(6);
+                    token = token.Substring(token.IndexOf('.') + 1);
                     var condition = SyntaxTreeNode.Conditional(
                         SuperSimpleExpressionParser.Parse(scopeStack, token),
                         SyntaxTreeNode.Block(),

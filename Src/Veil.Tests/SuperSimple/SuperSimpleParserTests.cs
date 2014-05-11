@@ -482,6 +482,43 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [Test]
+        public void Should_include_block_with_ifnull_if_value_null()
+        {
+            var input = @"<html><head></head><body>@IfNull.Name;No users found@EndIf;</body></html>";
+            var output = Parse(input, typeof(User));
+
+            AssertSyntaxTree(
+                output,
+                S.WriteString("<html><head></head><body>"),
+                S.Conditional(E.Property(typeof(User), "Name"),
+                    S.Block(),
+                    S.Block(S.WriteString("No users found"))
+                ),
+                S.WriteString("</body></html>")
+            );
+        }
+
+        [Test]
+        public void Should_include_block_with_ifnotnull_if_value_non_null()
+        {
+            var input = @"<html><head></head><body>@IfNotNull.Name;Hello @Model.Name@EndIf;</body></html>";
+            var output = Parse(input, typeof(User));
+
+            AssertSyntaxTree(
+                output,
+                S.WriteString("<html><head></head><body>"),
+                S.Conditional(E.Property(typeof(User), "Name"),
+                    S.Block(
+                        S.WriteString("Hello "),
+                        S.WriteExpression(E.Property(typeof(User), "Name", S.ExpressionScope.RootModel))
+                    ),
+                    null
+                ),
+                S.WriteString("</body></html>")
+            );
+        }
+
         /*
                 [Test]
                 public void Should_call_to_expand_paths()
@@ -794,50 +831,6 @@ namespace Veil.Tests.SuperSimple
                     var output = viewEngine.Render(input, model, this.fakeHost);
 
                     Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_include_block_with_ifnull_if_value_null()
-                {
-                    const string input = @"<html><head></head><body>@IfNull.Name;No users found@EndIf;</body></html>";
-                    var model = new User(null, true);
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body>No users found</body></html>", output);
-                }
-
-                [Test]
-                public void Should_not_include_block_with_ifnull_if_value_non_null()
-                {
-                    const string input = @"<html><head></head><body>@IfNull.Name;No users found@EndIf;</body></html>";
-                    var model = new User("Bob", true);
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body></body></html>", output);
-                }
-
-                [Test]
-                public void Should_include_block_with_ifnotnull_if_value_non_null()
-                {
-                    const string input = @"<html><head></head><body>@IfNotNull.Name;Hello @Model.Name@EndIf;</body></html>";
-                    var model = new User("Bob", true);
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body>Hello Bob</body></html>", output);
-                }
-
-                [Test]
-                public void Should_not_include_block_with_ifnotnull_if_value_null()
-                {
-                    const string input = @"<html><head></head><body>@IfNotNull.Name;Hello @Model.Name@EndIf;</body></html>";
-                    var model = new User(null, true);
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body></body></html>", output);
                 }
                 */
     }
