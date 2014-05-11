@@ -73,6 +73,7 @@
     <Compile Include="Expressions\ConditionalNodeTests.cs" />
     <Compile Include="Expressions\IterateNodeTests.cs" />
     <Compile Include="Handlebars\ConditionalTests.cs" />
+    <Compile Include="Handlebars\FlushTests.cs" />
     <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
     <Compile Include="Handlebars\IterationTests.cs" />
     <Compile Include="Handlebars\WriteLiteralTests.cs" />

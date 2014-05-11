@@ -65,6 +65,10 @@ namespace Veil.Handlebars
                 {
                     blockStack.Pop();
                 }
+                else if (token == "#flush")
+                {
+                    blockStack.Peek().Block.Add(SyntaxTreeNode.Flush());
+                }
                 else
                 {
                     var expression = HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token);
