@@ -83,7 +83,7 @@ namespace Veil.Tests.SuperSimple
         }
 
         [Test]
-        public void Should_create_multiple_entries_for_each_statements()
+        public void Should_support_implicit_model_reference_for_each_block()
         {
             var input = @"<html><head></head><body><ul>@Each.Users;<li>@Current;</li>@EndEach;</ul></body></html>";
             var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" } };
@@ -92,6 +92,26 @@ namespace Veil.Tests.SuperSimple
                 S.WriteString("<html><head></head><body><ul>"),
                 S.Iterate(
                     E.Property(model.GetType(), "Users"),
+                    S.Block(
+                        S.WriteString("<li>"),
+                        S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.CurrentModelOnStack)),
+                        S.WriteString("</li>")
+                    )
+                ),
+                S.WriteString("</ul></body></html>")
+            );
+        }
+
+        [Test]
+        public void Should_support_explicit_model_reference_for_each_block()
+        {
+            var input = @"<html><head></head><body><ul>@Each.Model.Users;<li>@Current;</li>@EndEach;</ul></body></html>";
+            var model = new { Users = new List<string>() { "Bob", "Jim", "Bill" } };
+            var output = Parse(input, model.GetType());
+            AssertSyntaxTree(output,
+                S.WriteString("<html><head></head><body><ul>"),
+                S.Iterate(
+                    E.Property(model.GetType(), "Users", S.ExpressionScope.RootModel),
                     S.Block(
                         S.WriteString("<li>"),
                         S.WriteExpression(E.Self(typeof(string), S.ExpressionScope.CurrentModelOnStack)),
@@ -198,7 +218,7 @@ namespace Veil.Tests.SuperSimple
         }
 
         [Test]
-        public void Should_render_block_when_if_statement_returns_true()
+        public void Should_parse_if_block_with_implcit_model_reference()
         {
             var input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
             var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
@@ -208,6 +228,36 @@ namespace Veil.Tests.SuperSimple
                 S.WriteString("<html><head></head><body>"),
                 S.Conditional(
                     E.Property(model.GetType(), "HasUsers"),
+                    S.Block(
+                        S.WriteString("<ul>"),
+                        S.Iterate(
+                            E.Property(model.GetType(), "Users"),
+                            S.Block(
+                                S.WriteString("<li>Hello "),
+                                S.WriteExpression(E.Self(typeof(string))),
+                                S.WriteString(", "),
+                                S.WriteExpression(E.Property(model.GetType(), "Name", S.ExpressionScope.RootModel)),
+                                S.WriteString(" says hello!</li>")
+                            )
+                        ),
+                        S.WriteString("</ul>")
+                    )
+                ),
+                S.WriteString("</body></html>")
+            );
+        }
+
+        [Test]
+        public void Should_parse_if_block_with_explicit_model_reference()
+        {
+            var input = @"<html><head></head><body>@If.Model.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
+            var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
+            var output = Parse(input, model.GetType());
+
+            AssertSyntaxTree(output,
+                S.WriteString("<html><head></head><body>"),
+                S.Conditional(
+                    E.Property(model.GetType(), "HasUsers", S.ExpressionScope.RootModel),
                     S.Block(
                         S.WriteString("<ul>"),
                         S.Iterate(
@@ -780,59 +830,7 @@ namespace Veil.Tests.SuperSimple
 
                     Assert.Equal(@"<html><head></head><body>Users found!</body></html>", output);
                 }
-
-                [Test]
-                public void Should_allow_if_and_endif_and_model_model_source()
-                {
-                    const string input = @"<html><head></head><body>@If.Model.HasUsers;Users found!@EndIf</body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    ((FakeViewEngineHost)this.fakeHost).Context = new FakeModel("NancyContext", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body>Users found!</body></html>", output);
-                }
-
-                [Test]
-                public void Should_allow_if_and_endif_and_implicit_model_model_source()
-                {
-                    const string input = @"<html><head></head><body>@If.HasUsers;Users found!@EndIf</body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    ((FakeViewEngineHost)this.fakeHost).Context = new FakeModel("NancyContext", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body>Users found!</body></html>", output);
-                }
-
-                [Test]
-                public void Should_support_each_block_with_model_as_model_source()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Model.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    ((FakeViewEngineHost)this.fakeHost).Context = new FakeModel("NancyContext", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-
-                [Test]
-                public void Should_support_each_block_with_implicit_model_source()
-                {
-                    const string input = @"<html><head></head><body><ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
-                    var model = new FakeModel("Nancy", new List<string>() { "Bob", "Jim", "Bill" });
-
-                    ((FakeViewEngineHost)this.fakeHost).Context = new FakeModel("NancyContext", new List<string>());
-
-                    var output = viewEngine.Render(input, model, this.fakeHost);
-
-                    Assert.Equal(@"<html><head></head><body><ul><li>Hello Bob, Nancy says hello!</li><li>Hello Jim, Nancy says hello!</li><li>Hello Bill, Nancy says hello!</li></ul></body></html>", output);
-                }
-                */
+         */
     }
 
     public class User
