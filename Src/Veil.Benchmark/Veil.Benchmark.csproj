@@ -59,8 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GCBenchmark.cs" />
+    <Compile Include="GCBenchmarkCases\ChevronGCBenchmarkCase.cs" />
     <Compile Include="GCBenchmarkCases\IGCBenchmarkCase.cs" />
     <Compile Include="GCBenchmarkCases\NullTextWriter.cs" />
+    <Compile Include="GCBenchmarkCases\RazorGCBenchmarkCase.cs" />
     <Compile Include="GCBenchmarkCases\SuperSimpleGCBenchmarkCase.cs" />
     <Compile Include="GCBenchmarkCases\VeilGCBenchmarkCase.cs" />
     <Compile Include="Hosts\SuperSimpleHost.cs" />

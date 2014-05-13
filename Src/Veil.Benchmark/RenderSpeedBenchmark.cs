@@ -46,7 +46,6 @@ namespace Veil.Benchmark
             {
                 benchmark.Dispose();
             }
-            return;
         }
 
         private static void Execute(Func<string> sample, string name)
