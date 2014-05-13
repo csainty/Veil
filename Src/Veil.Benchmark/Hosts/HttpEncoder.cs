@@ -36,7 +36,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Veil.Benchmark
+namespace Veil.Benchmark.Hosts
 {
 #if NET_4_0
 	public
