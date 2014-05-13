@@ -16,6 +16,7 @@ namespace Veil.Benchmark
             Console.WriteLine("1. Render speed");
 
             var key = Console.ReadKey(true);
+            Console.Clear();
             if (key.KeyChar == '1') new RenderSpeedBenchmark().Run();
 
             Console.WriteLine();
