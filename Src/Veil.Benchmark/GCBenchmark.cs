@@ -63,11 +63,11 @@ namespace Veil.Benchmark
                 benchmark.Render(NullTextWriter.Instance, model);
             }
 
-            var gen0Done = gen0Counter.RawValue - gen0Count;
-            var gen1Done = gen1Counter.RawValue - gen1Count;
-            var gen2Done = gen2Counter.RawValue - gen2Count;
-
-            Console.WriteLine(gen0Done + "/" + gen1Done + "/" + gen2Done);
+            Console.WriteLine(String.Format("GC Gen Collections - {0}/{1}/{2}",
+                gen0Counter.RawValue - gen0Count,
+                gen1Counter.RawValue - gen1Count,
+                gen2Counter.RawValue - gen2Count
+            ));
         }
     }
 }
