@@ -8,22 +8,34 @@ namespace Veil.Benchmark
     {
         private static void Main(string[] args)
         {
+            bool isManual = args.Length == 0;
+            string option = "";
             VeilEngine.RegisterParser("haml", new HandlebarsParser());
             VeilEngine.RegisterParser("sshtml", new SuperSimpleParser());
 
             Console.WriteLine("Veil.Benchmarks");
             Console.WriteLine("---------------");
-            Console.WriteLine("1. Render speed");
-            Console.WriteLine("2. GC pressure");
 
-            var key = Console.ReadKey(true);
-            Console.Clear();
-            if (key.KeyChar == '1') new RenderSpeedBenchmark().Run();
-            if (key.KeyChar == '2') new GCBenchmark().Run();
+            if (isManual)
+            {
+                Console.WriteLine("1. Render speed");
+                Console.WriteLine("2. GC pressure");
+
+                var key = Console.ReadKey(true);
+                Console.Clear();
+                option = key.KeyChar.ToString();
+            }
+            else
+            {
+                option = args[0];
+            }
+
+            if (option == "1") new RenderSpeedBenchmark().Run();
+            if (option == "2") new GCBenchmark().Run();
 
             Console.WriteLine();
             Console.WriteLine("-- Done --");
-            Console.ReadKey();
+            if (isManual) Console.ReadKey();
         }
     }
 }
