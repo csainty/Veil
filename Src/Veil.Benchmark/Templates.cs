@@ -21,7 +21,7 @@ namespace Veil.Benchmark
 
         public static string ReadTemplate(string templateName)
         {
-            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Veil.Benchmark." + templateName)))
+            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Veil.Benchmark.Views." + templateName)))
             {
                 return reader.ReadToEnd();
             }
