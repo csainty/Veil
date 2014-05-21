@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Sigil;
 using Veil.Parser;
 
 namespace Veil.Compiler
