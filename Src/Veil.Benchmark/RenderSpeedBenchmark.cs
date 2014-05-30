@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SimpleSpeedTester.Core;
 using Veil.Benchmark.RenderSpeedBenchmarkCases;
@@ -14,13 +15,7 @@ namespace Veil.Benchmark
             var typedModel = ViewModels.CreateTypedViewModel();
             var dynamicModel = ViewModels.CreateDynamicViewModel();
             var dictionaryModel = ViewModels.CreateDictionaryModel();
-            var benchmarks = new IRenderSpeedBenchmarkCase[] {
-                new VeilSuperSimpleRenderSpeedBenchmarkCase(),
-                new SuperSimpleRenderSpeedBenchmarkCase(),
-                new VeilHandlebarsRenderSpeedBenchmarkCase(),
-                new ChevronRenderSpeedBenchmarkCase(),
-                new RazorRenderSpeedBenchmarkCase()
-            };
+            var benchmarks = GetBenchmarkCases().ToArray();
 
             Console.WriteLine("Warming up and validating benchmarks");
 
@@ -46,6 +41,15 @@ namespace Veil.Benchmark
             {
                 benchmark.Dispose();
             }
+        }
+
+        private IEnumerable<IRenderSpeedBenchmarkCase> GetBenchmarkCases()
+        {
+            yield return new VeilSuperSimpleRenderSpeedBenchmarkCase();
+            yield return new SuperSimpleRenderSpeedBenchmarkCase();
+            yield return new VeilHandlebarsRenderSpeedBenchmarkCase();
+            if (!Program.IsNix) yield return new ChevronRenderSpeedBenchmarkCase();
+            yield return new RazorRenderSpeedBenchmarkCase();
         }
 
         private static void Execute(Func<string> sample, string name)

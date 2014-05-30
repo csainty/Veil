@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Veil.Benchmark.GCBenchmarkCases;
@@ -23,12 +24,7 @@ namespace Veil.Benchmark
         public void Run()
         {
             var model = ViewModels.CreateTypedViewModel();
-            var benchmarks = new IGCBenchmarkCase[] {
-                new VeilGCBenchmarkCase(),
-                new SuperSimpleGCBenchmarkCase(),
-                new ChevronGCBenchmarkCase(),
-                new RazorGCBenchmarkCase()
-            };
+            var benchmarks = GetBenchmarkCases().ToArray();
 
             Console.WriteLine("Warming up benchmarks");
             for (int i = 0, j = benchmarks.Length; i < j; i++)
@@ -46,6 +42,14 @@ namespace Veil.Benchmark
             {
                 benchmark.Dispose();
             }
+        }
+
+        private IEnumerable<IGCBenchmarkCase> GetBenchmarkCases()
+        {
+            yield return new VeilGCBenchmarkCase();
+            yield return new SuperSimpleGCBenchmarkCase();
+            if (!Program.IsNix) yield return new ChevronGCBenchmarkCase();
+            yield return new RazorGCBenchmarkCase();
         }
 
         private void Execute(IGCBenchmarkCase benchmark, ViewModel model)
