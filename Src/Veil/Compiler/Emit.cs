@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 
@@ -17,7 +18,7 @@ namespace Veil.Compiler
             var invokeMethod = delegateType.GetMethod("Invoke");
 
             var methodName = "_DynamicMethod" + Interlocked.Increment(ref methodCount);
-            this.method = new DynamicMethod(methodName, invokeMethod.ReturnType, invokeMethod.GetParameters().Select(x => x.ParameterType).ToArray());
+            this.method = new DynamicMethod(methodName, invokeMethod.ReturnType, invokeMethod.GetParameters().Select(x => x.ParameterType).ToArray(), true);
             this.generator = this.method.GetILGenerator();
         }
 
@@ -40,10 +41,10 @@ namespace Veil.Compiler
         {
             switch (index)
             {
-                case 0: this.generator.Emit(OpCodes.Ldarg_0); break;
-                case 1: this.generator.Emit(OpCodes.Ldarg_1); break;
-                case 2: this.generator.Emit(OpCodes.Ldarg_2); break;
-                case 3: this.generator.Emit(OpCodes.Ldarg_3); break;
+                case 0: this.generator.Emit(OpCodes.Ldarg_0); return;
+                case 1: this.generator.Emit(OpCodes.Ldarg_1); return;
+                case 2: this.generator.Emit(OpCodes.Ldarg_2); return;
+                case 3: this.generator.Emit(OpCodes.Ldarg_3); return;
                 default: throw new InvalidOperationException("Tried to emit a load argument for an unspoorted index.");
             }
         }
@@ -53,64 +54,127 @@ namespace Veil.Compiler
             this.generator.Emit(OpCodes.Ldstr, value);
         }
 
-        public void LoadConstant(double value)
-        {
-            this.generator.Emit(OpCodes.Ldc_R8, value);
-        }
-
-        public void LoadConstant(float value)
-        {
-            this.generator.Emit(OpCodes.Ldc_R4, value);
-        }
-
-        public void LoadConstant(long value)
-        {
-            this.generator.Emit(OpCodes.Ldc_I8, value);
-        }
-
-        public void LoadConstant(ulong value)
-        {
-            this.generator.Emit(OpCodes.Ldc_I8, value);
-        }
-
         public void LoadConstant(int value)
         {
             switch (value)
             {
-                case -1: this.generator.Emit(OpCodes.Ldc_I4_M1); break;
-                case 0: this.generator.Emit(OpCodes.Ldc_I4_0); break;
-                case 1: this.generator.Emit(OpCodes.Ldc_I4_1); break;
-                case 2: this.generator.Emit(OpCodes.Ldc_I4_2); break;
-                case 3: this.generator.Emit(OpCodes.Ldc_I4_3); break;
-                case 4: this.generator.Emit(OpCodes.Ldc_I4_4); break;
-                case 5: this.generator.Emit(OpCodes.Ldc_I4_5); break;
-                case 6: this.generator.Emit(OpCodes.Ldc_I4_6); break;
-                case 7: this.generator.Emit(OpCodes.Ldc_I4_7); break;
-                case 8: this.generator.Emit(OpCodes.Ldc_I4_8); break;
+                case -1: this.generator.Emit(OpCodes.Ldc_I4_M1); return;
+                case 0: this.generator.Emit(OpCodes.Ldc_I4_0); return;
+                case 1: this.generator.Emit(OpCodes.Ldc_I4_1); return;
+                case 2: this.generator.Emit(OpCodes.Ldc_I4_2); return;
+                case 3: this.generator.Emit(OpCodes.Ldc_I4_3); return;
+                case 4: this.generator.Emit(OpCodes.Ldc_I4_4); return;
+                case 5: this.generator.Emit(OpCodes.Ldc_I4_5); return;
+                case 6: this.generator.Emit(OpCodes.Ldc_I4_6); return;
+                case 7: this.generator.Emit(OpCodes.Ldc_I4_7); return;
+                case 8: this.generator.Emit(OpCodes.Ldc_I4_8); return;
             }
 
             if (value >= SByte.MinValue && value <= SByte.MaxValue)
             {
                 this.generator.Emit(OpCodes.Ldc_I4_S, (sbyte)value);
+                return;
             }
+
+            this.generator.Emit(OpCodes.Ldc_I4, value);
         }
 
-        public void LoadConstant(uint value)
+        internal Local DeclareLocal(Type type)
         {
-            switch (value)
-            {
-                case -1: this.generator.Emit(OpCodes.Ldc_I4_M1); break;
-                case 0: this.generator.Emit(OpCodes.Ldc_I4_0); break;
-                case 1: this.generator.Emit(OpCodes.Ldc_I4_1); break;
-                case 2: this.generator.Emit(OpCodes.Ldc_I4_2); break;
-                case 3: this.generator.Emit(OpCodes.Ldc_I4_3); break;
-                case 4: this.generator.Emit(OpCodes.Ldc_I4_4); break;
-                case 5: this.generator.Emit(OpCodes.Ldc_I4_5); break;
-                case 6: this.generator.Emit(OpCodes.Ldc_I4_6); break;
-                case 7: this.generator.Emit(OpCodes.Ldc_I4_7); break;
-                case 8: this.generator.Emit(OpCodes.Ldc_I4_8); break;
-            }
+            return new Local(this.generator.DeclareLocal(type));
         }
 
+        internal void StoreLocal(Local local)
+        {
+            switch (local.Index)
+            {
+                case 0: this.generator.Emit(OpCodes.Stloc_0); return;
+                case 1: this.generator.Emit(OpCodes.Stloc_1); return;
+                case 2: this.generator.Emit(OpCodes.Stloc_2); return;
+                case 3: this.generator.Emit(OpCodes.Stloc_3); return;
+            }
+
+            if (local.Index >= SByte.MinValue && local.Index <= SByte.MaxValue)
+            {
+                this.generator.Emit(OpCodes.Stloc_S, (sbyte)local.Index);
+                return;
+            }
+
+            this.generator.Emit(OpCodes.Stloc, local.Index);
+        }
+
+        internal void LoadLocal(Local local)
+        {
+            switch (local.Index)
+            {
+                case 0: this.generator.Emit(OpCodes.Ldloc_0); return;
+                case 1: this.generator.Emit(OpCodes.Ldloc_1); return;
+                case 2: this.generator.Emit(OpCodes.Ldloc_2); return;
+                case 3: this.generator.Emit(OpCodes.Ldloc_3); return;
+            }
+
+            if (local.Index >= SByte.MinValue && local.Index <= SByte.MaxValue)
+            {
+                this.generator.Emit(OpCodes.Ldloc_S, (sbyte)local.Index);
+                return;
+            }
+
+            this.generator.Emit(OpCodes.Ldloc, local.Index);
+        }
+
+        internal void CallVirtual(MethodInfo info)
+        {
+            this.generator.Emit(OpCodes.Callvirt, info);
+        }
+
+        internal void Call(MethodInfo info)
+        {
+            this.generator.Emit(OpCodes.Call, info);
+        }
+
+        internal void CastClass(Type type)
+        {
+            this.generator.Emit(OpCodes.Castclass, type);
+        }
+
+        internal void LoadField(FieldInfo fieldInfo)
+        {
+            this.generator.Emit(OpCodes.Ldfld, fieldInfo);
+        }
+
+        internal Label DefineLabel()
+        {
+            return this.generator.DefineLabel();
+        }
+
+        internal void MarkLabel(Label label)
+        {
+            this.generator.MarkLabel(label);
+        }
+
+        internal void Branch(Label label)
+        {
+            this.generator.Emit(OpCodes.Br, label);
+        }
+
+        internal void BranchIfFalse(Label label)
+        {
+            this.generator.Emit(OpCodes.Brfalse, label);
+        }
+
+        internal void BranchIfTrue(Label label)
+        {
+            this.generator.Emit(OpCodes.Brtrue, label);
+        }
+
+        internal void CompareEqual()
+        {
+            this.generator.Emit(OpCodes.Ceq);
+        }
+
+        internal void Pop()
+        {
+            this.generator.Emit(OpCodes.Pop);
+        }
     }
 }

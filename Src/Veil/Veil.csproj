@@ -44,6 +44,7 @@
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="Compiler\Emit.cs" />
     <Compile Include="Compiler\EmitterExtensions.cs" />
+    <Compile Include="Compiler\Local.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitFlush.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitOverride.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitInclude.cs" />
