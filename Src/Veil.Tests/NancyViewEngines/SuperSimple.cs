@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Nancy;
 using Nancy.Testing;
 using Nancy.ViewEngines.Veil.SuperSimple;
@@ -42,23 +43,9 @@ namespace Veil.NancyViewEngines
 
         private class TestingRootPathProvider : IRootPathProvider
         {
-            private static readonly string RootPath;
-
-            static TestingRootPathProvider()
-            {
-                var directoryName = Path.GetDirectoryName(typeof(SuperSimple).Assembly.CodeBase);
-
-                if (directoryName != null)
-                {
-                    var assemblyPath = directoryName.Replace(@"file:\", string.Empty);
-
-                    RootPath = Path.GetFullPath(Path.Combine(assemblyPath, "..", "..", "NancyViewEngines"));
-                }
-            }
-
             public string GetRootPath()
             {
-                return RootPath;
+                return Path.Combine(Environment.CurrentDirectory, "..", "..", "NancyViewEngines");
             }
         }
     }
