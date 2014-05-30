@@ -5,7 +5,7 @@ namespace Veil.Benchmark.GCBenchmarkCases
 {
     public class ChevronGCBenchmarkCase : IGCBenchmarkCase, IDisposable
     {
-        public string Name { get { return "Chevron.IE.Merged"; } }
+        public string Name { get { return "Chevron.V8"; } }
 
         private readonly Chevron.Handlebars engine = new Chevron.Handlebars();
 

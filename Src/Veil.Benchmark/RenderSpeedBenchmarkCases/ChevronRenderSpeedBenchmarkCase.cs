@@ -5,7 +5,7 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 {
     public class ChevronRenderSpeedBenchmarkCase : IRenderSpeedBenchmarkCase, IDisposable
     {
-        public string Name { get { return "Chevron.IE.Merged"; } }
+        public string Name { get { return "Chevron.V8"; } }
 
         public bool SupportsDictionaryModel { get { return true; } }
 
