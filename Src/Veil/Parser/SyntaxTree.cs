@@ -23,8 +23,7 @@ namespace Veil.Parser
         {
             return new WriteLiteralNode
             {
-                LiteralContent = content,
-                LiteralType = typeof(string)
+                LiteralContent = content
             };
         }
 
@@ -165,9 +164,7 @@ namespace Veil.Parser
 
         public class WriteLiteralNode : SyntaxTreeNode
         {
-            public Type LiteralType { get; set; }
-
-            public object LiteralContent { get; set; }
+            public string LiteralContent { get; set; }
         }
 
         public class WriteExpressionNode : SyntaxTreeNode
