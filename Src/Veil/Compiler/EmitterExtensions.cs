@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Sigil;
 
 namespace Veil.Compiler
 {

@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Sigil">
-      <HintPath>..\packages\Sigil.4.1.0\lib\net40\Sigil.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
+    <Compile Include="Compiler\Emit.cs" />
     <Compile Include="Compiler\EmitterExtensions.cs" />
+    <Compile Include="Compiler\Local.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitFlush.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitOverride.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitInclude.cs" />
@@ -70,7 +69,6 @@
   <ItemGroup>
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteExpression.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitBlock.cs" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

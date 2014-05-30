@@ -53,7 +53,7 @@ namespace Veil.Compiler
                 if (disposeEnumerator)
                 {
                     emitter.LoadLocal(en);
-                    emitter.Call(disposeMethod);
+                    emitter.CallMethod(disposeMethod);
                 }
             }
         }

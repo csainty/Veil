@@ -6,7 +6,6 @@ namespace Veil.Compiler
     [TestFixture]
     internal class WriteLiteralTests : CompilerTestBase
     {
-        [SetCulture("en-US")]
         [TestCase("Hello World", "Hello World")]
         public void Should_output_literal(string literal, string expectedResult)
         {
