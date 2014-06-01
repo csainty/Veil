@@ -84,8 +84,12 @@ namespace Veil.Compiler
                     scopeStack.Last.Value.Invoke(emitter);
                     break;
 
+                case SyntaxTreeNode.ExpressionScope.ModelOfParentScope:
+                    scopeStack.First.Next.Value.Invoke(emitter);
+                    break;
+
                 default:
-                    throw new VeilCompilerException("Uknown expression scope '{0}'".FormatInvariant(expression.Scope));
+                    throw new VeilCompilerException("Unknown expression scope '{0}'".FormatInvariant(expression.Scope));
             }
             EvaluateExpressionAgainstModelOnStack(expression);
         }

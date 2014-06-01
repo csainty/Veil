@@ -9,7 +9,8 @@ namespace Veil.Parser
         public enum ExpressionScope
         {
             CurrentModelOnStack,
-            RootModel
+            RootModel,
+            ModelOfParentScope
         }
 
         public abstract class ExpressionNode : SyntaxTreeNode

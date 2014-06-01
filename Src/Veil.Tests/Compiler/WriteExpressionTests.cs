@@ -49,6 +49,36 @@ namespace Veil.Compiler
         }
 
         [Test]
+        public void Should_be_able_to_write_from_parent_scope_model()
+        {
+            var model = new Model<string>
+            {
+                Name = "Root",
+                SubModels = new[] { 
+                    new SubModel<string> { Name = "1", Strings = new [] { "A", "B" } },
+                    new SubModel<string> { Name = "2", Strings = new [] { "C", "D" } }
+                }
+            };
+            var template = SyntaxTreeNode.Block(
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "SubModels", SyntaxTreeNode.ExpressionScope.RootModel),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.Iterate(
+                            SyntaxTreeNode.ExpressionNode.Property(model.Sub.GetType(), "Strings", SyntaxTreeNode.ExpressionScope.CurrentModelOnStack),
+                            SyntaxTreeNode.Block(
+                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
+                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.Sub.GetType(), "Name", SyntaxTreeNode.ExpressionScope.ModelOfParentScope)),
+                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel))
+                            )
+                        )
+                    )
+                )
+            );
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("A1RootB1RootC2RootD2Root"));
+        }
+
+        [Test]
         public void Should_apply_html_encoding_when_requested()
         {
             var model = new { Text = "<h1>Hello</h1>" };
@@ -91,11 +121,19 @@ namespace Veil.Compiler
             public T DataField;
 
             public SubModel<T> Sub { get { return new SubModel<T> { SubData = DataField }; } }
+
+            public SubModel<T>[] SubModels { get; set; }
+
+            public string Name { get; set; }
         }
 
         internal class SubModel<T>
         {
             public T SubData { get; set; }
+
+            public string[] Strings { get; set; }
+
+            public string Name { get; set; }
         }
     }
 }
