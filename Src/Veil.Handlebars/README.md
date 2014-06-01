@@ -74,3 +74,7 @@ var deptTemplate = "From {{ Department.Name }}";
 `{{> userTemplate }} {{> deptTemplate }} - Hello Bob From Sector 7G`
 
 Partials always inherit the current model context.
+
+### {{! comments }}
+You can add comments to your template with the `{{! your comment here }}` expression.  
+These are simply ignored and removed during compilation.

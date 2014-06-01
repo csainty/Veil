@@ -75,6 +75,10 @@ namespace Veil.Handlebars
                     var self = SyntaxTreeNode.ExpressionNode.Self(blockStack.Peek().ModelInScope);
                     blockStack.Peek().Block.Add(SyntaxTreeNode.Include(partialName, self));
                 }
+                else if (token.StartsWith("!"))
+                {
+                    // do nothing for comments
+                }
                 else
                 {
                     var expression = HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token);

@@ -72,6 +72,7 @@
     <Compile Include="Expressions\CollectionHasItemsNodeTests.cs" />
     <Compile Include="Expressions\ConditionalNodeTests.cs" />
     <Compile Include="Expressions\IterateNodeTests.cs" />
+    <Compile Include="Handlebars\CommentTests.cs" />
     <Compile Include="Handlebars\ConditionalTests.cs" />
     <Compile Include="Handlebars\FlushTests.cs" />
     <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
