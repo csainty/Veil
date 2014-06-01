@@ -20,6 +20,16 @@ var model = new {
 Hello `{{ Name }}` - Hello Bob  
 From `{{ Department.Name }}` - From Sector 7G 
 
+Handlebars supports referencing the model of the parent scope with the `../` expression.
+
+````
+var model = new {
+	Name = "Bob",
+	Roles = new [] { "Admin", "User" }
+}
+````  
+`{{#each Roles}}`Hello `{{../Name}}` the `{{this}}`! `{{/each}}` - Hello Bob the Admin! Hello Bob the User! 
+
 All handlebars expressions are HTML-escape by default. To disable this functionality you should wrap your expression with three braces instead.   
 ````
 var model = new {

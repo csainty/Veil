@@ -107,7 +107,8 @@ namespace Veil
                 new object[] {"Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil"},
                 new object[] {"Department: {{ Department.GetDepartmentNumber() }}", "Department: 10"},
                 new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{ this }}{{/each}}", "Hey Chris, You are in roles User Browser"},
-                new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{> role}}{{/each}}", "Hey Chris, You are in roles User Browser"}
+                new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{> role}}{{/each}}", "Hey Chris, You are in roles User Browser"},
+                new object[] {"Hey {{ Name }},{{#each Roles}} {{ ../Name }}{{/each}}", "Hey Chris, Chris Chris"}
             };
         }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 using DeepEqual.Syntax;
 using NUnit.Framework;
 using Veil.Parser;
@@ -66,6 +65,18 @@ namespace Veil.Handlebars
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.LateBound("Name", SyntaxTreeNode.ExpressionScope.CurrentModelOnStack));
         }
 
+        [Test]
+        public void Should_be_able_to_reference_parent_scopes_model()
+        {
+            var current = new { };
+            var parent = new { Name = "" };
+            var root = new { };
+
+            var scopes = CreateScopes(root.GetType(), parent.GetType(), current.GetType());
+            var result = HandlebarsExpressionParser.Parse(scopes, "../Name");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(parent.GetType(), "Name", SyntaxTreeNode.ExpressionScope.ModelOfParentScope));
+        }
+
         [TestCase("Foo")]
         [TestCase("Foo.Bar")]
         [TestCase("SubModel.Foo")]
@@ -117,9 +128,14 @@ namespace Veil.Handlebars
             public string SubSubField = "";
         }
 
-        private static LinkedList<HandlebarsParser.ParserScope> CreateScopes(params Type[] models)
+        private static LinkedList<HandlebarsParser.ParserScope> CreateScopes(params Type[] modelTypes)
         {
-            return new LinkedList<HandlebarsParser.ParserScope>(models.Select(x => new HandlebarsParser.ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = x }));
+            var scopes = new LinkedList<HandlebarsParser.ParserScope>();
+            foreach (var modelType in modelTypes)
+            {
+                scopes.AddFirst(new HandlebarsParser.ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = modelType });
+            }
+            return scopes;
         }
     }
 }

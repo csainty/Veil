@@ -11,37 +11,41 @@ namespace Veil.Handlebars
         {
             expression = expression.Trim();
 
-            return ParseAgainstModel(scopes.First().ModelInScope, expression);
+            if (expression == "this")
+            {
+                return SyntaxTreeNode.ExpressionNode.Self(scopes.First().ModelInScope, SyntaxTreeNode.ExpressionScope.CurrentModelOnStack);
+            }
+            if (expression.StartsWith("../"))
+            {
+                return ParseAgainstModel(scopes.First.Next.Value.ModelInScope, expression.Substring(3), SyntaxTreeNode.ExpressionScope.ModelOfParentScope);
+            }
+
+            return ParseAgainstModel(scopes.First().ModelInScope, expression, SyntaxTreeNode.ExpressionScope.CurrentModelOnStack);
         }
 
-        private static SyntaxTreeNode.ExpressionNode ParseAgainstModel(Type modelType, string expression)
+        private static SyntaxTreeNode.ExpressionNode ParseAgainstModel(Type modelType, string expression, SyntaxTreeNode.ExpressionNode.ExpressionScope expressionScope)
         {
             var dotIndex = expression.IndexOf('.');
             if (dotIndex >= 0)
             {
-                var subModel = HandlebarsExpressionParser.ParseAgainstModel(modelType, expression.Substring(0, dotIndex));
+                var subModel = HandlebarsExpressionParser.ParseAgainstModel(modelType, expression.Substring(0, dotIndex), expressionScope);
                 return SyntaxTreeNode.ExpressionNode.SubModel(
                     subModel,
-                    HandlebarsExpressionParser.ParseAgainstModel(subModel.ResultType, expression.Substring(dotIndex + 1))
+                    HandlebarsExpressionParser.ParseAgainstModel(subModel.ResultType, expression.Substring(dotIndex + 1), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)
                 );
-            }
-
-            if (expression == "this")
-            {
-                return SyntaxTreeNode.ExpressionNode.Self(modelType);
             }
 
             if (expression.EndsWith("()"))
             {
                 var methodInfo = modelType.GetMethod(expression.Substring(0, expression.Length - 2));
-                if (methodInfo != null) return new SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode { MethodInfo = methodInfo };
+                if (methodInfo != null) return SyntaxTreeNode.ExpressionNode.Function(modelType, expression.Substring(0, expression.Length - 2), expressionScope);
             }
 
             var propertyInfo = modelType.GetProperty(expression);
-            if (propertyInfo != null) return new SyntaxTreeNode.ExpressionNode.PropertyExpressionNode { PropertyInfo = propertyInfo };
+            if (propertyInfo != null) return SyntaxTreeNode.ExpressionNode.Property(modelType, expression, expressionScope);
 
             var fieldInfo = modelType.GetField(expression);
-            if (fieldInfo != null) return new SyntaxTreeNode.ExpressionNode.FieldExpressionNode { FieldInfo = fieldInfo };
+            if (fieldInfo != null) return SyntaxTreeNode.ExpressionNode.Field(modelType, expression, expressionScope);
 
             if (IsLateBoundAcceptingType(modelType)) return SyntaxTreeNode.ExpressionNode.LateBound(expression);
 
