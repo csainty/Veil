@@ -13,6 +13,8 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
         public bool SupportsDynamicModel { get { return true; } }
 
+        public bool SupportsUntypedModel { get { return true; } }
+
         private readonly Action<TextWriter, ViewModel> compiledTypedTemplate;
         private readonly Action<TextWriter, object> compiledUntypedTemplate;
         private readonly Action<TextWriter, dynamic> compiledDynamicTemplate;

@@ -36,9 +36,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Chevron.IE.Merged.0.4.1\Lib\NET40\Chevron.IE.dll</HintPath>
     </Reference>
-    <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
-    </Reference>
     <Reference Include="SimpleSpeedTester">
       <HintPath>..\packages\SimpleSpeedTester.1.1.0\lib\net40\SimpleSpeedTester.dll</HintPath>
     </Reference>
@@ -70,6 +67,7 @@
     <Compile Include="Hosts\VeilContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Razor.cs" />
     <Compile Include="RenderSpeedBenchmark.cs" />
     <Compile Include="RenderSpeedBenchmarkCases\ChevronRenderSpeedBenchmarkCase.cs" />
     <Compile Include="RenderSpeedBenchmarkCases\IRenderSpeedBenchmarkCase.cs" />

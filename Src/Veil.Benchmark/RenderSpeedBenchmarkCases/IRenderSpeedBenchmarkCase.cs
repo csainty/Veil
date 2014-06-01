@@ -17,5 +17,7 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
         bool SupportsDictionaryModel { get; }
 
         bool SupportsDynamicModel { get; }
+
+        bool SupportsUntypedModel { get; }
     }
 }

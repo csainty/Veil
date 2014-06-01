@@ -11,6 +11,8 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
         public bool SupportsDynamicModel { get { return true; } }
 
+        public bool SupportsUntypedModel { get { return true; } }
+
         private readonly Chevron.Handlebars engine = new Chevron.Handlebars();
 
         public ChevronRenderSpeedBenchmarkCase()

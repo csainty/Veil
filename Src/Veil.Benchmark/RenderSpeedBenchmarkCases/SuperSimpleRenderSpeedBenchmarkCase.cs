@@ -12,6 +12,8 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
         public bool SupportsDynamicModel { get { return true; } }
 
+        public bool SupportsUntypedModel { get { return true; } }
+
         private readonly string templateContents = Templates.ReadTemplate("Template.sshtml");
         private readonly SuperSimpleHost host = new SuperSimpleHost();
         private readonly SuperSimpleViewEngine.SuperSimpleViewEngine engine = new SuperSimpleViewEngine.SuperSimpleViewEngine();

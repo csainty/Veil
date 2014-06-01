@@ -22,7 +22,7 @@ namespace Veil.Benchmark
             foreach (var benchmark in benchmarks)
             {
                 Templates.AssertTemplateSample(benchmark.RenderTypedModel(typedModel), benchmark.Name + " (Typed Model)");
-                Templates.AssertTemplateSample(benchmark.RenderUntypedModel(typedModel), benchmark.Name + " (Untyped Model)");
+                if (benchmark.SupportsUntypedModel) Templates.AssertTemplateSample(benchmark.RenderUntypedModel(typedModel), benchmark.Name + " (Untyped Model)");
                 if (benchmark.SupportsDynamicModel) Templates.AssertTemplateSample(benchmark.RenderDynamicModel(dynamicModel), benchmark.Name + " (Dynamic Model)");
                 if (benchmark.SupportsDictionaryModel) Templates.AssertTemplateSample(benchmark.RenderDictionaryModel(dictionaryModel), benchmark.Name + " (Dictionary Model)");
             }
@@ -32,7 +32,7 @@ namespace Veil.Benchmark
             foreach (var benchmark in benchmarks)
             {
                 Execute(() => benchmark.RenderTypedModel(typedModel), benchmark.Name + " (Typed Model)");
-                Execute(() => benchmark.RenderUntypedModel(typedModel), benchmark.Name + " (Untyped Model)");
+                if (benchmark.SupportsUntypedModel) Execute(() => benchmark.RenderUntypedModel(typedModel), benchmark.Name + " (Untyped Model)");
                 if (benchmark.SupportsDynamicModel) Execute(() => benchmark.RenderDynamicModel(dynamicModel), benchmark.Name + " (Dynamic Model)");
                 if (benchmark.SupportsDictionaryModel) Execute(() => benchmark.RenderDictionaryModel(dictionaryModel), benchmark.Name + " (Dictionary Model)");
             }
