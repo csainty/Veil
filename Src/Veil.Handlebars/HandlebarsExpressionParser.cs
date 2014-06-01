@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Veil.Parser;
 
 namespace Veil.Handlebars
@@ -36,7 +38,19 @@ namespace Veil.Handlebars
             var fieldInfo = modelType.GetField(expression);
             if (fieldInfo != null) return new SyntaxTreeNode.ExpressionNode.FieldExpressionNode { FieldInfo = fieldInfo };
 
+            if (IsLateBoundAcceptingType(modelType)) return SyntaxTreeNode.ExpressionNode.LateBound(expression);
+
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt model '{1}'", expression, modelType.Name));
+        }
+
+        private static bool IsLateBoundAcceptingType(Type type)
+        {
+            return type == typeof(object) || (type.IsDictionary() || type.GetInterfaces().Any(IsDictionary));
+        }
+
+        private static bool IsDictionary(this Type t)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
         }
     }
 }

@@ -9,12 +9,14 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
     {
         public string Name { get { return "Veil.Handlebars"; } }
 
-        public bool SupportsDictionaryModel { get { return false; } }
+        public bool SupportsDictionaryModel { get { return true; } }
 
-        public bool SupportsDynamicModel { get { return false; } }
+        public bool SupportsDynamicModel { get { return true; } }
 
         private readonly Action<TextWriter, ViewModel> compiledTypedTemplate;
         private readonly Action<TextWriter, object> compiledUntypedTemplate;
+        private readonly Action<TextWriter, dynamic> compiledDynamicTemplate;
+        private readonly Action<TextWriter, IDictionary<string, object>> compiledDictionaryTemplate;
 
         public VeilHandlebarsRenderSpeedBenchmarkCase()
         {
@@ -25,6 +27,8 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
             compiledTypedTemplate = engine.Compile<ViewModel>("haml", new StringReader(templateContents));
             compiledUntypedTemplate = engine.CompileNonGeneric("haml", new StringReader(templateContents), typeof(ViewModel));
+            compiledDynamicTemplate = engine.Compile<dynamic>("haml", new StringReader(templateContents));
+            compiledDictionaryTemplate = engine.Compile<IDictionary<string, object>>("haml", new StringReader(templateContents));
         }
 
         public string RenderTypedModel(ViewModel model)
@@ -38,12 +42,20 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
         public string RenderDynamicModel(dynamic model)
         {
-            throw new NotSupportedException();
+            using (var writer = new StringWriter())
+            {
+                compiledDynamicTemplate(writer, model);
+                return writer.ToString();
+            }
         }
 
         public string RenderDictionaryModel(IDictionary<string, object> model)
         {
-            throw new NotSupportedException();
+            using (var writer = new StringWriter())
+            {
+                compiledDictionaryTemplate(writer, model);
+                return writer.ToString();
+            }
         }
 
         public string RenderUntypedModel(object model)

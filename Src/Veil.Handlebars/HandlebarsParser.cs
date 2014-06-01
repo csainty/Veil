@@ -82,7 +82,7 @@ namespace Veil.Handlebars
                 else
                 {
                     var expression = HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token);
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape && expression.ResultType == typeof(string)));
+                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape));
                 }
             }
             if (index < template.Length)

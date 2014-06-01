@@ -1,4 +1,6 @@
-﻿using DeepEqual.Syntax;
+﻿using System.Collections.Generic;
+using System.Dynamic;
+using DeepEqual.Syntax;
 using NUnit.Framework;
 using Veil.Parser;
 
@@ -55,6 +57,13 @@ namespace Veil.Handlebars
             result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Self(typeof(string)));
         }
 
+        [TestCaseSource("LateBoundTestCases")]
+        public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
+        {
+            var result = HandlebarsExpressionParser.Parse(typeof(T), "Name");
+            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.LateBound("Name", SyntaxTreeNode.ExpressionScope.CurrentModelOnStack));
+        }
+
         [TestCase("Foo")]
         [TestCase("Foo.Bar")]
         [TestCase("SubModel.Foo")]
@@ -69,6 +78,15 @@ namespace Veil.Handlebars
             {
                 HandlebarsExpressionParser.Parse(typeof(Model), expression);
             });
+        }
+
+        public object[] LateBoundTestCases()
+        {
+            return new object[] {
+                new object[] { new object() },
+                new object[] { new Dictionary<string, object>() },
+                new object[] { new ExpandoObject() }
+            };
         }
 
         private class Model

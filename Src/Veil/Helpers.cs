@@ -41,6 +41,18 @@ namespace Veil
             else if (length > 0) writer.Write(chars, startIndex, length);
         }
 
+        public static void HtmlEncodeLateBound(TextWriter writer, object value)
+        {
+            if (value is string)
+            {
+                HtmlEncode(writer, (string)value);
+            }
+            else
+            {
+                writer.Write(value);
+            }
+        }
+
         public static bool Boolify(object o)
         {
             if (o is bool) return (bool)o;

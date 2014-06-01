@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Veil.Parser;
 
 namespace Veil.Compiler
@@ -6,6 +7,7 @@ namespace Veil.Compiler
     internal partial class VeilTemplateCompiler<T>
     {
         private static MethodInfo htmlEncodeMethod = typeof(Helpers).GetMethod("HtmlEncode");
+        private static MethodInfo htmlEncodeLateBoundMethod = typeof(Helpers).GetMethod("HtmlEncodeLateBound");
         private static MethodInfo toStringMethod = typeof(object).GetMethod("ToString");
 
         private void EmitWriteExpression(SyntaxTreeNode.WriteExpressionNode node)
@@ -20,15 +22,20 @@ namespace Veil.Compiler
                 emitter.CallMethod(toStringMethod);
             }
 
-            if (node.HtmlEncode)
+            if (node.HtmlEncode && CanHtmlEncodeType(valueType))
             {
-                if (valueType != typeof(string)) throw new VeilCompilerException("Tried to HtmlEncode an expression that does not evaluate to a string");
-                emitter.Call(htmlEncodeMethod);
+                if (valueType == typeof(string)) emitter.CallMethod(htmlEncodeMethod);
+                else emitter.CallMethod(htmlEncodeLateBoundMethod);
             }
             else
             {
                 CallWriteFor(valueType);
             }
+        }
+
+        private bool CanHtmlEncodeType(Type type)
+        {
+            return type == typeof(string) || type == typeof(object);
         }
     }
 }
