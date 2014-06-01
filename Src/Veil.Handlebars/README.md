@@ -55,3 +55,22 @@ var model = new {
 
 ### {{#flush}}
 Veil supports early flushing rendered content. Doing this allows the browser to start loading external assets such as CSS, JavaScript and images before the full page is loaded. You can trigger this anywhere in your templates with the `{{#flush}}` expression.
+
+### Partials - {{> partialName }}
+Including another template is handled through the `{{> }}` expression. Partials are loaded through the [IVeilContext](https://github.com/csainty/Veil/blob/master/Src/Veil/IVeilContext.cs) provdided to your [VeilEngine](https://github.com/csainty/Veil/blob/master/Src/Veil/VeilEngine.cs) instance. If you are executing without an `IVeilContext` then attempts to load partials will throw an exception.
+
+````
+var model = new {
+	User = new {
+		Name = "Bob"
+	},
+	Department = new {
+		Name = "Sector 7G"
+	}
+};
+var userTemplate = "Hello {{ User.Name }}";
+var deptTemplate = "From {{ Department.Name }}"; 
+````  
+`{{> userTemplate }} {{> deptTemplate }} - Hello Bob From Sector 7G`
+
+Partials always inherit the current model context.

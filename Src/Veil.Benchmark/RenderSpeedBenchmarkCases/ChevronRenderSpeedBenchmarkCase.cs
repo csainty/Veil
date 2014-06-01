@@ -15,6 +15,7 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
         public ChevronRenderSpeedBenchmarkCase()
         {
+            engine.RegisterPartial("Roles", Templates.ReadTemplate("Roles.haml"));
             engine.RegisterTemplate("default", Templates.ReadTemplate("Template.haml"));
         }
 

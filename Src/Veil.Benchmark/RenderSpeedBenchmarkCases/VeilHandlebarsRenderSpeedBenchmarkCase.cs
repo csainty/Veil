@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Veil.Benchmark.Hosts;
 
 namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 {
@@ -18,7 +19,9 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
         public VeilHandlebarsRenderSpeedBenchmarkCase()
         {
             var templateContents = Templates.ReadTemplate("Template.haml");
-            var engine = new VeilEngine();
+            var context = new VeilContext();
+            context.RegisterTemplate("Roles", Templates.ReadTemplate("Roles.haml"));
+            var engine = new VeilEngine(context);
 
             compiledTypedTemplate = engine.Compile<ViewModel>("haml", new StringReader(templateContents));
             compiledUntypedTemplate = engine.CompileNonGeneric("haml", new StringReader(templateContents), typeof(ViewModel));

@@ -43,6 +43,7 @@ namespace Veil
         [TestCaseSource("HandlebarsTemplates")]
         public void Should_render_handlebars_template(string template, string expectedResult)
         {
+            RegisterHandlebarsTemplates();
             var view = Compile(template, "handlebars");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -51,6 +52,7 @@ namespace Veil
         [TestCaseSource("HandlebarsTemplates")]
         public void Should_render_handlebars_template_nongeneric(string template, string expectedResult)
         {
+            RegisterHandlebarsTemplates();
             var view = CompileNonGeneric(template, "handlebars");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -104,7 +106,8 @@ namespace Veil
                 new object[] {"{{#if IsAdmin}}Yo Admin!{{else}}Sorry{{/if}}", "Sorry"},
                 new object[] {"Hey {{ Name }}, {{ Department.DepartmentName }} {{#if Department.Company }}{{ Department.Company.CompanyName }}{{/if}}", "Hey Chris, Developers Veil"},
                 new object[] {"Department: {{ Department.GetDepartmentNumber() }}", "Department: 10"},
-                new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{ this }}{{/each}}", "Hey Chris, You are in roles User Browser"}
+                new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{ this }}{{/each}}", "Hey Chris, You are in roles User Browser"},
+                new object[] {"Hey {{ Name }}, You are in roles{{#each Roles}} {{> role}}{{/each}}", "Hey Chris, You are in roles User Browser"}
             };
         }
 
@@ -133,6 +136,11 @@ namespace Veil
             context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
             context.RegisterTemplate("Master", "Hello @Model.Name; @Section['Middle'] See Ya!");
             context.RegisterTemplate("MiddleMaster", "@Master['Master'] @Section['Middle']from @Model.Department.DepartmentName @Section['Content'];@EndSection");
+        }
+
+        private void RegisterHandlebarsTemplates()
+        {
+            context.RegisterTemplate("role", "{{ this }}");
         }
 
         private Action<TextWriter, ViewModel> Compile(string template, string templateType)
