@@ -5,19 +5,24 @@ using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    public static class HandlebarsExpressionParser
+    internal static class HandlebarsExpressionParser
     {
-        public static SyntaxTreeNode.ExpressionNode Parse(Type modelType, string expression)
+        public static SyntaxTreeNode.ExpressionNode Parse(LinkedList<HandlebarsParser.ParserScope> scopes, string expression)
         {
             expression = expression.Trim();
 
+            return ParseAgainstModel(scopes.First().ModelInScope, expression);
+        }
+
+        private static SyntaxTreeNode.ExpressionNode ParseAgainstModel(Type modelType, string expression)
+        {
             var dotIndex = expression.IndexOf('.');
             if (dotIndex >= 0)
             {
-                var subModel = HandlebarsExpressionParser.Parse(modelType, expression.Substring(0, dotIndex));
+                var subModel = HandlebarsExpressionParser.ParseAgainstModel(modelType, expression.Substring(0, dotIndex));
                 return SyntaxTreeNode.ExpressionNode.SubModel(
                     subModel,
-                    HandlebarsExpressionParser.Parse(subModel.ResultType, expression.Substring(dotIndex + 1))
+                    HandlebarsExpressionParser.ParseAgainstModel(subModel.ResultType, expression.Substring(dotIndex + 1))
                 );
             }
 

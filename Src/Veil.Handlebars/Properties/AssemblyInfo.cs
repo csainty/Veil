@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Veil.Handlebars")]
@@ -13,3 +14,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("95961955-b309-43af-95aa-e7e84c1886f4")]
 [assembly: AssemblyVersion("0.1.0")]
 [assembly: AssemblyFileVersion("0.1.0")]
+[assembly: InternalsVisibleTo("Veil.Tests")]

@@ -35,7 +35,7 @@ namespace Veil.Handlebars
                 if (token.StartsWith("#if"))
                 {
                     var block = SyntaxTreeNode.Block();
-                    var conditional = SyntaxTreeNode.Conditional(HandlebarsExpressionParser.Parse(scopes.First().ModelInScope, token.Substring(4)), block);
+                    var conditional = SyntaxTreeNode.Conditional(HandlebarsExpressionParser.Parse(scopes, token.Substring(4)), block);
                     scopes.First().Block.Add(conditional);
                     scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                 }
@@ -55,7 +55,7 @@ namespace Veil.Handlebars
                 else if (token.StartsWith("#each"))
                 {
                     var iteration = SyntaxTreeNode.Iterate(
-                        HandlebarsExpressionParser.Parse(scopes.First().ModelInScope, token.Substring(6)),
+                        HandlebarsExpressionParser.Parse(scopes, token.Substring(6)),
                         SyntaxTreeNode.Block()
                     );
                     scopes.First().Block.Add(iteration);
@@ -81,7 +81,7 @@ namespace Veil.Handlebars
                 }
                 else
                 {
-                    var expression = HandlebarsExpressionParser.Parse(scopes.First().ModelInScope, token);
+                    var expression = HandlebarsExpressionParser.Parse(scopes, token);
                     scopes.First().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape));
                 }
             }
