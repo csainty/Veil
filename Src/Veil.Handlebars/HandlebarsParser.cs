@@ -14,8 +14,8 @@ namespace Veil.Handlebars
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd();
-            var blockStack = new Stack<ParserScope>();
-            blockStack.Push(new ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = modelType });
+            var scopes = new LinkedList<ParserScope>();
+            scopes.AddFirst(new ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = modelType });
 
             var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
             var matches = matcher.Matches(template);
@@ -24,7 +24,7 @@ namespace Veil.Handlebars
             {
                 if (index < match.Index)
                 {
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index, match.Index - index)));
+                    scopes.First().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index, match.Index - index)));
                 }
 
                 index = match.Index + match.Length;
@@ -35,45 +35,45 @@ namespace Veil.Handlebars
                 if (token.StartsWith("#if"))
                 {
                     var block = SyntaxTreeNode.Block();
-                    var conditional = SyntaxTreeNode.Conditional(HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token.Substring(4)), block);
-                    blockStack.Peek().Block.Add(conditional);
-                    blockStack.Push(new ParserScope { Block = block, ModelInScope = blockStack.Peek().ModelInScope });
+                    var conditional = SyntaxTreeNode.Conditional(HandlebarsExpressionParser.Parse(scopes.First().ModelInScope, token.Substring(4)), block);
+                    scopes.First().Block.Add(conditional);
+                    scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                 }
                 else if (token == "else")
                 {
-                    AssertInsideConditionalOnModelBlock(blockStack, "{{else}}");
-                    blockStack.Pop();
+                    AssertInsideConditionalOnModelBlock(scopes, "{{else}}");
+                    scopes.RemoveFirst();
                     var block = SyntaxTreeNode.Block();
-                    ((SyntaxTreeNode.ConditionalNode)blockStack.Peek().Block.Nodes.Last()).FalseBlock = block;
-                    blockStack.Push(new ParserScope { Block = block, ModelInScope = blockStack.Peek().ModelInScope });
+                    ((SyntaxTreeNode.ConditionalNode)scopes.First().Block.Nodes.Last()).FalseBlock = block;
+                    scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                 }
                 else if (token == "/if")
                 {
-                    AssertInsideConditionalOnModelBlock(blockStack, "{{/if}}");
-                    blockStack.Pop();
+                    AssertInsideConditionalOnModelBlock(scopes, "{{/if}}");
+                    scopes.RemoveFirst();
                 }
                 else if (token.StartsWith("#each"))
                 {
                     var iteration = SyntaxTreeNode.Iterate(
-                        HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token.Substring(6)),
+                        HandlebarsExpressionParser.Parse(scopes.First().ModelInScope, token.Substring(6)),
                         SyntaxTreeNode.Block()
                     );
-                    blockStack.Peek().Block.Add(iteration);
-                    blockStack.Push(new ParserScope { Block = iteration.Body, ModelInScope = iteration.ItemType });
+                    scopes.First().Block.Add(iteration);
+                    scopes.AddFirst(new ParserScope { Block = iteration.Body, ModelInScope = iteration.ItemType });
                 }
                 else if (token == "/each")
                 {
-                    blockStack.Pop();
+                    scopes.RemoveFirst();
                 }
                 else if (token == "#flush")
                 {
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.Flush());
+                    scopes.First().Block.Add(SyntaxTreeNode.Flush());
                 }
                 else if (token.StartsWith(">"))
                 {
                     var partialName = token.Substring(1).Trim();
-                    var self = SyntaxTreeNode.ExpressionNode.Self(blockStack.Peek().ModelInScope);
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.Include(partialName, self));
+                    var self = SyntaxTreeNode.ExpressionNode.Self(scopes.First().ModelInScope);
+                    scopes.First().Block.Add(SyntaxTreeNode.Include(partialName, self));
                 }
                 else if (token.StartsWith("!"))
                 {
@@ -81,21 +81,21 @@ namespace Veil.Handlebars
                 }
                 else
                 {
-                    var expression = HandlebarsExpressionParser.Parse(blockStack.Peek().ModelInScope, token);
-                    blockStack.Peek().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape));
+                    var expression = HandlebarsExpressionParser.Parse(scopes.First().ModelInScope, token);
+                    scopes.First().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape));
                 }
             }
             if (index < template.Length)
             {
-                blockStack.Peek().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index)));
+                scopes.First().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index)));
             }
 
-            AssertStackOnRootNode(blockStack);
+            AssertStackOnRootNode(scopes);
 
-            return blockStack.Pop().Block;
+            return scopes.First().Block;
         }
 
-        private void AssertStackOnRootNode(Stack<ParserScope> scopes)
+        private void AssertStackOnRootNode(LinkedList<ParserScope> scopes)
         {
             if (scopes.Count != 1)
             {
@@ -103,16 +103,14 @@ namespace Veil.Handlebars
             }
         }
 
-        private void AssertInsideConditionalOnModelBlock(Stack<ParserScope> scopes, string foundToken)
+        private void AssertInsideConditionalOnModelBlock(LinkedList<ParserScope> scopes, string foundToken)
         {
             var faulted = false;
             faulted = scopes.Count < 2;
 
             if (!faulted)
             {
-                var block = scopes.Pop();
-                faulted = !(scopes.Peek().Block.Nodes.Last() is SyntaxTreeNode.ConditionalNode);
-                scopes.Push(block);
+                faulted = !(scopes.First.Next.Value.Block.Nodes.Last() is SyntaxTreeNode.ConditionalNode);
             }
 
             if (faulted)
