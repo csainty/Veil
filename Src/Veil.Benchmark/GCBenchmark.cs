@@ -54,7 +54,7 @@ namespace Veil.Benchmark
 
         private void Execute(IGCBenchmarkCase benchmark, ViewModel model)
         {
-            Console.WriteLine("Executing " + benchmark.Name);
+            Console.WriteLine(String.Format("Executing {0} ({1} runs)", benchmark.Name, TestCount));
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
