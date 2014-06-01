@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Web.Razor;
 
@@ -43,12 +44,21 @@ namespace Veil.Benchmark
 
                 if (compileResult.Errors.HasErrors) throw new InvalidOperationException(compileResult.Errors[0].ErrorText);
 
-                return (writer, model) =>
-                {
-                    var view = (IView)compileResult.CompiledAssembly.CreateInstance("VeilRazor.Template");
-                    view.Initialize(writer, model);
-                    view.Execute();
-                };
+                var viewType = compileResult.CompiledAssembly.GetType("VeilRazor.Template");
+                var view = Expression.Variable(viewType, "view");
+                var init = viewType.GetMethod("Initialize");
+                var exec = viewType.GetMethod("Execute");
+                var writer = Expression.Parameter(typeof(TextWriter));
+                var model = Expression.Parameter(typeof(T));
+
+                return Expression.Lambda<Action<TextWriter, T>>(Expression.Block(
+                    new[] { view },
+                    new Expression[] {
+                        Expression.Assign(view, Expression.New(viewType)),
+                        Expression.Call(view, init, writer, model),
+                        Expression.Call(view, exec)
+                    }
+                ), writer, model).Compile();
             }
         }
 
