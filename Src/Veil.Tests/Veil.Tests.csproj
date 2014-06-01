@@ -75,7 +75,7 @@
     <Compile Include="Handlebars\CommentTests.cs" />
     <Compile Include="Handlebars\ConditionalTests.cs" />
     <Compile Include="Handlebars\FlushTests.cs" />
-    <Compile Include="Handlebars\HandlebarsExpressionParerTests.cs" />
+    <Compile Include="Handlebars\HandlebarsExpressionParserTests.cs" />
     <Compile Include="Handlebars\IterationTests.cs" />
     <Compile Include="Handlebars\PartialTests.cs" />
     <Compile Include="Handlebars\WriteLiteralTests.cs" />

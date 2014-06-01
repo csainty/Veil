@@ -7,7 +7,7 @@ using Veil.Parser;
 namespace Veil.Handlebars
 {
     [TestFixture]
-    public class HandlebarsExpressionParerTests
+    public class HandlebarsExpressionParserTests
     {
         [Test]
         public void Should_parse_property()
