@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Veil
 {
@@ -68,20 +70,66 @@ namespace Veil
                 var type = pair.Item1;
 
                 var property = type.GetProperty(pair.Item2);
-                if (property != null) return o => property.GetValue(o, null);
+                if (property != null) return CreatePropertyAccess(type, property);
 
                 var field = type.GetField(pair.Item2);
-                if (field != null) return o => field.GetValue(o);
+                if (field != null) return CreateFieldAccess(type, field);
 
                 var dictionaryType = type.GetDictionaryTypeWithKey<string>();
-                var getItem = dictionaryType.GetMethod("get_Item");
-                if (dictionaryType != null) return o => getItem.Invoke(o, new[] { pair.Item2 });
+                if (dictionaryType != null) return CreateDictionaryAccess(dictionaryType, pair.Item2);
 
                 return null;
             }));
 
             if (binder == null) return null;
             return binder(model);
+        }
+
+        private static Func<object, object> CreatePropertyAccess(Type modelType, PropertyInfo property)
+        {
+            var getter = property.GetGetMethod();
+
+            var method = new DynamicMethod("LateBoundPropertyAccess_{0}_{1}".FormatInvariant(modelType.Name, property.Name), typeof(object), new[] { typeof(object) }, true);
+            var il = method.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Castclass, modelType);
+
+            if (getter.IsVirtual)
+                il.Emit(OpCodes.Callvirt, getter);
+            else
+                il.Emit(OpCodes.Call, getter);
+            il.Emit(OpCodes.Ret);
+
+            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
+        }
+
+        private static Func<object, object> CreateFieldAccess(Type modelType, FieldInfo field)
+        {
+            var method = new DynamicMethod("LateBoundFieldAccess_{0}_{1}".FormatInvariant(modelType.Name, field.Name), typeof(object), new[] { typeof(object) }, true);
+            var il = method.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Castclass, modelType);
+            il.Emit(OpCodes.Ldfld, field);
+            il.Emit(OpCodes.Ret);
+
+            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
+        }
+
+        private static Func<object, object> CreateDictionaryAccess(Type modelType, string key)
+        {
+            var getItem = modelType.GetMethod("get_Item");
+            var method = new DynamicMethod("LateBoundDictionaryAccess_{0}_{1}".FormatInvariant(modelType.Name, key), typeof(object), new[] { typeof(object) }, true);
+            var il = method.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Castclass, modelType);
+            il.Emit(OpCodes.Ldstr, key);
+            if (getItem.IsVirtual)
+                il.Emit(OpCodes.Callvirt, getItem);
+            else
+                il.Emit(OpCodes.Call, getItem);
+            il.Emit(OpCodes.Ret);
+
+            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
         }
     }
 }
