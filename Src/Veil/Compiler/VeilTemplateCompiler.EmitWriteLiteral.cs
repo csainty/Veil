@@ -6,6 +6,8 @@ namespace Veil.Compiler
     {
         private void EmitWriteLiteral(SyntaxTreeNode.WriteLiteralNode node)
         {
+            if (string.IsNullOrEmpty(node.LiteralContent)) return;
+
             LoadWriterToStack();
             emitter.LoadConstant(node.LiteralContent);
             CallWriteFor(typeof(string));
