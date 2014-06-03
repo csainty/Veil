@@ -21,6 +21,8 @@ namespace Veil.Handlebars
             var matches = matcher.Matches(template);
             var index = 0;
             var trimNextLiteral = false;
+            var expressionPrefixes = new Stack<string>();
+
             Action<String> writeLiteral = s =>
             {
                 if (trimNextLiteral)
@@ -30,6 +32,14 @@ namespace Veil.Handlebars
                 }
                 scopes.First().Block.Add(SyntaxTreeNode.WriteString(s));
             };
+            Func<string, string> prefixExpression = s =>
+            {
+                if (expressionPrefixes.Count == 0) return s;
+                if (s == "this") return String.Join(".", expressionPrefixes.Reverse());
+                if (s.StartsWith("../")) return String.Join(".", expressionPrefixes.Skip(1).Reverse().Concat(new [] { s.Substring(3) }));
+                return String.Join(".", expressionPrefixes.Reverse().Concat(new[] { s }));
+            };
+            Func<string, SyntaxTreeNode.ExpressionNode> parseExpression = e => HandlebarsExpressionParser.Parse(scopes, prefixExpression(e));
 
             foreach (Match match in matches)
             {
@@ -53,7 +63,7 @@ namespace Veil.Handlebars
                 if (token.StartsWith("#if"))
                 {
                     var block = SyntaxTreeNode.Block();
-                    var conditional = SyntaxTreeNode.Conditional(HandlebarsExpressionParser.Parse(scopes, token.Substring(4)), block);
+                    var conditional = SyntaxTreeNode.Conditional(parseExpression(token.Substring(4)), block);
                     scopes.First().Block.Add(conditional);
                     scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                 }
@@ -73,7 +83,7 @@ namespace Veil.Handlebars
                 else if (token.StartsWith("#each"))
                 {
                     var iteration = SyntaxTreeNode.Iterate(
-                        HandlebarsExpressionParser.Parse(scopes, token.Substring(6)),
+                        parseExpression(token.Substring(6)),
                         SyntaxTreeNode.Block()
                     );
                     scopes.First().Block.Add(iteration);
@@ -87,6 +97,14 @@ namespace Veil.Handlebars
                 {
                     scopes.First().Block.Add(SyntaxTreeNode.Flush());
                 }
+                else if (token.StartsWith("#with"))
+                {
+                    expressionPrefixes.Push(token.Substring(6).Trim());
+                }
+                else if (token == "/with")
+                {
+                    expressionPrefixes.Pop();
+                }
                 else if (token.StartsWith(">"))
                 {
                     var partialName = token.Substring(1).Trim();
@@ -99,7 +117,7 @@ namespace Veil.Handlebars
                 }
                 else
                 {
-                    var expression = HandlebarsExpressionParser.Parse(scopes, token);
+                    var expression = parseExpression(token);
                     scopes.First().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape));
                 }
             }
@@ -120,7 +138,7 @@ namespace Veil.Handlebars
             literal.LiteralContent = literal.LiteralContent.TrimEnd();
         }
 
-        private void AssertStackOnRootNode(LinkedList<ParserScope> scopes)
+        private static void AssertStackOnRootNode(LinkedList<ParserScope> scopes)
         {
             if (scopes.Count != 1)
             {
@@ -128,7 +146,7 @@ namespace Veil.Handlebars
             }
         }
 
-        private void AssertInsideConditionalOnModelBlock(LinkedList<ParserScope> scopes, string foundToken)
+        private static void AssertInsideConditionalOnModelBlock(LinkedList<ParserScope> scopes, string foundToken)
         {
             var faulted = false;
             faulted = scopes.Count < 2;

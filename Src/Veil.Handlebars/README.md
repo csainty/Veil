@@ -5,7 +5,7 @@ A [Handlebars](http://handlebarsjs.com/) inspired syntax parser for [Veil](https
 ### Syntax
 Expressions in Handlebars are wrapped in {{ and }}.
 
-### Accessing your model
+### Access your model - {{ }}
 
 Access to your model is implicit in any handlebars expression.
 
@@ -30,6 +30,8 @@ var model = new {
 ````  
 `{{#each Roles}}`Hello `{{../Name}}` the `{{this}}`! `{{/each}}` - Hello Bob the Admin! Hello Bob the User! 
 
+### Disable HTML Escape - {{{ }}}
+
 All handlebars expressions are HTML-escape by default. To disable this functionality you should wrap your expression with three braces instead.   
 ````
 var model = new {
@@ -38,7 +40,7 @@ var model = new {
 ````  
 See my `{{{ Content }}}` - See my Safe <b>Markup</b>
 
-### {{#if}} {{else}} {{/if}}
+### Conditionals - {{#if}} {{else}} {{/if}}
 Conditionals are handled with the `{{#if}}` expression. E.g.  
 ````
 var model = new {
@@ -49,7 +51,7 @@ var model = new {
 `@Model.Name` is `{{#if IsAdmin }}`an Admin`{{ else }}`a User`{{/if}}` - Bob is a User  
 In additional to boolean values, conditionals also support null-checking reference types. 
 
-### {{#each}} {{/each}}
+### Iteration - {{#each}} {{/each}}
 Iteration is handled with the `{{#each}}` expression. Access to the current item in the iteration is provided through the `{{this}}` expression. E.g.  
 ````
 var model = new {
@@ -63,7 +65,19 @@ var model = new {
 `{{#each Items}}{{this}}{{/each}}` - CatDog  
 `{{#each Users}}{{this.Name}}{{/each}}` - JimBob
 
-### {{#flush}}
+### Scope - {{#with}}
+You can scope a block in Handlebars with the `{{#with Name}} {{/with}}` expression. Any expressions within this scope block will use the object referenced by the block as their model.
+````  
+var model = new {
+	User = new {
+		Name = "Joe",
+		Id = 1
+	}
+}; 
+````  
+`{{#with User}} {{Id}}: {{Name}}{{/with}}` - 1: Joe
+
+### Response Flush - {{#flush}}
 Veil supports early flushing rendered content. Doing this allows the browser to start loading external assets such as CSS, JavaScript and images before the full page is loaded. You can trigger this anywhere in your templates with the `{{#flush}}` expression.
 
 ### Partials - {{> partialName }}
@@ -85,11 +99,11 @@ var deptTemplate = "From {{ Department.Name }}";
 
 Partials always inherit the current model context.
 
-### {{! comments }}
+### Comments {{! ... }}
 You can add comments to your template with the `{{! your comment here }}` expression.  
 These are simply ignored and removed during compilation.
 
-### Whitespace control
+### Whitespace control - {{~Foo~}}
 Handlebars supports selectively trimming templates whitespace by adding `~` markers in your expressions.
 
 ````  

@@ -79,6 +79,7 @@
     <Compile Include="Handlebars\IterationTests.cs" />
     <Compile Include="Handlebars\PartialTests.cs" />
     <Compile Include="Handlebars\WhitespaceControlTests.cs" />
+    <Compile Include="Handlebars\WithTests.cs" />
     <Compile Include="Handlebars\WriteLiteralTests.cs" />
     <Compile Include="Handlebars\WriteExpressionTests.cs" />
     <Compile Include="Helpers\HtmlEncodeTests.cs" />
