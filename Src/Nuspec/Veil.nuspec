@@ -11,9 +11,6 @@
     <description>An easy-to-use and highly optimized template renderer / view engine</description>
     <copyright>Copyright 2014</copyright>
     <tags>veil template render format view engine</tags>
-    <dependencies>
-      <dependency id="Sigil" version="4.1.0" />
-    </dependencies>
   </metadata>
     <files>
       <file src="lib\net40\Veil.dll" target="lib\net40" />
