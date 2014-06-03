@@ -82,7 +82,10 @@
     <Compile Include="Handlebars\WriteLiteralTests.cs" />
     <Compile Include="Handlebars\WriteExpressionTests.cs" />
     <Compile Include="Helpers\HtmlEncodeTests.cs" />
-    <Compile Include="NancyViewEngines\SuperSimple.cs" />
+    <Compile Include="NancyViewEngines\IndexViewModel.cs" />
+    <Compile Include="NancyViewEngines\NancyViewEngineTests.cs" />
+    <Compile Include="NancyViewEngines\TestingModule.cs" />
+    <Compile Include="NancyViewEngines\TestingRootPathProvider.cs" />
     <Compile Include="ParserTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SuperSimple\SuperSimpleExpressionParserTests.cs" />
@@ -91,11 +94,17 @@
     <Compile Include="VeilEngineTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="NancyViewEngines\Views\Header.haml" />
     <None Include="NancyViewEngines\Views\Header.vsshtml" />
-    <None Include="NancyViewEngines\Views\Index.vsshtml" />
+    <None Include="NancyViewEngines\Views\Handlebars.haml" />
+    <None Include="NancyViewEngines\Views\SuperSimple.vsshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nancy.ViewEngines.Veil.Handlebars\Nancy.ViewEngines.Veil.Handlebars.csproj">
+      <Project>{22f484bc-664c-48d0-878d-7b425d758a33}</Project>
+      <Name>Nancy.ViewEngines.Veil.Handlebars</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nancy.ViewEngines.Veil.SuperSimple\Nancy.ViewEngines.Veil.SuperSimple.csproj">
       <Project>{0ce12322-8186-4521-9420-ecc63bb243af}</Project>
       <Name>Nancy.ViewEngines.Veil.SuperSimple</Name>
