@@ -7,11 +7,11 @@
 	<h1>{{ Name }}</h1>
 
 	<nav>
-		{{#if IsLoggedIn}}
+		{{~#if IsLoggedIn~}}
 			<a>Sign Out</a>
-		{{else}}
+		{{~else~}}
 			<a>Sign In</a>
-		{{/if}}
+		{{~/if~}}
 	</nav>
 	{{> Roles}}
 </body>

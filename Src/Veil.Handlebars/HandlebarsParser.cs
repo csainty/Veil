@@ -20,17 +20,35 @@ namespace Veil.Handlebars
             var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
             var matches = matcher.Matches(template);
             var index = 0;
+            var trimNextLiteral = false;
+            Action<String> writeLiteral = s =>
+            {
+                if (trimNextLiteral)
+                {
+                    s = s.TrimStart();
+                    trimNextLiteral = false;
+                }
+                scopes.First().Block.Add(SyntaxTreeNode.WriteString(s));
+            };
+
             foreach (Match match in matches)
             {
                 if (index < match.Index)
                 {
-                    scopes.First().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index, match.Index - index)));
+                    writeLiteral(template.Substring(index, match.Index - index));
                 }
 
                 index = match.Index + match.Length;
 
                 var htmlEscape = match.Value.Count(c => c == '{') == 2;
                 var token = match.Value.Trim(new[] { '{', '}', ' ', '\t' });
+
+                if (token.StartsWith("~"))
+                {
+                    TrimLastLiteral(scopes.First().Block);
+                }
+                trimNextLiteral = token.EndsWith("~");
+                token = token.Trim('~', ' ');
 
                 if (token.StartsWith("#if"))
                 {
@@ -87,12 +105,19 @@ namespace Veil.Handlebars
             }
             if (index < template.Length)
             {
-                scopes.First().Block.Add(SyntaxTreeNode.WriteString(template.Substring(index)));
+                writeLiteral(template.Substring(index));
             }
 
             AssertStackOnRootNode(scopes);
 
             return scopes.First().Block;
+        }
+
+        private static void TrimLastLiteral(SyntaxTreeNode.BlockNode blockNode)
+        {
+            var literal = blockNode.Nodes.Last() as SyntaxTreeNode.WriteLiteralNode;
+            if (literal == null) return;
+            literal.LiteralContent = literal.LiteralContent.TrimEnd();
         }
 
         private void AssertStackOnRootNode(LinkedList<ParserScope> scopes)

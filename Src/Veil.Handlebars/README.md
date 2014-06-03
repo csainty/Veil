@@ -88,3 +88,20 @@ Partials always inherit the current model context.
 ### {{! comments }}
 You can add comments to your template with the `{{! your comment here }}` expression.  
 These are simply ignored and removed during compilation.
+
+### Whitespace control
+Handlebars supports selectively trimming templates whitespace by adding `~` markers in your expressions.
+
+````  
+var model = { Name = "Joe" };
+
+<p>
+	{{~Name~}}
+</p>
+
+<p>Joe</p>
+````
+
+Placing a `~` at the start of the block trim the whitespace preceeding the block. Placing a `~` at the end of a block trims whitespace following the block.  
+Use the features to generate smaller markup for sending over the wire.
+
