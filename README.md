@@ -8,7 +8,7 @@ See [Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Veil.Supe
 * Easy to install, configure and use in any project
 * Fastest view engine available
 * Support for explicit flush to aid in browser performance
-* Mono support **(not available yet)**
+* Mono support
 
 ### Not supported
 Unlike Razor, Veil templates are not compiled to full .NET assemblies. This is part of what makes Veil so much easier to integrate and work with. The cost of this approach is that arbitrary code blocks are not supported.  
