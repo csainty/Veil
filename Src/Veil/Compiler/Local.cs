@@ -17,5 +17,7 @@ namespace Veil.Compiler
         public void Dispose()
         {
         }
+
+        public LocalBuilder Builder { get { return this.builder; } }
     }
 }

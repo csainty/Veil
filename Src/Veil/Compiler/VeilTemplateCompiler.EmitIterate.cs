@@ -13,47 +13,88 @@ namespace Veil.Compiler
 
         private void EmitIterate(SyntaxTreeNode.IterateNode node)
         {
-            var enumerable = typeof(IEnumerable<>).MakeGenericType(node.ItemType);
-            var getEnumerator = enumerable.GetMethod("GetEnumerator");
-            var getCurrent = getEnumerator.ReturnType.GetProperty("Current").GetGetMethod();
-            var disposeEnumerator = typeof(IDisposable).IsAssignableFrom(getEnumerator.ReturnType);
-            var loop = emitter.DefineLabel();
-            var done = emitter.DefineLabel();
-
-            EvaluateExpression(node.Collection);
-
-            if (node.Collection.ResultType == typeof(object))
+            if (node.Collection.ResultType.IsArray)
             {
-                emitter.CastClass(enumerable);
-            }
-
-            using (var item = emitter.DeclareLocal(node.ItemType))
-            using (var en = emitter.DeclareLocal(getEnumerator.ReturnType))
-            {
-                emitter.CallMethod(getEnumerator);
-                emitter.StoreLocal(en);
-
-                emitter.MarkLabel(loop);
-                emitter.LoadLocal(en);
-                emitter.CallMethod(moveNextMethod);
-                emitter.BranchIfFalse(done);
-
-                emitter.LoadLocal(en);
-                emitter.CallMethod(getCurrent);
-                emitter.StoreLocal(item);
-
-                AddModelScope(e => e.LoadLocal(item));
-                EmitNode(node.Body);
-                RemoveModelScope();
-
-                emitter.Branch(loop);
-
-                emitter.MarkLabel(done);
-
-                if (disposeEnumerator)
+                var done = emitter.DefineLabel();
+                var loop = emitter.DefineLabel();
+                using (var index = emitter.DeclareLocal(typeof(int)))
+                using (var length = emitter.DeclareLocal(typeof(int)))
+                using (var item = emitter.DeclareLocal(node.ItemType))
                 {
+                    emitter.LoadConstant(0);
+                    emitter.StoreLocal(index);
+                    EvaluateExpression(node.Collection);
+                    emitter.LoadLength(node.ItemType);
+                    emitter.StoreLocal(length);
+
+                    emitter.MarkLabel(loop);
+                    emitter.LoadLocal(length);
+                    emitter.LoadLocal(index);
+                    emitter.CompareEqual();
+                    emitter.BranchIfTrue(done);
+
+                    EvaluateExpression(node.Collection);
+                    emitter.LoadLocal(index);
+                    emitter.LoadElement(node.ItemType);
+                    emitter.StoreLocal(item);
+
+                    AddModelScope(e => e.LoadLocal(item));
+                    EmitNode(node.Body);
+                    RemoveModelScope();
+
+                    emitter.LoadLocal(index);
+                    emitter.LoadConstant(1);
+                    emitter.Add();
+                    emitter.StoreLocal(index);
+                    emitter.Branch(loop);
+
+                    emitter.MarkLabel(done);
+                }
+            }
+            else
+            {
+                var enumerable = typeof(IEnumerable<>).MakeGenericType(node.ItemType);
+                var getEnumerator = enumerable.GetMethod("GetEnumerator");
+                var getCurrent = getEnumerator.ReturnType.GetProperty("Current").GetGetMethod();
+                var disposeEnumerator = typeof(IDisposable).IsAssignableFrom(getEnumerator.ReturnType);
+                var loop = emitter.DefineLabel();
+                var done = emitter.DefineLabel();
+
+                EvaluateExpression(node.Collection);
+
+                if (node.Collection.ResultType == typeof(object))
+                {
+                    emitter.CastClass(enumerable);
+                }
+
+                using (var item = emitter.DeclareLocal(node.ItemType))
+                using (var en = emitter.DeclareLocal(getEnumerator.ReturnType))
+                {
+                    emitter.CallMethod(getEnumerator);
+                    emitter.StoreLocal(en);
+
+                    emitter.MarkLabel(loop);
                     emitter.LoadLocal(en);
-                    emitter.CallMethod(disposeMethod);
+                    emitter.CallMethod(moveNextMethod);
+                    emitter.BranchIfFalse(done);
+
+                    emitter.LoadLocal(en);
+                    emitter.CallMethod(getCurrent);
+                    emitter.StoreLocal(item);
+
+                    AddModelScope(e => e.LoadLocal(item));
+                    EmitNode(node.Body);
+                    RemoveModelScope();
+
+                    emitter.Branch(loop);
+
+                    emitter.MarkLabel(done);
+
+                    if (disposeEnumerator)
+                    {
+                        emitter.LoadLocal(en);
+                        emitter.CallMethod(disposeMethod);
+                    }
                 }
             }
         }

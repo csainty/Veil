@@ -176,5 +176,49 @@ namespace Veil.Compiler
         {
             this.generator.Emit(OpCodes.Pop);
         }
+
+        internal void Add()
+        {
+            this.generator.Emit(OpCodes.Add);
+        }
+
+        internal void LoadLength(Type elementType)
+        {
+            this.generator.Emit(OpCodes.Ldlen);
+        }
+
+        internal void LoadElement(Type elementType)
+        {
+            if (!elementType.IsValueType) this.generator.Emit(OpCodes.Ldelem_Ref);
+            else if (elementType == typeof(sbyte)) this.generator.Emit(OpCodes.Ldelem_I1);
+            else if (elementType == typeof(byte)) this.generator.Emit(OpCodes.Ldelem_U1);
+            else if (elementType == typeof(short)) this.generator.Emit(OpCodes.Ldelem_I2);
+            else if (elementType == typeof(ushort)) this.generator.Emit(OpCodes.Ldelem_U2);
+            else if (elementType == typeof(int)) this.generator.Emit(OpCodes.Ldelem_I4);
+            else if (elementType == typeof(uint)) this.generator.Emit(OpCodes.Ldelem_U4);
+            else if (elementType == typeof(long)) this.generator.Emit(OpCodes.Ldelem_I8);
+            else if (elementType == typeof(float)) this.generator.Emit(OpCodes.Ldelem_R4);
+            else if (elementType == typeof(double)) this.generator.Emit(OpCodes.Ldelem_R8);
+            else this.generator.Emit(OpCodes.Ldelem);
+        }
+
+        internal void CompareLessThan()
+        {
+            this.generator.Emit(OpCodes.Clt);
+        }
+
+#if DEBUG
+
+        internal void Debug(Local local)
+        {
+            generator.EmitWriteLine(local.Builder);
+        }
+
+        internal void Debug(string value)
+        {
+            generator.EmitWriteLine(value);
+        }
+
+#endif
     }
 }
