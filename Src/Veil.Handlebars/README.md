@@ -17,8 +17,8 @@ var model = new {
 	}
 }
 ````  
-Hello `{{ Name }}` - Hello Bob  
-From `{{ Department.Name }}` - From Sector 7G 
+`Hello {{ Name }}` - Hello Bob  
+`From {{ Department.Name }}` - From Sector 7G 
 
 Handlebars supports referencing the model of the parent scope with the `../` expression.
 
@@ -28,7 +28,7 @@ var model = new {
 	Roles = new [] { "Admin", "User" }
 }
 ````  
-`{{#each Roles}}`Hello `{{../Name}}` the `{{this}}`! `{{/each}}` - Hello Bob the Admin! Hello Bob the User! 
+`{{#each Roles}}Hello {{../Name}} the {{this}}! {{/each}}` - Hello Bob the Admin! Hello Bob the User! 
 
 ### Disable HTML Escape - {{{ }}}
 
@@ -38,7 +38,7 @@ var model = new {
 	Content = "Safe <b>Markup</b>"
 };
 ````  
-See my `{{{ Content }}}` - See my Safe <b>Markup</b>
+`See my {{{ Content }}}` - See my Safe <b>Markup</b>
 
 ### Conditionals - {{#if}} {{else}} {{/if}}
 Conditionals are handled with the `{{#if}}` expression. E.g.  
@@ -48,8 +48,19 @@ var model = new {
 	IsAdmin = false
 };
 ````  
-`@Model.Name` is `{{#if IsAdmin }}`an Admin`{{ else }}`a User`{{/if}}` - Bob is a User  
+`@Model.Name is {{#if IsAdmin }}an Admin{{ else }}a User{{/if}}` - Bob is a User  
 In additional to boolean values, conditionals also support null-checking reference types. 
+
+### Conditionals - {{#unless}} {{/unless}}
+An alternate form of conditional exists that renders its content when the expression evaluates false.  
+
+````
+var model = new {
+	IsAdmin = false
+};
+````  
+`{{#unless IsAdmin }}Please Login{{/unless}}` - Please login  
+
 
 ### Iteration - {{#each}} {{/each}}
 Iteration is handled with the `{{#each}}` expression. Access to the current item in the iteration is provided through the `{{this}}` expression. E.g.  
@@ -118,4 +129,3 @@ var model = { Name = "Joe" };
 
 Placing a `~` at the start of the block trim the whitespace preceeding the block. Placing a `~` at the end of a block trims whitespace following the block.  
 Use the features to generate smaller markup for sending over the wire.
-

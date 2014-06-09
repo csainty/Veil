@@ -36,7 +36,7 @@ namespace Veil.Handlebars
             {
                 if (expressionPrefixes.Count == 0) return s;
                 if (s == "this") return String.Join(".", expressionPrefixes.Reverse());
-                if (s.StartsWith("../")) return String.Join(".", expressionPrefixes.Skip(1).Reverse().Concat(new [] { s.Substring(3) }));
+                if (s.StartsWith("../")) return String.Join(".", expressionPrefixes.Skip(1).Reverse().Concat(new[] { s.Substring(3) }));
                 return String.Join(".", expressionPrefixes.Reverse().Concat(new[] { s }));
             };
             Func<string, SyntaxTreeNode.ExpressionNode> parseExpression = e => HandlebarsExpressionParser.Parse(scopes, prefixExpression(e));
@@ -78,6 +78,18 @@ namespace Veil.Handlebars
                 else if (token == "/if")
                 {
                     AssertInsideConditionalOnModelBlock(scopes, "{{/if}}");
+                    scopes.RemoveFirst();
+                }
+                else if (token.StartsWith("#unless"))
+                {
+                    var block = SyntaxTreeNode.Block();
+                    var conditional = SyntaxTreeNode.Conditional(parseExpression(token.Substring(8)), SyntaxTreeNode.Block(), block);
+                    scopes.First().Block.Add(conditional);
+                    scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
+                }
+                else if (token == "/unless")
+                {
+                    AssertInsideConditionalOnModelBlock(scopes, "{{/unless}}");
                     scopes.RemoveFirst();
                 }
                 else if (token.StartsWith("#each"))
