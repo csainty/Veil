@@ -2,15 +2,8 @@
 using System.Collections;
 using System.Reflection;
 
-namespace Veil.Parser
+namespace Veil.Parser.Nodes
 {
-    public abstract class ExpressionNode : SyntaxTreeNode
-    {
-        public ExpressionScope Scope { get; set; }
-
-        public abstract Type ResultType { get; }
-    }
-
     public class PropertyExpressionNode : ExpressionNode
     {
         public PropertyInfo PropertyInfo { get; set; }

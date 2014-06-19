@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Veil.Parser
+namespace Veil.Parser.Nodes
 {
-    public abstract class SyntaxTreeNode
-    {
-    }
-
     public class BlockNode : SyntaxTreeNode
     {
         private List<SyntaxTreeNode> nodes;

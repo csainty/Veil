@@ -1,4 +1,5 @@
 ﻿using System;
+using Veil.Parser.Nodes;
 
 namespace Veil.Parser
 {

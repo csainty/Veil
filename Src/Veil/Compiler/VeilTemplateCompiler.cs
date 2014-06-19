@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {

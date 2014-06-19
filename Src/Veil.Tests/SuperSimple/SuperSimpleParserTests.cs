@@ -3,6 +3,7 @@ using System.Linq;
 using DeepEqual.Syntax;
 using NUnit.Framework;
 using Veil.Parser;
+using Veil.Parser.Nodes;
 using Veil.SuperSimple;
 using E = Veil.Parser.Expression;
 using S = Veil.Parser.SyntaxTree;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {

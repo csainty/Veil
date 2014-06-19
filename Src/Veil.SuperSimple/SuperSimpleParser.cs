@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.SuperSimple
 {

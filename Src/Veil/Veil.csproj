@@ -52,8 +52,10 @@
     <Compile Include="IVeilContext.cs" />
     <Compile Include="NullVeilContext.cs" />
     <Compile Include="Parser\Expression.cs" />
+    <Compile Include="Parser\ExpressionNode.cs" />
     <Compile Include="Parser\ExpressionScope.cs" />
     <Compile Include="Parser\Nodes\SyntaxTreeNodes.cs" />
+    <Compile Include="Parser\SyntaxTreeNode.cs" />
     <Compile Include="VeilCompilerException.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitConditional.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitIterate.cs" />
