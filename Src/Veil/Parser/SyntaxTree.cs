@@ -46,12 +46,14 @@ namespace Veil.Parser
         /// </summary>
         /// <param name="collectionExpression">expression to load the collection</param>
         /// <param name="body">Block to execute in the scope of each item</param>
-        public static IterateNode Iterate(ExpressionNode collectionExpression, BlockNode body)
+        /// <param name="emptyBody">Block to execute when there are no items in the collection</param>
+        public static IterateNode Iterate(ExpressionNode collectionExpression, BlockNode body, BlockNode emptyBody = null)
         {
             return new IterateNode
             {
                 Collection = collectionExpression,
-                Body = body
+                Body = body,
+                EmptyBody = emptyBody ?? SyntaxTreeNode.Block()
             };
         }
 
@@ -207,6 +209,8 @@ namespace Veil.Parser
             }
 
             public BlockNode Body { get; set; }
+
+            public BlockNode EmptyBody { get; set; }
 
             public Type ItemType
             {

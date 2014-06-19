@@ -13,6 +13,8 @@ namespace Veil.Compiler
 
         private void EmitIterate(SyntaxTreeNode.IterateNode node)
         {
+            var allDone = emitter.DefineLabel();
+            var empty = emitter.DefineLabel();
             if (node.Collection.ResultType.IsArray)
             {
                 var done = emitter.DefineLabel();
@@ -21,11 +23,15 @@ namespace Veil.Compiler
                 using (var length = emitter.DeclareLocal(typeof(int)))
                 using (var item = emitter.DeclareLocal(node.ItemType))
                 {
-                    emitter.LoadConstant(0);
-                    emitter.StoreLocal(index);
                     EvaluateExpression(node.Collection);
                     emitter.LoadLength(node.ItemType);
                     emitter.StoreLocal(length);
+
+                    emitter.LoadLocal(length);
+                    emitter.BranchIfFalse(empty);
+
+                    emitter.LoadConstant(0);
+                    emitter.StoreLocal(index);
 
                     emitter.MarkLabel(loop);
                     emitter.LoadLocal(length);
@@ -49,6 +55,7 @@ namespace Veil.Compiler
                     emitter.Branch(loop);
 
                     emitter.MarkLabel(done);
+                    emitter.Branch(allDone);
                 }
             }
             else
@@ -68,6 +75,7 @@ namespace Veil.Compiler
                 }
 
                 using (var item = emitter.DeclareLocal(node.ItemType))
+                using (var hasItems = emitter.DeclareLocal(typeof(bool)))
                 using (var en = emitter.DeclareLocal(getEnumerator.ReturnType))
                 {
                     emitter.CallMethod(getEnumerator);
@@ -78,6 +86,8 @@ namespace Veil.Compiler
                     emitter.CallMethod(moveNextMethod);
                     emitter.BranchIfFalse(done);
 
+                    emitter.LoadConstant(1);
+                    emitter.StoreLocal(hasItems);
                     emitter.LoadLocal(en);
                     emitter.CallMethod(getCurrent);
                     emitter.StoreLocal(item);
@@ -95,8 +105,14 @@ namespace Veil.Compiler
                         emitter.LoadLocal(en);
                         emitter.CallMethod(disposeMethod);
                     }
+
+                    emitter.LoadLocal(hasItems);
+                    emitter.BranchIfTrue(allDone);
                 }
             }
+            emitter.MarkLabel(empty);
+            EmitNode(node.EmptyBody);
+            emitter.MarkLabel(allDone);
         }
     }
 }

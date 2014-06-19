@@ -15,6 +15,9 @@ namespace Veil.Compiler
                 SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteString("Item")
+                ),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteString("Empty")
                 )
             ));
 
@@ -30,6 +33,9 @@ namespace Veil.Compiler
                 SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
                 SyntaxTreeNode.Block(
                     SyntaxTreeNode.WriteString("Item")
+                ),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteString("Empty")
                 )
             ));
 
@@ -80,6 +86,42 @@ namespace Veil.Compiler
 
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("12"));
+        }
+
+        [Test]
+        public void Should_render_empty_block_no_items_in_collection()
+        {
+            var model = new { Items = new List<string> { } };
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteString("Item")
+                ),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteString("Empty")
+                )
+            ));
+
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Empty"));
+        }
+
+        [Test]
+        public void Should_render_empty_block_no_items_in_array()
+        {
+            var model = new { Items = new string[0] };
+            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
+                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteString("Item")
+                ),
+                SyntaxTreeNode.Block(
+                    SyntaxTreeNode.WriteString("Empty")
+                )
+            ));
+
+            var result = ExecuteTemplate(template, model);
+            Assert.That(result, Is.EqualTo("Empty"));
         }
 
         private class ItemModel
