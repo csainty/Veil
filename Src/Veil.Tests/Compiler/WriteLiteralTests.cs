@@ -9,7 +9,7 @@ namespace Veil.Compiler
         [TestCase("Hello World", "Hello World")]
         public void Should_output_literal(string literal, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(new SyntaxTreeNode.WriteLiteralNode { LiteralContent = literal });
+            var template = SyntaxTree.Block(new WriteLiteralNode { LiteralContent = literal });
             var result = ExecuteTemplate(template, new { });
             Assert.That(result, Is.EqualTo(expectedResult));
         }

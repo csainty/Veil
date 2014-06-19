@@ -24,9 +24,9 @@ namespace Veil.Compiler
 
         public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)
         {
-            while (templateSyntaxTree is SyntaxTreeNode.ExtendTemplateNode)
+            while (templateSyntaxTree is ExtendTemplateNode)
             {
-                templateSyntaxTree = Extend((SyntaxTreeNode.ExtendTemplateNode)templateSyntaxTree);
+                templateSyntaxTree = Extend((ExtendTemplateNode)templateSyntaxTree);
             }
 
             AddModelScope(e => e.LoadArgument(1));
@@ -36,7 +36,7 @@ namespace Veil.Compiler
             return emitter.CreateDelegate();
         }
 
-        private SyntaxTreeNode Extend(SyntaxTreeNode.ExtendTemplateNode extendNode)
+        private SyntaxTreeNode Extend(ExtendTemplateNode extendNode)
         {
             foreach (var o in extendNode.Overrides)
             {
@@ -72,19 +72,19 @@ namespace Veil.Compiler
             scopeStack.First.Value.Invoke(emitter);
         }
 
-        private void EvaluateExpression(SyntaxTreeNode.ExpressionNode expression)
+        private void EvaluateExpression(ExpressionNode expression)
         {
             switch (expression.Scope)
             {
-                case SyntaxTreeNode.ExpressionScope.CurrentModelOnStack:
+                case ExpressionScope.CurrentModelOnStack:
                     scopeStack.First.Value.Invoke(emitter);
                     break;
 
-                case SyntaxTreeNode.ExpressionScope.RootModel:
+                case ExpressionScope.RootModel:
                     scopeStack.Last.Value.Invoke(emitter);
                     break;
 
-                case SyntaxTreeNode.ExpressionScope.ModelOfParentScope:
+                case ExpressionScope.ModelOfParentScope:
                     scopeStack.First.Next.Value.Invoke(emitter);
                     break;
 
@@ -94,28 +94,28 @@ namespace Veil.Compiler
             EvaluateExpressionAgainstModelOnStack(expression);
         }
 
-        private void EvaluateExpressionAgainstModelOnStack(SyntaxTreeNode.ExpressionNode expression)
+        private void EvaluateExpressionAgainstModelOnStack(ExpressionNode expression)
         {
-            if (expression is SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)
+            if (expression is PropertyExpressionNode)
             {
-                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.PropertyExpressionNode)expression).PropertyInfo.GetGetMethod());
+                emitter.CallMethod(((PropertyExpressionNode)expression).PropertyInfo.GetGetMethod());
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.FieldExpressionNode)
+            else if (expression is FieldExpressionNode)
             {
-                emitter.LoadField(((SyntaxTreeNode.ExpressionNode.FieldExpressionNode)expression).FieldInfo);
+                emitter.LoadField(((FieldExpressionNode)expression).FieldInfo);
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)
+            else if (expression is SubModelExpressionNode)
             {
-                EvaluateExpressionAgainstModelOnStack(((SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)expression).ModelExpression);
-                EvaluateExpressionAgainstModelOnStack(((SyntaxTreeNode.ExpressionNode.SubModelExpressionNode)expression).SubModelExpression);
+                EvaluateExpressionAgainstModelOnStack(((SubModelExpressionNode)expression).ModelExpression);
+                EvaluateExpressionAgainstModelOnStack(((SubModelExpressionNode)expression).SubModelExpression);
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)
+            else if (expression is FunctionCallExpressionNode)
             {
-                emitter.CallMethod(((SyntaxTreeNode.ExpressionNode.FunctionCallExpressionNode)expression).MethodInfo);
+                emitter.CallMethod(((FunctionCallExpressionNode)expression).MethodInfo);
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.CollectionHasItemsNode)
+            else if (expression is CollectionHasItemsNode)
             {
-                var hasItems = (SyntaxTreeNode.ExpressionNode.CollectionHasItemsNode)expression;
+                var hasItems = (CollectionHasItemsNode)expression;
                 var count = typeof(ICollection).GetProperty("Count");
                 EvaluateExpressionAgainstModelOnStack(hasItems.CollectionExpression);
                 emitter.CallMethod(count.GetGetMethod());
@@ -124,12 +124,12 @@ namespace Veil.Compiler
                 emitter.LoadConstant(0);
                 emitter.CompareEqual();
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.LateBoundNode)
+            else if (expression is LateBoundNode)
             {
-                emitter.LoadConstant(((SyntaxTreeNode.ExpressionNode.LateBoundNode)expression).ItemName);
+                emitter.LoadConstant(((LateBoundNode)expression).ItemName);
                 emitter.CallMethod(runtimeBindMethod);
             }
-            else if (expression is SyntaxTreeNode.ExpressionNode.SelfExpressionNode)
+            else if (expression is SelfExpressionNode)
             {
             }
             else

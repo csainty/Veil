@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using FakeItEasy;
 using NUnit.Framework;
-using S = Veil.Parser.SyntaxTreeNode;
+using S = Veil.Parser.SyntaxTree;
 
 namespace Veil.Compiler
 {

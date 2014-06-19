@@ -4,7 +4,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private void EmitInclude(SyntaxTreeNode.IncludeTemplateNode node)
+        private void EmitInclude(IncludeTemplateNode node)
         {
             var template = includeParser(node.TemplateName, node.ModelExpression.ResultType);
             if (template == null) throw new VeilCompilerException("Unable to load template '{0}'".FormatInvariant(node.TemplateName));

@@ -14,32 +14,32 @@ namespace Veil.Handlebars
         public void Should_parse_property()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Property");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(typeof(Model), "Property"));
+            result.ShouldDeepEqual(Expression.Property(typeof(Model), "Property"));
         }
 
         [Test]
         public void Should_parse_field()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Field");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Field(typeof(Model), "Field"));
+            result.ShouldDeepEqual(Expression.Field(typeof(Model), "Field"));
         }
 
         [Test]
         public void Should_parse_property_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "SubModel.SubProperty");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(SyntaxTreeNode.ExpressionNode.Property(typeof(Model), "SubModel"), SyntaxTreeNode.ExpressionNode.Property(typeof(SubModel), "SubProperty")));
+            result.ShouldDeepEqual(Expression.SubModel(Expression.Property(typeof(Model), "SubModel"), Expression.Property(typeof(SubModel), "SubProperty")));
         }
 
         [Test]
         public void Should_parse_field_from_subsubmodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "SubModel.SubSubModel.SubSubField");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.SubModel(
-                SyntaxTreeNode.ExpressionNode.Property(typeof(Model), "SubModel"),
-                SyntaxTreeNode.ExpressionNode.SubModel(
-                    SyntaxTreeNode.ExpressionNode.Field(typeof(SubModel), "SubSubModel"),
-                    SyntaxTreeNode.ExpressionNode.Field(typeof(SubSubModel), "SubSubField"))
+            result.ShouldDeepEqual(Expression.SubModel(
+                Expression.Property(typeof(Model), "SubModel"),
+                Expression.SubModel(
+                    Expression.Field(typeof(SubModel), "SubSubModel"),
+                    Expression.Field(typeof(SubSubModel), "SubSubField"))
                 )
             );
         }
@@ -48,21 +48,21 @@ namespace Veil.Handlebars
         public void Should_parse_function_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Function()");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Function(typeof(Model), "Function"));
+            result.ShouldDeepEqual(Expression.Function(typeof(Model), "Function"));
         }
 
         [TestCase("this")]
         public void Should_parse_self_expression_node(string expression)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(string)), expression);
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Self(typeof(string)));
+            result.ShouldDeepEqual(Expression.Self(typeof(string)));
         }
 
         [TestCaseSource("LateBoundTestCases")]
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(T)), "Name");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.LateBound("Name", SyntaxTreeNode.ExpressionScope.CurrentModelOnStack));
+            result.ShouldDeepEqual(Expression.LateBound("Name", ExpressionScope.CurrentModelOnStack));
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace Veil.Handlebars
 
             var scopes = CreateScopes(root.GetType(), parent.GetType(), current.GetType());
             var result = HandlebarsExpressionParser.Parse(scopes, "../Name");
-            result.ShouldDeepEqual(SyntaxTreeNode.ExpressionNode.Property(parent.GetType(), "Name", SyntaxTreeNode.ExpressionScope.ModelOfParentScope));
+            result.ShouldDeepEqual(Expression.Property(parent.GetType(), "Name", ExpressionScope.ModelOfParentScope));
         }
 
         [TestCase("Foo")]
@@ -133,7 +133,7 @@ namespace Veil.Handlebars
             var scopes = new LinkedList<HandlebarsParser.ParserScope>();
             foreach (var modelType in modelTypes)
             {
-                scopes.AddFirst(new HandlebarsParser.ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = modelType });
+                scopes.AddFirst(new HandlebarsParser.ParserScope { Block = SyntaxTree.Block(), ModelInScope = modelType });
             }
             return scopes;
         }

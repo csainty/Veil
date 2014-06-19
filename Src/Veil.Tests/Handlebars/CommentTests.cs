@@ -12,8 +12,8 @@ namespace Veil.Handlebars
             var template = Parse("Hello {{! this again? }}World{{! at least it is done now}}", typeof(object));
             AssertSyntaxTree(
                 template,
-                SyntaxTreeNode.WriteString("Hello "),
-                SyntaxTreeNode.WriteString("World")
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.WriteString("World")
             );
         }
     }

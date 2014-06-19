@@ -11,7 +11,7 @@ namespace Veil.Expressions
         {
             Assert.Throws<VeilParserException>(() =>
             {
-                SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"), SyntaxTreeNode.Block(), SyntaxTreeNode.Block());
+                SyntaxTree.Conditional(Expression.Property(model.GetType(), "Items"), SyntaxTree.Block(), SyntaxTree.Block());
             });
         }
 
@@ -20,7 +20,7 @@ namespace Veil.Expressions
         {
             Assert.DoesNotThrow(() =>
             {
-                SyntaxTreeNode.Conditional(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"), SyntaxTreeNode.Block(), SyntaxTreeNode.Block());
+                SyntaxTree.Conditional(Expression.Property(model.GetType(), "Items"), SyntaxTree.Block(), SyntaxTree.Block());
             });
         }
 

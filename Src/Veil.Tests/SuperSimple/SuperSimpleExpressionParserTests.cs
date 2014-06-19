@@ -4,7 +4,7 @@ using System.Dynamic;
 using DeepEqual.Syntax;
 using NUnit.Framework;
 using Veil.Parser;
-using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
+using E = Veil.Parser.Expression;
 
 namespace Veil.SuperSimple
 {
@@ -16,7 +16,7 @@ namespace Veil.SuperSimple
         {
             var model = new { };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model");
-            result.ShouldDeepEqual(E.Self(model.GetType(), SyntaxTreeNode.ExpressionScope.RootModel));
+            result.ShouldDeepEqual(E.Self(model.GetType(), ExpressionScope.RootModel));
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Veil.SuperSimple
         {
             var model = new { Name = "foo" };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.Name");
-            result.ShouldDeepEqual(E.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel));
+            result.ShouldDeepEqual(E.Property(model.GetType(), "Name", ExpressionScope.RootModel));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace Veil.SuperSimple
             var model = new { User = new { Name = "Bob" } };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.User.Name");
             result.ShouldDeepEqual(E.SubModel(
-                E.Property(model.GetType(), "User", SyntaxTreeNode.ExpressionScope.RootModel),
+                E.Property(model.GetType(), "User", ExpressionScope.RootModel),
                 E.Property(model.User.GetType(), "Name")
             ));
         }
@@ -79,7 +79,7 @@ namespace Veil.SuperSimple
             var model = new { User = new { Department = new { Company = new { Name = "Foo" } } } };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.User.Department.Company.Name");
             result.ShouldDeepEqual(E.SubModel(
-                E.Property(model.GetType(), "User", SyntaxTreeNode.ExpressionScope.RootModel),
+                E.Property(model.GetType(), "User", ExpressionScope.RootModel),
                 E.SubModel(
                     E.Property(model.User.GetType(), "Department"),
                     E.SubModel(
@@ -94,14 +94,14 @@ namespace Veil.SuperSimple
         public void Should_parse_field_references()
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(ViewModel)), "Model.FieldName");
-            result.ShouldDeepEqual(E.Field(typeof(ViewModel), "FieldName", SyntaxTreeNode.ExpressionScope.RootModel));
+            result.ShouldDeepEqual(E.Field(typeof(ViewModel), "FieldName", ExpressionScope.RootModel));
         }
 
         [TestCaseSource("LateBoundTestCases")]
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(T)), "Model.Name");
-            result.ShouldDeepEqual(E.LateBound("Name", SyntaxTreeNode.ExpressionScope.RootModel));
+            result.ShouldDeepEqual(E.LateBound("Name", ExpressionScope.RootModel));
         }
 
         [TestCase("Model.Wrong")]

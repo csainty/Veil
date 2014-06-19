@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
-using S = Veil.Parser.SyntaxTreeNode;
+using Veil.Parser;
+using E = Veil.Parser.Expression;
+using S = Veil.Parser.SyntaxTree;
 
 namespace Veil.Compiler
 {
@@ -69,7 +70,7 @@ namespace Veil.Compiler
                 S.WriteExpression(E.Property(model.Company.GetType(), "Name")),
                 S.WriteString(" - "),
                 S.Iterate(E.Property(model.Company.GetType(), "Departments"), S.Block(
-                    S.WriteExpression(E.Property(model.Company.GetType(), "Name", S.ExpressionScope.RootModel))
+                    S.WriteExpression(E.Property(model.Company.GetType(), "Name", ExpressionScope.RootModel))
                 ))
             ));
             var template = S.Block(

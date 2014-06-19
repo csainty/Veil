@@ -10,10 +10,10 @@ namespace Veil.Compiler
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_property<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Conditional(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Condition"),
-                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
-                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))));
+            var template = SyntaxTree.Block(SyntaxTree.Conditional(
+                Expression.Property(model.GetType(), "Condition"),
+                SyntaxTree.Block(SyntaxTree.WriteString("True")),
+                SyntaxTree.Block(SyntaxTree.WriteString("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -22,10 +22,10 @@ namespace Veil.Compiler
         [TestCaseSource("TruthyFalseyCases")]
         public void Should_render_correct_block_based_on_model_field<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Conditional(
-                SyntaxTreeNode.ExpressionNode.Field(model.GetType(), "ConditionField"),
-                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
-                SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))));
+            var template = SyntaxTree.Block(SyntaxTree.Conditional(
+                Expression.Field(model.GetType(), "ConditionField"),
+                SyntaxTree.Block(SyntaxTree.WriteString("True")),
+                SyntaxTree.Block(SyntaxTree.WriteString("False"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -38,39 +38,39 @@ namespace Veil.Compiler
         public void Should_be_able_to_nest_conditionals(bool c1, bool c2, string expectedResult)
         {
             var model = new { Condition1 = c1, Condition2 = c2 };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.WriteString("Start "),
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Condition1"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("True1 "),
-                        SyntaxTreeNode.Conditional(
-                            SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Condition2"),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True2 ")),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False2 "))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Start "),
+                SyntaxTree.Conditional(
+                    Expression.Property(model.GetType(), "Condition1"),
+                    SyntaxTree.Block(
+                        SyntaxTree.WriteString("True1 "),
+                        SyntaxTree.Conditional(
+                            Expression.Property(model.GetType(), "Condition2"),
+                            SyntaxTree.Block(SyntaxTree.WriteString("True2 ")),
+                            SyntaxTree.Block(SyntaxTree.WriteString("False2 "))
                         )
                     ),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("False1 "),
-                        SyntaxTreeNode.Conditional(
-                            SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Condition2"),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True2 ")),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False2 "))
+                    SyntaxTree.Block(
+                        SyntaxTree.WriteString("False1 "),
+                        SyntaxTree.Conditional(
+                            Expression.Property(model.GetType(), "Condition2"),
+                            SyntaxTree.Block(SyntaxTree.WriteString("True2 ")),
+                            SyntaxTree.Block(SyntaxTree.WriteString("False2 "))
                         )
                     )
                 ),
-                SyntaxTreeNode.WriteString("End"));
+                SyntaxTree.WriteString("End"));
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCaseSource("EmptyBlockCases")]
-        public void Should_throw_with_empty_blocks(SyntaxTreeNode.BlockNode emptyBlock)
+        public void Should_throw_with_empty_blocks(BlockNode emptyBlock)
         {
             var model = new { X = true };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Conditional(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "X"),
+            var template = SyntaxTree.Block(
+                SyntaxTree.Conditional(
+                Expression.Property(model.GetType(), "X"),
                 emptyBlock,
                 emptyBlock
             ));
@@ -82,13 +82,13 @@ namespace Veil.Compiler
         }
 
         [TestCaseSource("EmptyBlockCases")]
-        public void Should_handle_empty_false_block(SyntaxTreeNode.BlockNode falseBlock)
+        public void Should_handle_empty_false_block(BlockNode falseBlock)
         {
             var model = new { X = true };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "X"),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Hello")),
+            var template = SyntaxTree.Block(
+                SyntaxTree.Conditional(
+                    Expression.Property(model.GetType(), "X"),
+                    SyntaxTree.Block(SyntaxTree.WriteString("Hello")),
                     falseBlock)
                 );
             var result = this.ExecuteTemplate(template, model);
@@ -96,14 +96,14 @@ namespace Veil.Compiler
         }
 
         [TestCaseSource("EmptyBlockCases")]
-        public void Should_handle_empty_true_block(SyntaxTreeNode.BlockNode trueBlock)
+        public void Should_handle_empty_true_block(BlockNode trueBlock)
         {
             var model = new { X = false };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "X"),
+            var template = SyntaxTree.Block(
+                SyntaxTree.Conditional(
+                    Expression.Property(model.GetType(), "X"),
                     trueBlock,
-                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("Hello")))
+                    SyntaxTree.Block(SyntaxTree.WriteString("Hello")))
                 );
             var result = this.ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello"));
@@ -113,13 +113,13 @@ namespace Veil.Compiler
         public void Should_handle_conditional_on_root_scope()
         {
             var model = new { RootConditional = true, Values = new[] { 1, 2, 3 } };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Values"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.Conditional(
-                            SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "RootConditional", SyntaxTreeNode.ExpressionScope.RootModel),
-                            SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(int))))
+            var template = SyntaxTree.Block(
+                SyntaxTree.Iterate(
+                    Expression.Property(model.GetType(), "Values"),
+                    SyntaxTree.Block(
+                        SyntaxTree.Conditional(
+                            Expression.Property(model.GetType(), "RootConditional", ExpressionScope.RootModel),
+                            SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.Self(typeof(int))))
                         )
                     )
                 )
@@ -131,11 +131,11 @@ namespace Veil.Compiler
         [TestCaseSource("HasItemsCases")]
         public void Should_handle_has_items_expression<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.HasItems(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items")),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("HasItems")),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("HasNoItems"))
+            var template = SyntaxTree.Block(
+                SyntaxTree.Conditional(
+                    Expression.HasItems(Expression.Property(model.GetType(), "Items")),
+                    SyntaxTree.Block(SyntaxTree.WriteString("HasItems")),
+                    SyntaxTree.Block(SyntaxTree.WriteString("HasNoItems"))
                 )
             );
             var result = this.ExecuteTemplate(template, model);
@@ -147,11 +147,11 @@ namespace Veil.Compiler
         {
             var model = new Dictionary<string, object>();
             model.Add("Bool", testModel.GetType().GetProperty("Condition").GetValue(testModel));
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Conditional(
-                    SyntaxTreeNode.ExpressionNode.LateBound("Bool"),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("True")),
-                    SyntaxTreeNode.Block(SyntaxTreeNode.WriteString("False"))
+            var template = SyntaxTree.Block(
+                SyntaxTree.Conditional(
+                    Expression.LateBound("Bool"),
+                    SyntaxTree.Block(SyntaxTree.WriteString("True")),
+                    SyntaxTree.Block(SyntaxTree.WriteString("False"))
                 )
             );
             var result = ExecuteTemplate(template, model);
@@ -172,7 +172,7 @@ namespace Veil.Compiler
         {
             return new object[] {
                 new object[] { null },
-                new object[] { SyntaxTreeNode.Block() }
+                new object[] { SyntaxTree.Block() }
             };
         }
 

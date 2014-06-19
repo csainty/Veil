@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
-using S = Veil.Parser.SyntaxTreeNode;
+using Veil.Parser;
+using E = Veil.Parser.Expression;
+using S = Veil.Parser.SyntaxTree;
 
 namespace Veil.Compiler
 {
@@ -17,7 +18,7 @@ namespace Veil.Compiler
                 S.Override("head"),
                 S.WriteString("</head></html>")
             ));
-            var template = S.Extend("master", new Dictionary<string, S> {
+            var template = S.Extend("master", new Dictionary<string, SyntaxTreeNode> {
                 {
                     "head",
                     S.Block(
@@ -69,12 +70,12 @@ namespace Veil.Compiler
         {
             var model = new { };
             RegisterTemplate("one", S.Block(S.Override("start"), S.Override("middle"), S.Override("end")));
-            RegisterTemplate("two", S.Extend("one", new Dictionary<string, S> {
+            RegisterTemplate("two", S.Extend("one", new Dictionary<string, SyntaxTreeNode> {
                 {"start", S.WriteString("Hello ")},
                 {"middle", S.WriteString("there ")},
                 {"end", S.Override("name", S.WriteString("world"))}
             }));
-            var template = S.Extend("two", new Dictionary<string, S>
+            var template = S.Extend("two", new Dictionary<string, SyntaxTreeNode>
             {
                 {"start", S.WriteString("Well hello ")},
                 {"name", S.WriteString("Bob")}

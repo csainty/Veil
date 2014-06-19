@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 using NUnit.Framework;
-using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
-using S = Veil.Parser.SyntaxTreeNode;
+using E = Veil.Parser.Expression;
+using S = Veil.Parser.SyntaxTree;
 
 namespace Veil.Compiler
 {

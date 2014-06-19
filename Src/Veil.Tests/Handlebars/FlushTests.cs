@@ -10,7 +10,7 @@ namespace Veil.Handlebars
         public void Should_parse_flush()
         {
             var syntaxTree = Parse("{{#flush}}", typeof(object));
-            AssertSyntaxTree(syntaxTree, SyntaxTreeNode.Flush());
+            AssertSyntaxTree(syntaxTree, SyntaxTree.Flush());
         }
     }
 }

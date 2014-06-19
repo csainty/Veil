@@ -9,7 +9,7 @@ namespace Veil.Compiler
         [Test]
         public void Should_throw_when_invalid_syntax_node_found()
         {
-            var template = SyntaxTreeNode.Block(new InvalidSyntaxTreeNode());
+            var template = SyntaxTree.Block(new InvalidSyntaxTreeNode());
             Assert.Throws<VeilCompilerException>(() =>
             {
                 ExecuteTemplate(template, new { });

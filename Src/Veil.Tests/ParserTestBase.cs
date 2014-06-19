@@ -24,7 +24,7 @@ namespace Veil
 
         protected void AssertSyntaxTree(SyntaxTreeNode template, params SyntaxTreeNode[] expectedNodes)
         {
-            var comparisonTemplate = SyntaxTreeNode.Block(expectedNodes);
+            var comparisonTemplate = SyntaxTree.Block(expectedNodes);
             template.ShouldDeepEqual(comparisonTemplate);
         }
     }

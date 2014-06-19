@@ -4,7 +4,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private void EmitWriteLiteral(SyntaxTreeNode.WriteLiteralNode node)
+        private void EmitWriteLiteral(WriteLiteralNode node)
         {
             if (string.IsNullOrEmpty(node.LiteralContent)) return;
 

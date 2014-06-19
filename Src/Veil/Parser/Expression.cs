@@ -1,0 +1,109 @@
+﻿using System;
+
+namespace Veil.Parser
+{
+    public static class Expression
+    {
+        /// <summary>
+        /// Call the getter on the specified property
+        /// </summary>
+        /// <param name="modelType">The type of the scoped model</param>
+        /// <param name="propertyName">The name of the property</param>
+        /// <param name="scope">The scope this expression evaluated in</param>
+        public static PropertyExpressionNode Property(Type modelType, string propertyName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        {
+            return new PropertyExpressionNode
+            {
+                PropertyInfo = modelType.GetProperty(propertyName),
+                Scope = scope
+            };
+        }
+
+        /// <summary>
+        /// Get a field
+        /// </summary>
+        /// <param name="modelType">The type of the scoped model</param>
+        /// <param name="fieldName">The name of the field</param>
+        /// <param name="scope">The scope this expression evaluated in</param>
+        public static FieldExpressionNode Field(Type modelType, string fieldName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        {
+            return new FieldExpressionNode
+            {
+                FieldInfo = modelType.GetField(fieldName),
+                Scope = scope
+            };
+        }
+
+        /// <summary>
+        /// Traverse one level down a model structure
+        /// </summary>
+        /// <param name="modelExpression">An expression referencing the model to traverse to</param>
+        /// <param name="subModelExpression">An expression to evaluate in the scope of the model that has been traversed to</param>
+        /// <param name="scope">The scope this expression evaluated in</param>
+        public static SubModelExpressionNode SubModel(ExpressionNode modelExpression, ExpressionNode subModelExpression, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        {
+            return new SubModelExpressionNode
+            {
+                ModelExpression = modelExpression,
+                SubModelExpression = subModelExpression,
+                Scope = scope
+            };
+        }
+
+        /// <summary>
+        /// Execute a function
+        /// </summary>
+        /// <param name="modelType">The type of the scoped model</param>
+        /// <param name="functionName">The name of the function</param>
+        /// <param name="scope">The scope this expression evaluated in</param>
+        public static FunctionCallExpressionNode Function(Type modelType, string functionName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        {
+            return new FunctionCallExpressionNode
+            {
+                MethodInfo = modelType.GetMethod(functionName),
+                Scope = scope
+            };
+        }
+
+        /// <summary>
+        /// Evaluate the model itself e.g. Value types
+        /// </summary>
+        /// <param name="modelType">The type of the scoped model</param>
+        /// <param name="scope">The scope this expression evaluated in</param>
+        public static SelfExpressionNode Self(Type modelType, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        {
+            return new SelfExpressionNode
+            {
+                ModelType = modelType,
+                Scope = scope
+            };
+        }
+
+        /// <summary>
+        /// Evaluate whether the collectionExpression has Count > 0
+        /// </summary>
+        /// <param name="collectionExpression">An expression referencing a Collection</param>
+        public static CollectionHasItemsNode HasItems(ExpressionNode collectionExpression)
+        {
+            return new CollectionHasItemsNode
+            {
+                CollectionExpression = collectionExpression,
+                Scope = collectionExpression.Scope
+            };
+        }
+
+        /// <summary>
+        /// Evaluate a proeprty at runtime against an unknown model type
+        /// </summary>
+        /// <param name="itemName">The name of the proeprty that will be searched for</param>
+        /// <param name="scope">The scope this expression evaluated in</param>
+        public static LateBoundNode LateBound(string itemName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        {
+            return new LateBoundNode
+            {
+                ItemName = itemName,
+                Scope = scope
+            };
+        }
+    }
+}
