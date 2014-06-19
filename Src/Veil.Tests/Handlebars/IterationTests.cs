@@ -36,6 +36,23 @@ namespace Veil.Handlebars
             );
         }
 
+        [Test]
+        public void Should_parse_else_block_of_each()
+        {
+            var result = Parse("{{#each Items }}Foo{{else}}Bar{{/each}}", typeof(TestModel));
+            AssertSyntaxTree(result,
+                SyntaxTreeNode.Iterate(
+                    SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Items"),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("Foo")
+                    ),
+                    SyntaxTreeNode.Block(
+                        SyntaxTreeNode.WriteString("Bar")
+                    )
+                )
+            );
+        }
+
         private class TestModel
         {
             public string Prefix { get; set; }

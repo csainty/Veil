@@ -69,11 +69,20 @@ namespace Veil.Handlebars
                 }
                 else if (token == "else")
                 {
-                    AssertInsideConditionalOnModelBlock(scopes, "{{else}}");
-                    scopes.RemoveFirst();
-                    var block = SyntaxTreeNode.Block();
-                    ((SyntaxTreeNode.ConditionalNode)scopes.First().Block.Nodes.Last()).FalseBlock = block;
-                    scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
+                    if (IsInEachBlock(scopes))
+                    {
+                        scopes.RemoveFirst();
+                        var elseBlock = ((SyntaxTreeNode.IterateNode)scopes.First().Block.Nodes.Last()).EmptyBody;
+                        scopes.AddFirst(new ParserScope { Block = elseBlock, ModelInScope = scopes.First().ModelInScope });
+                    }
+                    else
+                    {
+                        AssertInsideConditionalOnModelBlock(scopes, "{{else}}");
+                        scopes.RemoveFirst();
+                        var block = SyntaxTreeNode.Block();
+                        ((SyntaxTreeNode.ConditionalNode)scopes.First().Block.Nodes.Last()).FalseBlock = block;
+                        scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
+                    }
                 }
                 else if (token == "/if")
                 {
@@ -172,6 +181,16 @@ namespace Veil.Handlebars
             {
                 throw new VeilParserException(String.Format("Found token '{0}' outside of a conditional block.", foundToken));
             }
+        }
+
+        private static bool IsInEachBlock(LinkedList<ParserScope> scopes)
+        {
+            if (scopes.Count < 2)
+            {
+                return false;
+            }
+
+            return scopes.First.Next.Value.Block.Nodes.Last() is SyntaxTreeNode.IterateNode;
         }
 
         internal class ParserScope

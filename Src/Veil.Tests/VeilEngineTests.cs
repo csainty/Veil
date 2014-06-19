@@ -26,7 +26,8 @@ namespace Veil
                     CompanyName = "Veil"
                 }
             },
-            Roles = new[] { "User", "Browser" }
+            Roles = new[] { "User", "Browser" },
+            Reports = new string[0]
         };
 
         [SetUp]
@@ -111,6 +112,7 @@ namespace Veil
                 new object[] {"Hey {{ Name }},{{#each Roles}} {{ ../Name }}{{/each}}", "Hey Chris, Chris Chris"},
                 new object[] {"<p>\r\n{{~Name~}}\r\n</p>", "<p>Chris</p>"},
                 new object[] {"{{#with Department}}Department: {{ GetDepartmentNumber() }}{{/with}}", "Department: 10"},
+                new object[] {"{{#each Reports}}{{this}}{{else}}No Reports{{/each}}", "No Reports"}
             };
         }
 
@@ -184,6 +186,8 @@ namespace Veil
             public Department Department { get; set; }
 
             public IEnumerable<string> Roles { get; set; }
+
+            public IEnumerable<string> Reports { get; set; }
         }
 
         private class Department

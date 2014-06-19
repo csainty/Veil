@@ -62,7 +62,7 @@ var model = new {
 `{{#unless IsAdmin }}Please Login{{/unless}}` - Please login  
 
 
-### Iteration - {{#each}} {{/each}}
+### Iteration - {{#each}} {{else}} {{/each}}
 Iteration is handled with the `{{#each}}` expression. Access to the current item in the iteration is provided through the `{{this}}` expression. E.g.  
 ````
 var model = new {
@@ -75,6 +75,15 @@ var model = new {
 ````  
 `{{#each Items}}{{this}}{{/each}}` - CatDog  
 `{{#each Users}}{{this.Name}}{{/each}}` - JimBob
+
+If an `{{#each}}` block contains an `{{else}}` then that content will be rendered when there are not items in the collection being iterated.
+
+````
+var model = new {
+	Items = new string[0]
+};
+````  
+`{{#each Items}}{{this}}{{else}}NoItems{{/each}}` - NoItems  
 
 ### Scope - {{#with}}
 You can scope a block in Handlebars with the `{{#with Name}} {{/with}}` expression. Any expressions within this scope block will use the object referenced by the block as their model.
