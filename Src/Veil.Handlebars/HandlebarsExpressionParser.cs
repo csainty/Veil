@@ -7,20 +7,20 @@ namespace Veil.Handlebars
 {
     internal static class HandlebarsExpressionParser
     {
-        public static ExpressionNode Parse(LinkedList<HandlebarsParser.ParserScope> scopes, string expression)
+        public static ExpressionNode Parse(HandlebarsScopeStack scopes, string expression)
         {
             expression = expression.Trim();
 
             if (expression == "this")
             {
-                return Expression.Self(scopes.First().ModelInScope, ExpressionScope.CurrentModelOnStack);
+                return Expression.Self(scopes.GetTypeOfModelInScope(), ExpressionScope.CurrentModelOnStack);
             }
             if (expression.StartsWith("../"))
             {
-                return ParseAgainstModel(scopes.First.Next.Value.ModelInScope, expression.Substring(3), ExpressionScope.ModelOfParentScope);
+                return ParseAgainstModel(scopes.GetTypeOfParentScopeModel(), expression.Substring(3), ExpressionScope.ModelOfParentScope);
             }
 
-            return ParseAgainstModel(scopes.First().ModelInScope, expression, ExpressionScope.CurrentModelOnStack);
+            return ParseAgainstModel(scopes.GetTypeOfModelInScope(), expression, ExpressionScope.CurrentModelOnStack);
         }
 
         private static ExpressionNode ParseAgainstModel(Type modelType, string expression, ExpressionScope expressionScope)
