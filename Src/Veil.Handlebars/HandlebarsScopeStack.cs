@@ -67,6 +67,11 @@ namespace Veil.Handlebars
             return (T)scopes.First.Next.Value.Block.Nodes.Last();
         }
 
+        public bool IsCurrentScopeContainer<T>() where T : SyntaxTreeNode
+        {
+            return scopes.First.Next.Value.Block.Nodes.Last() is T;
+        }
+
         public SyntaxTreeNode AddToCurrentScope(SyntaxTreeNode node)
         {
             Peek().Block.Add(node);

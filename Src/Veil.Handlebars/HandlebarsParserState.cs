@@ -7,7 +7,7 @@ namespace Veil.Handlebars
 {
     internal class HandlebarsParserState
     {
-        private readonly Stack<string> expressionPrefixes = new Stack<string>();
+        public Stack<string> ExpressionPrefixes { get; private set; }
 
         public HandlebarsScopeStack Scopes { get; private set; }
 
@@ -23,9 +23,12 @@ namespace Veil.Handlebars
 
         public string TokenText { get; set; }
 
+        public SyntaxTreeNode RootNode { get { return ExtendNode ?? Scopes.GetCurrentBlock(); } }
+
         public HandlebarsParserState()
         {
             this.Scopes = new HandlebarsScopeStack();
+            this.ExpressionPrefixes = new Stack<string>();
         }
 
         public void WriteLiteral(string s)
@@ -45,10 +48,10 @@ namespace Veil.Handlebars
 
         private string PrefixExpression(string expression)
         {
-            if (expressionPrefixes.Count == 0) return expression;
-            if (expression == "this") return String.Join(".", expressionPrefixes.Reverse());
-            if (expression.StartsWith("../")) return String.Join(".", expressionPrefixes.Skip(1).Reverse().Concat(new[] { expression.Substring(3) }));
-            return String.Join(".", expressionPrefixes.Reverse().Concat(new[] { expression }));
+            if (ExpressionPrefixes.Count == 0) return expression;
+            if (expression == "this") return String.Join(".", ExpressionPrefixes.Reverse());
+            if (expression.StartsWith("../")) return String.Join(".", ExpressionPrefixes.Skip(1).Reverse().Concat(new[] { expression.Substring(3) }));
+            return String.Join(".", ExpressionPrefixes.Reverse().Concat(new[] { expression }));
         }
 
         internal void SetCurrentToken(HandlebarsToken token)
@@ -57,16 +60,6 @@ namespace Veil.Handlebars
             TokenText = token.Content.Trim(new[] { '{', '}', ' ', '\t' });
             HtmlEscape = false;
             ContinueProcessingToken = false;
-        }
-
-        internal void PushExpressionPrefix(string prefix)
-        {
-            this.expressionPrefixes.Push(prefix);
-        }
-
-        internal void PopExpressionPrefix()
-        {
-            this.expressionPrefixes.Pop();
         }
     }
 }

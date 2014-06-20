@@ -53,6 +53,20 @@ namespace Veil.Handlebars
             );
         }
 
+        [TestCase("Hello {{#each Items}} There")]
+        [TestCase("Hello {{#each Items}} There {{else}}")]
+        [TestCase("Hello {{/each}} There")]
+        [TestCase("Hello {{#each Items}} There{{/each}}{{/each}}")]
+        [TestCase("Hello {{else}} Foo")]
+        [TestCase("Hello {{#each Items}} There{{/each}}{{else}}")]
+        public void Should_throw_if_block_not_open_and_closed_consistently(string template)
+        {
+            Assert.Throws<VeilParserException>(() =>
+            {
+                Parse(template, typeof(TestModel));
+            });
+        }
+
         private class TestModel
         {
             public string Prefix { get; set; }

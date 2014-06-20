@@ -12,13 +12,13 @@ namespace Veil.Handlebars
     /// </summary>
     public class HandlebarsParser : ITemplateParser
     {
-        private static Dictionary<Func<string, bool>, Action<HandlebarsParserState>> SyntaxHandlers = new Dictionary<Func<string, bool>, Action<HandlebarsParserState>>
+        private static readonly Dictionary<Func<string, bool>, Action<HandlebarsParserState>> SyntaxHandlers = new Dictionary<Func<string, bool>, Action<HandlebarsParserState>>
         {
-            { x => x.StartsWith("!"), x => { /* Ignore Comments */ }},
             { x => true, HandleStringLiteral },
             { x => true, HandleHtmlEscape },
             { x => x.StartsWith("~"), HandleTrimLastLiteral },
             { x => x.EndsWith("~"), HandleTrimNextLiteral },
+            { x => x.StartsWith("!"), x => { /* Ignore Comments */ }},
             { x => x.StartsWith("#if"), HandleIf },
             { x => x == "else", HandleElse },
             { x => x == "/if", HandleEndIf },
@@ -49,7 +49,7 @@ namespace Veil.Handlebars
                 {
                     if (handler.Key(state.TokenText))
                     {
-                        handler.Value(state);
+                        handler.Value.Invoke(state);
                         if (state.ContinueProcessingToken)
                         {
                             state.ContinueProcessingToken = false;
@@ -60,9 +60,10 @@ namespace Veil.Handlebars
                 }
             }
 
-            state.Scopes.AssertStackOnRootNode();
+            state.AssertStackOnRootNode();
+            state.AssertPrefixesAreEmpty();
 
-            return state.ExtendNode ?? state.Scopes.GetCurrentBlock();
+            return state.RootNode;
         }
 
         private static void HandleStringLiteral(HandlebarsParserState state)
@@ -110,7 +111,8 @@ namespace Veil.Handlebars
 
         private static void HandleElse(HandlebarsParserState state)
         {
-            if (state.Scopes.IsInEachBlock())
+            state.AssertInsideConditionalOrIteration("{{else}}");
+            if (state.IsInEachBlock())
             {
                 HandleIterationElse(state);
             }
@@ -129,7 +131,6 @@ namespace Veil.Handlebars
 
         private static void HandleConditionalElse(HandlebarsParserState state)
         {
-            state.Scopes.AssertInsideConditionalOnModelBlock("{{else}}");
             var block = SyntaxTree.Block();
             state.Scopes.GetCurrentScopeContainer<ConditionalNode>().FalseBlock = block;
             state.Scopes.PopScope();
@@ -138,7 +139,7 @@ namespace Veil.Handlebars
 
         private static void HandleEndIf(HandlebarsParserState state)
         {
-            state.Scopes.AssertInsideConditionalOnModelBlock("{{/if}}");
+            state.AssertInsideConditional("{{/if}}");
             state.Scopes.PopScope();
         }
 
@@ -152,7 +153,7 @@ namespace Veil.Handlebars
 
         private static void HandleEndUnless(HandlebarsParserState state)
         {
-            state.Scopes.AssertInsideConditionalOnModelBlock("{{/unless}}");
+            state.AssertInsideConditional("{{/unless}}");
             state.Scopes.PopScope();
         }
 
@@ -168,6 +169,7 @@ namespace Veil.Handlebars
 
         private static void HandleEndEach(HandlebarsParserState state)
         {
+            state.AssertInsideIteration("{{/each}}");
             state.Scopes.PopScope();
         }
 
@@ -178,12 +180,13 @@ namespace Veil.Handlebars
 
         private static void HandleWith(HandlebarsParserState state)
         {
-            state.PushExpressionPrefix(state.TokenText.Substring(6).Trim());
+            state.ExpressionPrefixes.Push(state.TokenText.Substring(6).Trim());
         }
 
         private static void HandleEndWith(HandlebarsParserState state)
         {
-            state.PopExpressionPrefix();
+            state.AssertHaveWithPrefix("{{/with}}");
+            state.ExpressionPrefixes.Pop();
         }
 
         private static void HandlePartial(HandlebarsParserState state)
@@ -195,7 +198,7 @@ namespace Veil.Handlebars
 
         private static void HandleMaster(HandlebarsParserState state)
         {
-            state.Scopes.AssertSyntaxTreeIsEmpty();
+            state.AssertSyntaxTreeIsEmpty("There can be no content before a {{< }} expression.");
             var masterName = state.TokenText.Substring(1).Trim();
             state.ExtendNode = SyntaxTree.Extend(masterName, new Dictionary<string, SyntaxTreeNode>
             {
