@@ -42,7 +42,7 @@ namespace Veil.Handlebars
 
         [TestCase("Hello {{#if Conditional}} There")]
         [TestCase("Hello {{#if Conditional}} There {{else}}")]
-        [TestCase("Hello {{/#if}} There")]
+        [TestCase("Hello {{/if}} There")]
         [TestCase("Hello {{#if Conditional}} There{{/if}}{{/if}}")]
         [TestCase("Hello {{else}} Foo")]
         [TestCase("Hello {{#if Conditional}} There{{/if}}{{else}}")]

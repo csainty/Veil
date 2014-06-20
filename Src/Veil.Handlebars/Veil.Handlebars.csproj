@@ -41,8 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="HandlebarsExpressionParser.cs" />
     <Compile Include="HandlebarsParser.cs" />
+    <Compile Include="HandlebarsParserScope.cs" />
+    <Compile Include="HandlebarsParserState.cs" />
+    <Compile Include="HandlebarsScopeStack.cs" />
+    <Compile Include="HandlebarsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

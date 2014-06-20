@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Veil.Parser;
 using Veil.Parser.Nodes;
 
@@ -13,216 +12,209 @@ namespace Veil.Handlebars
     /// </summary>
     public class HandlebarsParser : ITemplateParser
     {
-        // TODO: A serious refactor / rewrite is needed for this class
+        private static readonly Dictionary<Func<string, bool>, Action<HandlebarsParserState>> SyntaxHandlers = new Dictionary<Func<string, bool>, Action<HandlebarsParserState>>
+        {
+            { x => true, HandleStringLiteral },
+            { x => true, HandleHtmlEscape },
+            { x => x.StartsWith("~"), HandleTrimLastLiteral },
+            { x => x.EndsWith("~"), HandleTrimNextLiteral },
+            { x => x.StartsWith("!"), x => { /* Ignore Comments */ }},
+            { x => x.StartsWith("#if"), HandleIf },
+            { x => x == "else", HandleElse },
+            { x => x == "/if", HandleEndIf },
+            { x => x.StartsWith("#unless"), HandleUnless },
+            { x => x == "/unless", HandleEndUnless },
+            { x => x.StartsWith("#each"), HandleEach },
+            { x => x == "/each", HandleEndEach },
+            { x => x == "#flush", HandleFlush },
+            { x => x.StartsWith("#with"), HandleWith },
+            { x => x == "/with", HandleEndWith },
+            { x => x.StartsWith(">"), HandlePartial },
+            { x => x.StartsWith("<"), HandleMaster },
+            { x => x == "body", HandleBody },
+            { x => true, HandleExpression }
+        };
+
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
-            var template = templateReader.ReadToEnd();
-            var scopes = new LinkedList<ParserScope>();
-            SyntaxTreeNode extendNode = null;
-            scopes.AddFirst(new ParserScope { Block = SyntaxTree.Block(), ModelInScope = modelType });
+            var state = new HandlebarsParserState();
+            var tokens = HandlebarsTokenizer.Tokenize(templateReader);
+            state.Scopes.PushScope(modelType);
 
-            var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
-            var matches = matcher.Matches(template);
-            var index = 0;
-            var trimNextLiteral = false;
-            var expressionPrefixes = new Stack<string>();
-
-            Action<String> writeLiteral = s =>
+            foreach (var token in tokens)
             {
-                if (trimNextLiteral)
-                {
-                    s = s.TrimStart();
-                    trimNextLiteral = false;
-                }
-                scopes.First().Block.Add(SyntaxTree.WriteString(s));
-            };
-            Func<string, string> prefixExpression = s =>
-            {
-                if (expressionPrefixes.Count == 0) return s;
-                if (s == "this") return String.Join(".", expressionPrefixes.Reverse());
-                if (s.StartsWith("../")) return String.Join(".", expressionPrefixes.Skip(1).Reverse().Concat(new[] { s.Substring(3) }));
-                return String.Join(".", expressionPrefixes.Reverse().Concat(new[] { s }));
-            };
-            Func<string, ExpressionNode> parseExpression = e => HandlebarsExpressionParser.Parse(scopes, prefixExpression(e));
+                state.SetCurrentToken(token);
 
-            foreach (Match match in matches)
-            {
-                if (index < match.Index)
+                foreach (var handler in SyntaxHandlers)
                 {
-                    writeLiteral(template.Substring(index, match.Index - index));
-                }
-
-                index = match.Index + match.Length;
-
-                var htmlEscape = match.Value.Count(c => c == '{') == 2;
-                var token = match.Value.Trim(new[] { '{', '}', ' ', '\t' });
-
-                if (token.StartsWith("~"))
-                {
-                    TrimLastLiteral(scopes.First().Block);
-                }
-                trimNextLiteral = token.EndsWith("~");
-                token = token.Trim('~', ' ');
-
-                if (token.StartsWith("#if"))
-                {
-                    var block = SyntaxTree.Block();
-                    var conditional = SyntaxTree.Conditional(parseExpression(token.Substring(4)), block);
-                    scopes.First().Block.Add(conditional);
-                    scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
-                }
-                else if (token == "else")
-                {
-                    if (IsInEachBlock(scopes))
+                    if (handler.Key(state.TokenText))
                     {
-                        scopes.RemoveFirst();
-                        var elseBlock = ((IterateNode)scopes.First().Block.Nodes.Last()).EmptyBody;
-                        scopes.AddFirst(new ParserScope { Block = elseBlock, ModelInScope = scopes.First().ModelInScope });
-                    }
-                    else
-                    {
-                        AssertInsideConditionalOnModelBlock(scopes, "{{else}}");
-                        scopes.RemoveFirst();
-                        var block = SyntaxTree.Block();
-                        ((ConditionalNode)scopes.First().Block.Nodes.Last()).FalseBlock = block;
-                        scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
+                        handler.Value.Invoke(state);
+                        if (state.ContinueProcessingToken)
+                        {
+                            state.ContinueProcessingToken = false;
+                            continue;
+                        }
+                        break;
                     }
                 }
-                else if (token == "/if")
-                {
-                    AssertInsideConditionalOnModelBlock(scopes, "{{/if}}");
-                    scopes.RemoveFirst();
-                }
-                else if (token.StartsWith("#unless"))
-                {
-                    var block = SyntaxTree.Block();
-                    var conditional = SyntaxTree.Conditional(parseExpression(token.Substring(8)), SyntaxTree.Block(), block);
-                    scopes.First().Block.Add(conditional);
-                    scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
-                }
-                else if (token == "/unless")
-                {
-                    AssertInsideConditionalOnModelBlock(scopes, "{{/unless}}");
-                    scopes.RemoveFirst();
-                }
-                else if (token.StartsWith("#each"))
-                {
-                    var iteration = SyntaxTree.Iterate(
-                        parseExpression(token.Substring(6)),
-                        SyntaxTree.Block()
-                    );
-                    scopes.First().Block.Add(iteration);
-                    scopes.AddFirst(new ParserScope { Block = iteration.Body, ModelInScope = iteration.ItemType });
-                }
-                else if (token == "/each")
-                {
-                    scopes.RemoveFirst();
-                }
-                else if (token == "#flush")
-                {
-                    scopes.First().Block.Add(SyntaxTree.Flush());
-                }
-                else if (token.StartsWith("#with"))
-                {
-                    expressionPrefixes.Push(token.Substring(6).Trim());
-                }
-                else if (token == "/with")
-                {
-                    expressionPrefixes.Pop();
-                }
-                else if (token.StartsWith(">"))
-                {
-                    var partialName = token.Substring(1).Trim();
-                    var self = Expression.Self(scopes.First().ModelInScope);
-                    scopes.First().Block.Add(SyntaxTree.Include(partialName, self));
-                }
-                else if (token.StartsWith("<"))
-                {
-                    AssertSyntaxTreeIsEmpty(scopes);
-                    var masterName = token.Substring(1).Trim();
-                    extendNode = SyntaxTree.Extend(masterName, new Dictionary<string, SyntaxTreeNode>
-                    {
-                        {"body", scopes.First().Block}
-                    });
-                }
-                else if (token == "body")
-                {
-                    scopes.First().Block.Add(SyntaxTree.Override("body"));
-                }
-                else if (token.StartsWith("!"))
-                {
-                    // do nothing for comments
-                }
-                else
-                {
-                    var expression = parseExpression(token);
-                    scopes.First().Block.Add(SyntaxTree.WriteExpression(expression, htmlEscape));
-                }
-            }
-            if (index < template.Length)
-            {
-                writeLiteral(template.Substring(index));
             }
 
-            AssertStackOnRootNode(scopes);
+            state.AssertStackOnRootNode();
+            state.AssertPrefixesAreEmpty();
 
-            return extendNode ?? scopes.First().Block;
+            return state.RootNode;
         }
 
-        private static void TrimLastLiteral(BlockNode blockNode)
+        private static void HandleStringLiteral(HandlebarsParserState state)
         {
-            var literal = blockNode.Nodes.Last() as WriteLiteralNode;
-            if (literal == null) return;
-            literal.LiteralContent = literal.LiteralContent.TrimEnd();
-        }
-
-        private static void AssertStackOnRootNode(LinkedList<ParserScope> scopes)
-        {
-            if (scopes.Count != 1)
+            if (state.CurrentToken.IsSyntaxToken)
             {
-                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template but found '{0}' open blocks.", scopes.Count));
+                state.ContinueProcessingToken = true;
+                return;
+            }
+
+            state.WriteLiteral(state.CurrentToken.Content);
+        }
+
+        private static void HandleTrimLastLiteral(HandlebarsParserState state)
+        {
+            var literal = state.Scopes.GetCurrentBlock().Nodes.Last() as WriteLiteralNode;
+            if (literal != null)
+            {
+                literal.LiteralContent = literal.LiteralContent.TrimEnd();
+            }
+            state.TokenText = state.TokenText.TrimStart('~', ' ', '\t');
+            state.ContinueProcessingToken = true;
+        }
+
+        private static void HandleTrimNextLiteral(HandlebarsParserState state)
+        {
+            state.TrimNextLiteral = true;
+            state.TokenText = state.TokenText.TrimEnd('~', ' ', '\t');
+            state.ContinueProcessingToken = true;
+        }
+
+        private static void HandleHtmlEscape(HandlebarsParserState state)
+        {
+            state.HtmlEscape = state.CurrentToken.Content.Count(c => c == '{') == 2;
+            state.ContinueProcessingToken = true;
+        }
+
+        private static void HandleIf(HandlebarsParserState state)
+        {
+            var block = SyntaxTree.Block();
+            var conditional = SyntaxTree.Conditional(state.ParseExpression(state.TokenText.Substring(4)), block);
+            state.Scopes.AddToCurrentScope(conditional);
+            state.Scopes.PushInheritedScope(block);
+        }
+
+        private static void HandleElse(HandlebarsParserState state)
+        {
+            state.AssertInsideConditionalOrIteration("{{else}}");
+            if (state.IsInEachBlock())
+            {
+                HandleIterationElse(state);
+            }
+            else
+            {
+                HandleConditionalElse(state);
             }
         }
 
-        private static void AssertInsideConditionalOnModelBlock(LinkedList<ParserScope> scopes, string foundToken)
+        private static void HandleIterationElse(HandlebarsParserState state)
         {
-            var faulted = false;
-            faulted = scopes.Count < 2;
-
-            if (!faulted)
-            {
-                faulted = !(scopes.First.Next.Value.Block.Nodes.Last() is ConditionalNode);
-            }
-
-            if (faulted)
-            {
-                throw new VeilParserException(String.Format("Found token '{0}' outside of a conditional block.", foundToken));
-            }
+            var elseBlock = state.Scopes.GetCurrentScopeContainer<IterateNode>().EmptyBody;
+            state.Scopes.PopScope();
+            state.Scopes.PushInheritedScope(elseBlock);
         }
 
-        private static void AssertSyntaxTreeIsEmpty(LinkedList<ParserScope> scopes)
+        private static void HandleConditionalElse(HandlebarsParserState state)
         {
-            if (scopes.Count > 1 || !scopes.First().Block.IsEmpty())
-            {
-                throw new VeilParserException("There can be no content before a {{< }} expression.");
-            }
+            var block = SyntaxTree.Block();
+            state.Scopes.GetCurrentScopeContainer<ConditionalNode>().FalseBlock = block;
+            state.Scopes.PopScope();
+            state.Scopes.PushInheritedScope(block);
         }
 
-        private static bool IsInEachBlock(LinkedList<ParserScope> scopes)
+        private static void HandleEndIf(HandlebarsParserState state)
         {
-            if (scopes.Count < 2)
-            {
-                return false;
-            }
-
-            return scopes.First.Next.Value.Block.Nodes.Last() is IterateNode;
+            state.AssertInsideConditional("{{/if}}");
+            state.Scopes.PopScope();
         }
 
-        internal class ParserScope
+        private static void HandleUnless(HandlebarsParserState state)
         {
-            public BlockNode Block { get; set; }
+            var block = SyntaxTree.Block();
+            var conditional = SyntaxTree.Conditional(state.ParseExpression(state.TokenText.Substring(8)), SyntaxTree.Block(), block);
+            state.Scopes.AddToCurrentScope(conditional);
+            state.Scopes.PushInheritedScope(block);
+        }
 
-            public Type ModelInScope { get; set; }
+        private static void HandleEndUnless(HandlebarsParserState state)
+        {
+            state.AssertInsideConditional("{{/unless}}");
+            state.Scopes.PopScope();
+        }
+
+        private static void HandleEach(HandlebarsParserState state)
+        {
+            var iteration = SyntaxTree.Iterate(
+                state.ParseExpression(state.TokenText.Substring(6)),
+                SyntaxTree.Block()
+            );
+            state.Scopes.AddToCurrentScope(iteration);
+            state.Scopes.PushScope(new HandlebarsParserScope { Block = iteration.Body, ModelInScope = iteration.ItemType });
+        }
+
+        private static void HandleEndEach(HandlebarsParserState state)
+        {
+            state.AssertInsideIteration("{{/each}}");
+            state.Scopes.PopScope();
+        }
+
+        private static void HandleFlush(HandlebarsParserState state)
+        {
+            state.Scopes.AddToCurrentScope(SyntaxTree.Flush());
+        }
+
+        private static void HandleWith(HandlebarsParserState state)
+        {
+            state.ExpressionPrefixes.Push(state.TokenText.Substring(6).Trim());
+        }
+
+        private static void HandleEndWith(HandlebarsParserState state)
+        {
+            state.AssertHaveWithPrefix("{{/with}}");
+            state.ExpressionPrefixes.Pop();
+        }
+
+        private static void HandlePartial(HandlebarsParserState state)
+        {
+            var partialName = state.TokenText.Substring(1).Trim();
+            var self = Expression.Self(state.Scopes.GetTypeOfModelInScope());
+            state.Scopes.AddToCurrentScope(SyntaxTree.Include(partialName, self));
+        }
+
+        private static void HandleMaster(HandlebarsParserState state)
+        {
+            state.AssertSyntaxTreeIsEmpty("There can be no content before a {{< }} expression.");
+            var masterName = state.TokenText.Substring(1).Trim();
+            state.ExtendNode = SyntaxTree.Extend(masterName, new Dictionary<string, SyntaxTreeNode>
+            {
+                {"body", state.Scopes.GetCurrentBlock()}
+            });
+        }
+
+        private static void HandleBody(HandlebarsParserState state)
+        {
+            state.Scopes.AddToCurrentScope(SyntaxTree.Override("body"));
+        }
+
+        private static void HandleExpression(HandlebarsParserState state)
+        {
+            var expression = state.ParseExpression(state.TokenText);
+            state.Scopes.AddToCurrentScope(SyntaxTree.WriteExpression(expression, state.HtmlEscape));
         }
     }
 }

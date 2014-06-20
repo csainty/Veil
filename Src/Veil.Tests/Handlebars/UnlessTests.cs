@@ -23,5 +23,17 @@ namespace Veil.Handlebars
                 )
             );
         }
+
+        [TestCase("Hello {{#unless Conditional}} There")]
+        [TestCase("Hello {{/unless}} There")]
+        [TestCase("Hello {{#unless Conditional}} There{{/unless}}{{/unless}}")]
+        public void Should_throw_if_block_not_open_and_closed_consistently(string template)
+        {
+            var model = new { Conditional = false };
+            Assert.Throws<VeilParserException>(() =>
+            {
+                Parse(template, model.GetType());
+            });
+        }
     }
 }
