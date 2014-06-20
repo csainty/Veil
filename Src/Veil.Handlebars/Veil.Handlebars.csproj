@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="HandlebarsExpressionParser.cs" />
     <Compile Include="HandlebarsParser.cs" />
+    <Compile Include="HandlebarsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

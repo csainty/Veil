@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Veil.Parser;
 using Veil.Parser.Nodes;
 
@@ -16,14 +15,10 @@ namespace Veil.Handlebars
         // TODO: A serious refactor / rewrite is needed for this class
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
-            var template = templateReader.ReadToEnd();
+            var tokens = HandlebarsTokenizer.Tokenize(templateReader);
             var scopes = new LinkedList<ParserScope>();
             SyntaxTreeNode extendNode = null;
             scopes.AddFirst(new ParserScope { Block = SyntaxTree.Block(), ModelInScope = modelType });
-
-            var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
-            var matches = matcher.Matches(template);
-            var index = 0;
             var trimNextLiteral = false;
             var expressionPrefixes = new Stack<string>();
 
@@ -45,17 +40,15 @@ namespace Veil.Handlebars
             };
             Func<string, ExpressionNode> parseExpression = e => HandlebarsExpressionParser.Parse(scopes, prefixExpression(e));
 
-            foreach (Match match in matches)
+            foreach (var currentToken in tokens)
             {
-                if (index < match.Index)
+                if (!currentToken.IsSyntaxToken)
                 {
-                    writeLiteral(template.Substring(index, match.Index - index));
+                    writeLiteral(currentToken.Content);
+                    continue;
                 }
-
-                index = match.Index + match.Length;
-
-                var htmlEscape = match.Value.Count(c => c == '{') == 2;
-                var token = match.Value.Trim(new[] { '{', '}', ' ', '\t' });
+                var htmlEscape = currentToken.Content.Count(c => c == '{') == 2;
+                var token = currentToken.Content.Trim(new[] { '{', '}', ' ', '\t' });
 
                 if (token.StartsWith("~"))
                 {
@@ -158,10 +151,6 @@ namespace Veil.Handlebars
                     var expression = parseExpression(token);
                     scopes.First().Block.Add(SyntaxTree.WriteExpression(expression, htmlEscape));
                 }
-            }
-            if (index < template.Length)
-            {
-                writeLiteral(template.Substring(index));
             }
 
             AssertStackOnRootNode(scopes);
