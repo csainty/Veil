@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
@@ -10,7 +10,7 @@ namespace Veil.Compiler
         private static MethodInfo htmlEncodeLateBoundMethod = typeof(Helpers).GetMethod("HtmlEncodeLateBound");
         private static MethodInfo toStringMethod = typeof(object).GetMethod("ToString");
 
-        private void EmitWriteExpression(SyntaxTreeNode.WriteExpressionNode node)
+        private void EmitWriteExpression(WriteExpressionNode node)
         {
             LoadWriterToStack();
             EvaluateExpression(node.Expression);

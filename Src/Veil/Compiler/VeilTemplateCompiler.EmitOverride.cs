@@ -1,10 +1,10 @@
-﻿using Veil.Parser;
+﻿using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private void EmitOverride(SyntaxTreeNode.OverridePointNode node)
+        private void EmitOverride(OverridePointNode node)
         {
             if (!overrideSections.ContainsKey(node.OverrideName))
             {

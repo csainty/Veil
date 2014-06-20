@@ -51,6 +51,26 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="IVeilContext.cs" />
     <Compile Include="NullVeilContext.cs" />
+    <Compile Include="Parser\Expression.cs" />
+    <Compile Include="Parser\ExpressionNode.cs" />
+    <Compile Include="Parser\ExpressionScope.cs" />
+    <Compile Include="Parser\Nodes\BlockNode.cs" />
+    <Compile Include="Parser\Nodes\ConditionalNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\CollectionHasItemsExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\FieldExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\FunctionCallExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\LateBoundExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\PropertyExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\SelfExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\Expressions\SubModelExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\ExtendTemplateNode.cs" />
+    <Compile Include="Parser\Nodes\FlushNode.cs" />
+    <Compile Include="Parser\Nodes\IncludeTemplateNode.cs" />
+    <Compile Include="Parser\Nodes\IterateNode.cs" />
+    <Compile Include="Parser\Nodes\OverridePointNode.cs" />
+    <Compile Include="Parser\Nodes\WriteExpressionNode.cs" />
+    <Compile Include="Parser\Nodes\WriteLiteralNode.cs" />
+    <Compile Include="Parser\SyntaxTreeNode.cs" />
     <Compile Include="VeilCompilerException.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitConditional.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitIterate.cs" />
@@ -62,7 +82,6 @@
     <Compile Include="VeilParserException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parser\SyntaxTree.cs" />
-    <Compile Include="Parser\SyntaxTree.Expressions.cs" />
     <Compile Include="VeilEngine.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.cs" />
   </ItemGroup>

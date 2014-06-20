@@ -4,18 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Handlebars
 {
-    // TODO:
-    // - Stack assertions on #each
+    /// <summary>
+    /// Veil parser for the Handlebars syntax
+    /// </summary>
     public class HandlebarsParser : ITemplateParser
     {
+        // TODO: A serious refactor / rewrite is needed for this class
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd();
             var scopes = new LinkedList<ParserScope>();
-            scopes.AddFirst(new ParserScope { Block = SyntaxTreeNode.Block(), ModelInScope = modelType });
+            scopes.AddFirst(new ParserScope { Block = SyntaxTree.Block(), ModelInScope = modelType });
 
             var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
             var matches = matcher.Matches(template);
@@ -30,7 +33,7 @@ namespace Veil.Handlebars
                     s = s.TrimStart();
                     trimNextLiteral = false;
                 }
-                scopes.First().Block.Add(SyntaxTreeNode.WriteString(s));
+                scopes.First().Block.Add(SyntaxTree.WriteString(s));
             };
             Func<string, string> prefixExpression = s =>
             {
@@ -39,7 +42,7 @@ namespace Veil.Handlebars
                 if (s.StartsWith("../")) return String.Join(".", expressionPrefixes.Skip(1).Reverse().Concat(new[] { s.Substring(3) }));
                 return String.Join(".", expressionPrefixes.Reverse().Concat(new[] { s }));
             };
-            Func<string, SyntaxTreeNode.ExpressionNode> parseExpression = e => HandlebarsExpressionParser.Parse(scopes, prefixExpression(e));
+            Func<string, ExpressionNode> parseExpression = e => HandlebarsExpressionParser.Parse(scopes, prefixExpression(e));
 
             foreach (Match match in matches)
             {
@@ -62,8 +65,8 @@ namespace Veil.Handlebars
 
                 if (token.StartsWith("#if"))
                 {
-                    var block = SyntaxTreeNode.Block();
-                    var conditional = SyntaxTreeNode.Conditional(parseExpression(token.Substring(4)), block);
+                    var block = SyntaxTree.Block();
+                    var conditional = SyntaxTree.Conditional(parseExpression(token.Substring(4)), block);
                     scopes.First().Block.Add(conditional);
                     scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                 }
@@ -72,15 +75,15 @@ namespace Veil.Handlebars
                     if (IsInEachBlock(scopes))
                     {
                         scopes.RemoveFirst();
-                        var elseBlock = ((SyntaxTreeNode.IterateNode)scopes.First().Block.Nodes.Last()).EmptyBody;
+                        var elseBlock = ((IterateNode)scopes.First().Block.Nodes.Last()).EmptyBody;
                         scopes.AddFirst(new ParserScope { Block = elseBlock, ModelInScope = scopes.First().ModelInScope });
                     }
                     else
                     {
                         AssertInsideConditionalOnModelBlock(scopes, "{{else}}");
                         scopes.RemoveFirst();
-                        var block = SyntaxTreeNode.Block();
-                        ((SyntaxTreeNode.ConditionalNode)scopes.First().Block.Nodes.Last()).FalseBlock = block;
+                        var block = SyntaxTree.Block();
+                        ((ConditionalNode)scopes.First().Block.Nodes.Last()).FalseBlock = block;
                         scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                     }
                 }
@@ -91,8 +94,8 @@ namespace Veil.Handlebars
                 }
                 else if (token.StartsWith("#unless"))
                 {
-                    var block = SyntaxTreeNode.Block();
-                    var conditional = SyntaxTreeNode.Conditional(parseExpression(token.Substring(8)), SyntaxTreeNode.Block(), block);
+                    var block = SyntaxTree.Block();
+                    var conditional = SyntaxTree.Conditional(parseExpression(token.Substring(8)), SyntaxTree.Block(), block);
                     scopes.First().Block.Add(conditional);
                     scopes.AddFirst(new ParserScope { Block = block, ModelInScope = scopes.First().ModelInScope });
                 }
@@ -103,9 +106,9 @@ namespace Veil.Handlebars
                 }
                 else if (token.StartsWith("#each"))
                 {
-                    var iteration = SyntaxTreeNode.Iterate(
+                    var iteration = SyntaxTree.Iterate(
                         parseExpression(token.Substring(6)),
-                        SyntaxTreeNode.Block()
+                        SyntaxTree.Block()
                     );
                     scopes.First().Block.Add(iteration);
                     scopes.AddFirst(new ParserScope { Block = iteration.Body, ModelInScope = iteration.ItemType });
@@ -116,7 +119,7 @@ namespace Veil.Handlebars
                 }
                 else if (token == "#flush")
                 {
-                    scopes.First().Block.Add(SyntaxTreeNode.Flush());
+                    scopes.First().Block.Add(SyntaxTree.Flush());
                 }
                 else if (token.StartsWith("#with"))
                 {
@@ -129,8 +132,8 @@ namespace Veil.Handlebars
                 else if (token.StartsWith(">"))
                 {
                     var partialName = token.Substring(1).Trim();
-                    var self = SyntaxTreeNode.ExpressionNode.Self(scopes.First().ModelInScope);
-                    scopes.First().Block.Add(SyntaxTreeNode.Include(partialName, self));
+                    var self = Expression.Self(scopes.First().ModelInScope);
+                    scopes.First().Block.Add(SyntaxTree.Include(partialName, self));
                 }
                 else if (token.StartsWith("!"))
                 {
@@ -139,7 +142,7 @@ namespace Veil.Handlebars
                 else
                 {
                     var expression = parseExpression(token);
-                    scopes.First().Block.Add(SyntaxTreeNode.WriteExpression(expression, htmlEscape));
+                    scopes.First().Block.Add(SyntaxTree.WriteExpression(expression, htmlEscape));
                 }
             }
             if (index < template.Length)
@@ -152,9 +155,9 @@ namespace Veil.Handlebars
             return scopes.First().Block;
         }
 
-        private static void TrimLastLiteral(SyntaxTreeNode.BlockNode blockNode)
+        private static void TrimLastLiteral(BlockNode blockNode)
         {
-            var literal = blockNode.Nodes.Last() as SyntaxTreeNode.WriteLiteralNode;
+            var literal = blockNode.Nodes.Last() as WriteLiteralNode;
             if (literal == null) return;
             literal.LiteralContent = literal.LiteralContent.TrimEnd();
         }
@@ -174,7 +177,7 @@ namespace Veil.Handlebars
 
             if (!faulted)
             {
-                faulted = !(scopes.First.Next.Value.Block.Nodes.Last() is SyntaxTreeNode.ConditionalNode);
+                faulted = !(scopes.First.Next.Value.Block.Nodes.Last() is ConditionalNode);
             }
 
             if (faulted)
@@ -190,12 +193,12 @@ namespace Veil.Handlebars
                 return false;
             }
 
-            return scopes.First.Next.Value.Block.Nodes.Last() is SyntaxTreeNode.IterateNode;
+            return scopes.First.Next.Value.Block.Nodes.Last() is IterateNode;
         }
 
         internal class ParserScope
         {
-            public SyntaxTreeNode.BlockNode Block { get; set; }
+            public BlockNode Block { get; set; }
 
             public Type ModelInScope { get; set; }
         }

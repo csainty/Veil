@@ -12,7 +12,7 @@ namespace Veil.Handlebars
             var result = Parse("Hello World");
             AssertSyntaxTree(
                 result,
-                SyntaxTreeNode.WriteString("Hello World")
+                SyntaxTree.WriteString("Hello World")
             );
         }
     }

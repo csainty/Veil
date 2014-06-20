@@ -1,10 +1,10 @@
-﻿using Veil.Parser;
+﻿using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private void EmitBlock(SyntaxTreeNode.BlockNode node)
+        private void EmitBlock(BlockNode node)
         {
             foreach (var n in node.Nodes)
             {

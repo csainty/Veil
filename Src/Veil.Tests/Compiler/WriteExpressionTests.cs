@@ -11,7 +11,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_write_model_property<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Data")));
+            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Data")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -21,7 +21,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_write_model_field<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Field(model.GetType(), "DataField")));
+            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.Field(model.GetType(), "DataField")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -31,7 +31,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_write_from_sub_model<T>(T model, string expectedResult)
         {
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.SubModel(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Sub"), SyntaxTreeNode.ExpressionNode.Property(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
+            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.SubModel(Expression.Property(model.GetType(), "Sub"), Expression.Property(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -41,8 +41,8 @@ namespace Veil.Compiler
         public void Should_be_able_to_write_from_root_model()
         {
             var model = new { Text = "Hello!" };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Text", SyntaxTreeNode.ExpressionScope.RootModel))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Text", ExpressionScope.RootModel))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello!"));
@@ -59,16 +59,16 @@ namespace Veil.Compiler
                     new SubModel<string> { Name = "2", Strings = new [] { "C", "D" } }
                 }
             };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "SubModels", SyntaxTreeNode.ExpressionScope.RootModel),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.Iterate(
-                            SyntaxTreeNode.ExpressionNode.Property(model.Sub.GetType(), "Strings", SyntaxTreeNode.ExpressionScope.CurrentModelOnStack),
-                            SyntaxTreeNode.Block(
-                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string), SyntaxTreeNode.ExpressionScope.CurrentModelOnStack)),
-                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.Sub.GetType(), "Name", SyntaxTreeNode.ExpressionScope.ModelOfParentScope)),
-                                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Name", SyntaxTreeNode.ExpressionScope.RootModel))
+            var template = SyntaxTree.Block(
+                SyntaxTree.Iterate(
+                    Expression.Property(model.GetType(), "SubModels", ExpressionScope.RootModel),
+                    SyntaxTree.Block(
+                        SyntaxTree.Iterate(
+                            Expression.Property(model.Sub.GetType(), "Strings", ExpressionScope.CurrentModelOnStack),
+                            SyntaxTree.Block(
+                                SyntaxTree.WriteExpression(Expression.Self(typeof(string), ExpressionScope.CurrentModelOnStack)),
+                                SyntaxTree.WriteExpression(Expression.Property(model.Sub.GetType(), "Name", ExpressionScope.ModelOfParentScope)),
+                                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name", ExpressionScope.RootModel))
                             )
                         )
                     )
@@ -82,8 +82,8 @@ namespace Veil.Compiler
         public void Should_apply_html_encoding_when_requested()
         {
             var model = new { Text = "<h1>Hello</h1>" };
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Text", SyntaxTreeNode.ExpressionScope.RootModel), true)
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Text", ExpressionScope.RootModel), true)
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("&lt;h1&gt;Hello&lt;/h1&gt;"));
@@ -94,8 +94,8 @@ namespace Veil.Compiler
         {
             var model = new Dictionary<string, object>();
             model.Add("Name", "Joe");
-            var template = SyntaxTreeNode.Block(
-                SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.LateBound("Name"))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Joe"));

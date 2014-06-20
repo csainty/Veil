@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 using NUnit.Framework;
-using E = Veil.Parser.SyntaxTreeNode.ExpressionNode;
-using S = Veil.Parser.SyntaxTreeNode;
+using Veil.Parser;
 
 namespace Veil.Compiler
 {
@@ -12,8 +11,8 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_handle_late_binding<T>(T model)
         {
-            var template = S.Block(
-                S.WriteExpression(E.LateBound("Name"))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Joe"));
@@ -26,10 +25,10 @@ namespace Veil.Compiler
             model.Add("Name", "D1");
             model.Add("User", new { Name = "U" });
             model.Add("Department", new Dictionary<string, object> { { "Name", "D2" } });
-            var template = S.Block(
-                S.WriteExpression(E.LateBound("Name")),
-                S.WriteExpression(E.SubModel(E.LateBound("User"), E.LateBound("Name"))),
-                S.WriteExpression(E.SubModel(E.LateBound("Department"), E.LateBound("Name")))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.LateBound("Name")),
+                SyntaxTree.WriteExpression(Expression.SubModel(Expression.LateBound("User"), Expression.LateBound("Name"))),
+                SyntaxTree.WriteExpression(Expression.SubModel(Expression.LateBound("Department"), Expression.LateBound("Name")))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("D1UD2"));

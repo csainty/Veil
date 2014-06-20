@@ -11,13 +11,13 @@ namespace Veil.Compiler
         public void Should_be_able_to_iterate_a_list()
         {
             var model = new { Items = new List<string> { "1", "2" } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Item")
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.Property(model.GetType(), "Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Item")
                 ),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Empty")
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Empty")
                 )
             ));
 
@@ -29,13 +29,13 @@ namespace Veil.Compiler
         public void Should_be_able_to_iterate_an_array()
         {
             var model = new { Items = new[] { "1", "2" } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Item")
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.Property(model.GetType(), "Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Item")
                 ),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Empty")
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Empty")
                 )
             ));
 
@@ -47,10 +47,10 @@ namespace Veil.Compiler
         public void Should_use_items_from_collection_as_scope()
         {
             var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(ItemModel), "Name"))
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.Property(model.GetType(), "Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteExpression(Expression.Property(typeof(ItemModel), "Name"))
                 )
             ));
             var result = ExecuteTemplate(template, model);
@@ -61,10 +61,10 @@ namespace Veil.Compiler
         public void Should_be_able_to_output_value_types_from_collections()
         {
             var model = new { Items = new[] { "1", "2", "3", "4" } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)))
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.Property(model.GetType(), "Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteExpression(Expression.Self(typeof(string)))
                 )
             ));
 
@@ -77,10 +77,10 @@ namespace Veil.Compiler
         {
             var model = new Dictionary<string, object>();
             model.Add("Items", new string[] { "1", "2" });
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.LateBound("Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(object)))
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.LateBound("Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteExpression(Expression.Self(typeof(object)))
                 )
             ));
 
@@ -92,13 +92,13 @@ namespace Veil.Compiler
         public void Should_render_empty_block_no_items_in_collection()
         {
             var model = new { Items = new List<string> { } };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Item")
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.Property(model.GetType(), "Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Item")
                 ),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Empty")
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Empty")
                 )
             ));
 
@@ -110,13 +110,13 @@ namespace Veil.Compiler
         public void Should_render_empty_block_no_items_in_array()
         {
             var model = new { Items = new string[0] };
-            var template = SyntaxTreeNode.Block(SyntaxTreeNode.Iterate(
-                SyntaxTreeNode.ExpressionNode.Property(model.GetType(), "Items"),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Item")
+            var template = SyntaxTree.Block(SyntaxTree.Iterate(
+                Expression.Property(model.GetType(), "Items"),
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Item")
                 ),
-                SyntaxTreeNode.Block(
-                    SyntaxTreeNode.WriteString("Empty")
+                SyntaxTree.Block(
+                    SyntaxTree.WriteString("Empty")
                 )
             ));
 

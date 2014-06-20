@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
@@ -9,7 +9,7 @@ namespace Veil.Compiler
         private static MethodInfo getTypeMethod = typeof(object).GetMethod("GetType");
         private static MethodInfo boolifyMethod = typeof(Helpers).GetMethod("Boolify");
 
-        private void EmitConditional(SyntaxTreeNode.ConditionalNode node)
+        private void EmitConditional(ConditionalNode node)
         {
             var hasTrueBlock = node.TrueBlock != null && node.TrueBlock.Nodes.Any();
             var hasFalseBlock = node.FalseBlock != null && node.FalseBlock.Nodes.Any();

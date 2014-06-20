@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
@@ -11,7 +11,7 @@ namespace Veil.Compiler
         private static MethodInfo moveNextMethod = typeof(System.Collections.IEnumerator).GetMethod("MoveNext");
         private static MethodInfo disposeMethod = typeof(IDisposable).GetMethod("Dispose");
 
-        private void EmitIterate(SyntaxTreeNode.IterateNode node)
+        private void EmitIterate(IterateNode node)
         {
             var allDone = emitter.DefineLabel();
             var empty = emitter.DefineLabel();

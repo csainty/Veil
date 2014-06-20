@@ -12,10 +12,10 @@ namespace Veil.Handlebars
         {
             var result = Parse("{{#each Items }}{{ this }}{{/each}}", typeof(TestModel));
             AssertSyntaxTree(result,
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Items"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)), true)
+                SyntaxTree.Iterate(
+                    Expression.Property(typeof(TestModel), "Items"),
+                    SyntaxTree.Block(
+                        SyntaxTree.WriteExpression(Expression.Self(typeof(string)), true)
                     )
                 )
             );
@@ -26,11 +26,11 @@ namespace Veil.Handlebars
         {
             var result = Parse("{{#each Items }}{{ ../Prefix }}{{ this }}{{/each}}", typeof(TestModel));
             AssertSyntaxTree(result,
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Items"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Prefix", SyntaxTreeNode.ExpressionScope.ModelOfParentScope), true),
-                        SyntaxTreeNode.WriteExpression(SyntaxTreeNode.ExpressionNode.Self(typeof(string)), true)
+                SyntaxTree.Iterate(
+                    Expression.Property(typeof(TestModel), "Items"),
+                    SyntaxTree.Block(
+                        SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Prefix", ExpressionScope.ModelOfParentScope), true),
+                        SyntaxTree.WriteExpression(Expression.Self(typeof(string)), true)
                     )
                 )
             );
@@ -41,13 +41,13 @@ namespace Veil.Handlebars
         {
             var result = Parse("{{#each Items }}Foo{{else}}Bar{{/each}}", typeof(TestModel));
             AssertSyntaxTree(result,
-                SyntaxTreeNode.Iterate(
-                    SyntaxTreeNode.ExpressionNode.Property(typeof(TestModel), "Items"),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("Foo")
+                SyntaxTree.Iterate(
+                    Expression.Property(typeof(TestModel), "Items"),
+                    SyntaxTree.Block(
+                        SyntaxTree.WriteString("Foo")
                     ),
-                    SyntaxTreeNode.Block(
-                        SyntaxTreeNode.WriteString("Bar")
+                    SyntaxTree.Block(
+                        SyntaxTree.WriteString("Bar")
                     )
                 )
             );

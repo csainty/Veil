@@ -14,8 +14,8 @@ namespace Veil.Handlebars
 
             AssertSyntaxTree(
                 template,
-                SyntaxTreeNode.WriteString("Hello "),
-                SyntaxTreeNode.Include("person", SyntaxTreeNode.ExpressionNode.Self(model.GetType()))
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.Include("person", Expression.Self(model.GetType()))
             );
         }
     }
