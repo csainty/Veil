@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using FakeItEasy;
 using NUnit.Framework;
-using S = Veil.Parser.SyntaxTree;
+using Veil.Parser;
 
 namespace Veil.Compiler
 {
@@ -11,10 +11,10 @@ namespace Veil.Compiler
         [Test]
         public void Should_flush_textwriter()
         {
-            var template = S.Block(
-                S.WriteString("Start"),
-                S.Flush(),
-                S.WriteString("End")
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Start"),
+                SyntaxTree.Flush(),
+                SyntaxTree.WriteString("End")
             );
             var compiledTemplate = new VeilTemplateCompiler<object>(this.GetTemplateByName).Compile(template);
 

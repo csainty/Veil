@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
-using E = Veil.Parser.Expression;
-using S = Veil.Parser.SyntaxTree;
+using Veil.Parser;
 
 namespace Veil.Handlebars
 {
@@ -14,10 +13,10 @@ namespace Veil.Handlebars
             var template = Parse("Hello {{#with User}}{{Name}}{{/with}} from {{#with Dept}}{{Name}}{{/with}}", model.GetType());
             AssertSyntaxTree(
                 template,
-                S.WriteString("Hello "),
-                S.WriteExpression(E.SubModel(E.Property(model.GetType(), "User"), E.Property(model.User.GetType(), "Name")), true),
-                S.WriteString(" from "),
-                S.WriteExpression(E.SubModel(E.Property(model.GetType(), "Dept"), E.Property(model.Dept.GetType(), "Name")), true)
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.WriteExpression(Expression.SubModel(Expression.Property(model.GetType(), "User"), Expression.Property(model.User.GetType(), "Name")), true),
+                SyntaxTree.WriteString(" from "),
+                SyntaxTree.WriteExpression(Expression.SubModel(Expression.Property(model.GetType(), "Dept"), Expression.Property(model.Dept.GetType(), "Name")), true)
             );
         }
 
@@ -28,8 +27,8 @@ namespace Veil.Handlebars
             var template = Parse("Hello {{#with User}}{{this}}{{/with}}", model.GetType());
             AssertSyntaxTree(
                 template,
-                S.WriteString("Hello "),
-                S.WriteExpression(E.Property(model.GetType(), "User"), true)
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "User"), true)
             );
         }
 
@@ -40,9 +39,9 @@ namespace Veil.Handlebars
             var template = Parse("Hello {{#with User}}{{../Name}}{{this}}{{/with}}", model.GetType());
             AssertSyntaxTree(
                 template,
-                S.WriteString("Hello "),
-                S.WriteExpression(E.Property(model.GetType(), "Name"), true),
-                S.WriteExpression(E.Property(model.GetType(), "User"), true)
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name"), true),
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "User"), true)
             );
         }
     }

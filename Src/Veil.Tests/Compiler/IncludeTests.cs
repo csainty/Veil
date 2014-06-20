@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using Veil.Parser;
-using E = Veil.Parser.Expression;
-using S = Veil.Parser.SyntaxTree;
 
 namespace Veil.Compiler
 {
@@ -13,9 +11,9 @@ namespace Veil.Compiler
         public void Should_throw_if_unable_to_load_template()
         {
             var model = new { Name = "Joe" };
-            var template = S.Block(
-                S.WriteString("Hello "),
-                S.Include("person", E.Self(model.GetType()))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.Include("person", Expression.Self(model.GetType()))
             );
 
             Assert.Throws<VeilCompilerException>(() =>
@@ -28,12 +26,12 @@ namespace Veil.Compiler
         public void Should_render_include_with_same_model()
         {
             var model = new { Name = "Joe" };
-            RegisterTemplate("person", S.Block(
-                S.WriteExpression(E.Property(model.GetType(), "Name"))
+            RegisterTemplate("person", SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name"))
             ));
-            var template = S.Block(
-                S.WriteString("Hello "),
-                S.Include("person", E.Self(model.GetType()))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.Include("person", Expression.Self(model.GetType()))
             );
 
             var result = ExecuteTemplate(template, model);
@@ -44,18 +42,18 @@ namespace Veil.Compiler
         public void Should_render_include_with_same_sub_model()
         {
             var model = new { Name = "Joe", Company = new { Name = "Foo" } };
-            RegisterTemplate("company", S.Block(
-                S.WriteExpression(E.Property(model.Company.GetType(), "Name"))
+            RegisterTemplate("company", SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.Property(model.Company.GetType(), "Name"))
             ));
-            RegisterTemplate("person", S.Block(
-                S.WriteExpression(E.Property(model.GetType(), "Name"))
+            RegisterTemplate("person", SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name"))
             ));
-            var template = S.Block(
-                S.WriteString("Welcome from "),
-                S.Include("company", E.Property(model.GetType(), "Company")),
-                S.WriteString(" the amazing "),
-                S.Include("person", E.Self(model.GetType())),
-                S.WriteString(".")
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Welcome from "),
+                SyntaxTree.Include("company", Expression.Property(model.GetType(), "Company")),
+                SyntaxTree.WriteString(" the amazing "),
+                SyntaxTree.Include("person", Expression.Self(model.GetType())),
+                SyntaxTree.WriteString(".")
             );
 
             var result = ExecuteTemplate(template, model);
@@ -66,15 +64,15 @@ namespace Veil.Compiler
         public void Root_model_of_template_should_be_the_model_executed_against()
         {
             var model = new { Name = "Joe", Company = new { Name = "Foo", Departments = new[] { "IT", "Admin" } } };
-            RegisterTemplate("company", S.Block(
-                S.WriteExpression(E.Property(model.Company.GetType(), "Name")),
-                S.WriteString(" - "),
-                S.Iterate(E.Property(model.Company.GetType(), "Departments"), S.Block(
-                    S.WriteExpression(E.Property(model.Company.GetType(), "Name", ExpressionScope.RootModel))
+            RegisterTemplate("company", SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.Property(model.Company.GetType(), "Name")),
+                SyntaxTree.WriteString(" - "),
+                SyntaxTree.Iterate(Expression.Property(model.Company.GetType(), "Departments"), SyntaxTree.Block(
+                    SyntaxTree.WriteExpression(Expression.Property(model.Company.GetType(), "Name", ExpressionScope.RootModel))
                 ))
             ));
-            var template = S.Block(
-                S.Include("company", E.Property(model.GetType(), "Company"))
+            var template = SyntaxTree.Block(
+                SyntaxTree.Include("company", Expression.Property(model.GetType(), "Company"))
             );
 
             var result = ExecuteTemplate(template, model);
@@ -87,12 +85,12 @@ namespace Veil.Compiler
             var model = new Dictionary<string, object>();
             model.Add("Name", "Joe");
 
-            RegisterTemplate("person", S.Block(
-                S.WriteExpression(E.LateBound("Name"))
+            RegisterTemplate("person", SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
             ));
-            var template = S.Block(
-                S.WriteString("Hello "),
-                S.Include("person", E.Self(model.GetType()))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.Include("person", Expression.Self(model.GetType()))
             );
 
             var result = ExecuteTemplate(template, model);
@@ -105,17 +103,16 @@ namespace Veil.Compiler
             var model = new Dictionary<string, object>();
             model.Add("Person", new { Name = "Joe" });
 
-            RegisterTemplate("person", S.Block(
-                S.WriteExpression(E.LateBound("Name"))
+            RegisterTemplate("person", SyntaxTree.Block(
+                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
             ));
-            var template = S.Block(
-                S.WriteString("Hello "),
-                S.Include("person", E.LateBound("Person"))
+            var template = SyntaxTree.Block(
+                SyntaxTree.WriteString("Hello "),
+                SyntaxTree.Include("person", Expression.LateBound("Person"))
             );
 
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello Joe"));
         }
-
     }
 }
