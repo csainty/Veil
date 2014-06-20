@@ -12,6 +12,8 @@ namespace Veil.Handlebars
     /// </summary>
     public class HandlebarsParser : ITemplateParser
     {
+        private const string OverrideSectionName = "body";
+
         private static readonly Dictionary<Func<string, bool>, Action<HandlebarsParserState>> SyntaxHandlers = new Dictionary<Func<string, bool>, Action<HandlebarsParserState>>
         {
             { x => true, HandleStringLiteral },
@@ -39,7 +41,7 @@ namespace Veil.Handlebars
         {
             var state = new HandlebarsParserState();
             var tokens = HandlebarsTokenizer.Tokenize(templateReader);
-            state.Scopes.PushScope(modelType);
+            state.BlockStack.PushNewBlockWithModel(modelType);
 
             foreach (var token in tokens)
             {
@@ -79,7 +81,7 @@ namespace Veil.Handlebars
 
         private static void HandleTrimLastLiteral(HandlebarsParserState state)
         {
-            var literal = state.Scopes.GetCurrentBlock().Nodes.Last() as WriteLiteralNode;
+            var literal = state.LastNode() as WriteLiteralNode;
             if (literal != null)
             {
                 literal.LiteralContent = literal.LiteralContent.TrimEnd();
@@ -97,7 +99,7 @@ namespace Veil.Handlebars
 
         private static void HandleHtmlEscape(HandlebarsParserState state)
         {
-            state.HtmlEscape = state.CurrentToken.Content.Count(c => c == '{') == 2;
+            state.HtmlEscapeCurrentExpression = state.CurrentToken.Content.Count(c => c == '{') == 2;
             state.ContinueProcessingToken = true;
         }
 
@@ -105,8 +107,8 @@ namespace Veil.Handlebars
         {
             var block = SyntaxTree.Block();
             var conditional = SyntaxTree.Conditional(state.ParseExpression(state.TokenText.Substring(4)), block);
-            state.Scopes.AddToCurrentScope(conditional);
-            state.Scopes.PushInheritedScope(block);
+            state.AddNodeToCurrentBlock(conditional);
+            state.BlockStack.PushModelInheritingBlock(block);
         }
 
         private static void HandleElse(HandlebarsParserState state)
@@ -124,37 +126,37 @@ namespace Veil.Handlebars
 
         private static void HandleIterationElse(HandlebarsParserState state)
         {
-            var elseBlock = state.Scopes.GetCurrentScopeContainer<IterateNode>().EmptyBody;
-            state.Scopes.PopScope();
-            state.Scopes.PushInheritedScope(elseBlock);
+            var elseBlock = state.BlockStack.GetCurrentBlockContainer<IterateNode>().EmptyBody;
+            state.BlockStack.PopBlock();
+            state.BlockStack.PushModelInheritingBlock(elseBlock);
         }
 
         private static void HandleConditionalElse(HandlebarsParserState state)
         {
             var block = SyntaxTree.Block();
-            state.Scopes.GetCurrentScopeContainer<ConditionalNode>().FalseBlock = block;
-            state.Scopes.PopScope();
-            state.Scopes.PushInheritedScope(block);
+            state.BlockStack.GetCurrentBlockContainer<ConditionalNode>().FalseBlock = block;
+            state.BlockStack.PopBlock();
+            state.BlockStack.PushModelInheritingBlock(block);
         }
 
         private static void HandleEndIf(HandlebarsParserState state)
         {
             state.AssertInsideConditional("{{/if}}");
-            state.Scopes.PopScope();
+            state.BlockStack.PopBlock();
         }
 
         private static void HandleUnless(HandlebarsParserState state)
         {
             var block = SyntaxTree.Block();
             var conditional = SyntaxTree.Conditional(state.ParseExpression(state.TokenText.Substring(8)), SyntaxTree.Block(), block);
-            state.Scopes.AddToCurrentScope(conditional);
-            state.Scopes.PushInheritedScope(block);
+            state.AddNodeToCurrentBlock(conditional);
+            state.BlockStack.PushModelInheritingBlock(block);
         }
 
         private static void HandleEndUnless(HandlebarsParserState state)
         {
             state.AssertInsideConditional("{{/unless}}");
-            state.Scopes.PopScope();
+            state.BlockStack.PopBlock();
         }
 
         private static void HandleEach(HandlebarsParserState state)
@@ -163,19 +165,19 @@ namespace Veil.Handlebars
                 state.ParseExpression(state.TokenText.Substring(6)),
                 SyntaxTree.Block()
             );
-            state.Scopes.AddToCurrentScope(iteration);
-            state.Scopes.PushScope(new HandlebarsParserScope { Block = iteration.Body, ModelInScope = iteration.ItemType });
+            state.AddNodeToCurrentBlock(iteration);
+            state.BlockStack.PushBlock(new HandlebarsParserBlock { Block = iteration.Body, ModelInScope = iteration.ItemType });
         }
 
         private static void HandleEndEach(HandlebarsParserState state)
         {
             state.AssertInsideIteration("{{/each}}");
-            state.Scopes.PopScope();
+            state.BlockStack.PopBlock();
         }
 
         private static void HandleFlush(HandlebarsParserState state)
         {
-            state.Scopes.AddToCurrentScope(SyntaxTree.Flush());
+            state.AddNodeToCurrentBlock(SyntaxTree.Flush());
         }
 
         private static void HandleWith(HandlebarsParserState state)
@@ -191,30 +193,30 @@ namespace Veil.Handlebars
 
         private static void HandlePartial(HandlebarsParserState state)
         {
-            var partialName = state.TokenText.Substring(1).Trim();
-            var self = Expression.Self(state.Scopes.GetTypeOfModelInScope());
-            state.Scopes.AddToCurrentScope(SyntaxTree.Include(partialName, self));
+            var partialTemplateName = state.TokenText.Substring(1).Trim();
+            var self = Expression.Self(state.BlockStack.GetCurrentModelType());
+            state.AddNodeToCurrentBlock(SyntaxTree.Include(partialTemplateName, self));
         }
 
         private static void HandleMaster(HandlebarsParserState state)
         {
             state.AssertSyntaxTreeIsEmpty("There can be no content before a {{< }} expression.");
-            var masterName = state.TokenText.Substring(1).Trim();
-            state.ExtendNode = SyntaxTree.Extend(masterName, new Dictionary<string, SyntaxTreeNode>
+            var masterTemplateName = state.TokenText.Substring(1).Trim();
+            state.ExtendNode = SyntaxTree.Extend(masterTemplateName, new Dictionary<string, SyntaxTreeNode>
             {
-                {"body", state.Scopes.GetCurrentBlock()}
+                { OverrideSectionName, state.BlockStack.GetCurrentBlockNode() }
             });
         }
 
         private static void HandleBody(HandlebarsParserState state)
         {
-            state.Scopes.AddToCurrentScope(SyntaxTree.Override("body"));
+            state.AddNodeToCurrentBlock(SyntaxTree.Override(OverrideSectionName));
         }
 
         private static void HandleExpression(HandlebarsParserState state)
         {
             var expression = state.ParseExpression(state.TokenText);
-            state.Scopes.AddToCurrentScope(SyntaxTree.WriteExpression(expression, state.HtmlEscape));
+            state.AddNodeToCurrentBlock(SyntaxTree.WriteExpression(expression, state.HtmlEscapeCurrentExpression));
         }
     }
 }

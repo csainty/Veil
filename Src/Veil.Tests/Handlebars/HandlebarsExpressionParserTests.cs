@@ -128,12 +128,12 @@ namespace Veil.Handlebars
             public string SubSubField = "";
         }
 
-        private static HandlebarsScopeStack CreateScopes(params Type[] modelTypes)
+        private static HandlebarsBlockStack CreateScopes(params Type[] modelTypes)
         {
-            var scopes = new HandlebarsScopeStack();
+            var scopes = new HandlebarsBlockStack();
             foreach (var modelType in modelTypes)
             {
-                scopes.PushScope(new HandlebarsParserScope { Block = SyntaxTree.Block(), ModelInScope = modelType });
+                scopes.PushBlock(new HandlebarsParserBlock { Block = SyntaxTree.Block(), ModelInScope = modelType });
             }
             return scopes;
         }

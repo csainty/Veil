@@ -9,6 +9,8 @@ namespace Veil.Parser.Nodes
     {
         private List<SyntaxTreeNode> nodes;
 
+        public IEnumerable<SyntaxTreeNode> Nodes { get { return this.nodes; } }
+
         public BlockNode()
         {
             this.nodes = new List<SyntaxTreeNode>();
@@ -24,11 +26,14 @@ namespace Veil.Parser.Nodes
             this.nodes.AddRange(nodes);
         }
 
-        public IEnumerable<SyntaxTreeNode> Nodes { get { return this.nodes; } }
-
         public bool IsEmpty()
         {
             return this.nodes.Count == 0;
+        }
+
+        public SyntaxTreeNode LastNode()
+        {
+            return this.nodes[this.nodes.Count - 1];
         }
     }
 }

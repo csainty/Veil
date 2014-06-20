@@ -7,9 +7,9 @@ namespace Veil.Handlebars
     {
         public static void AssertStackOnRootNode(this HandlebarsParserState state)
         {
-            if (state.Scopes.Count != 1)
+            if (state.BlockStack.Count != 1)
             {
-                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template but found '{0}' open blocks.", state.Scopes.Count));
+                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template but found '{0}' open blocks.", state.BlockStack.Count));
             }
         }
 
@@ -23,8 +23,8 @@ namespace Veil.Handlebars
 
         public static void AssertInsideConditional(this HandlebarsParserState state, string foundToken)
         {
-            var faulted = state.Scopes.Count < 2;
-            faulted = faulted || !state.Scopes.IsCurrentScopeContainer<ConditionalNode>();
+            var faulted = state.BlockStack.Count < 2;
+            faulted = faulted || !state.BlockStack.IsCurrentBlockContainerOfType<ConditionalNode>();
 
             if (faulted)
             {
@@ -34,8 +34,8 @@ namespace Veil.Handlebars
 
         public static void AssertInsideIteration(this HandlebarsParserState state, string foundToken)
         {
-            var faulted = state.Scopes.Count < 2;
-            faulted = faulted || !state.Scopes.IsCurrentScopeContainer<IterateNode>();
+            var faulted = state.BlockStack.Count < 2;
+            faulted = faulted || !state.BlockStack.IsCurrentBlockContainerOfType<IterateNode>();
 
             if (faulted)
             {
@@ -45,8 +45,8 @@ namespace Veil.Handlebars
 
         public static void AssertInsideConditionalOrIteration(this HandlebarsParserState state, string foundToken)
         {
-            var faulted = state.Scopes.Count < 2;
-            faulted = faulted || !(state.Scopes.IsCurrentScopeContainer<ConditionalNode>() || state.Scopes.IsCurrentScopeContainer<IterateNode>());
+            var faulted = state.BlockStack.Count < 2;
+            faulted = faulted || !(state.BlockStack.IsCurrentBlockContainerOfType<ConditionalNode>() || state.BlockStack.IsCurrentBlockContainerOfType<IterateNode>());
 
             if (faulted)
             {
@@ -56,7 +56,7 @@ namespace Veil.Handlebars
 
         public static void AssertSyntaxTreeIsEmpty(this HandlebarsParserState state, string errorMessage)
         {
-            if (state.Scopes.Count > 1 || !state.Scopes.GetCurrentBlock().IsEmpty())
+            if (state.BlockStack.Count > 1 || !state.BlockStack.GetCurrentBlockNode().IsEmpty())
             {
                 throw new VeilParserException(errorMessage);
             }
@@ -72,12 +72,12 @@ namespace Veil.Handlebars
 
         public static bool IsInEachBlock(this HandlebarsParserState state)
         {
-            if (state.Scopes.Count < 2)
+            if (state.BlockStack.Count < 2)
             {
                 return false;
             }
 
-            return state.Scopes.IsCurrentScopeContainer<IterateNode>();
+            return state.BlockStack.IsCurrentBlockContainerOfType<IterateNode>();
         }
     }
 }

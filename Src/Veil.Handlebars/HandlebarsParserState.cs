@@ -9,7 +9,7 @@ namespace Veil.Handlebars
     {
         public Stack<string> ExpressionPrefixes { get; private set; }
 
-        public HandlebarsScopeStack Scopes { get; private set; }
+        public HandlebarsBlockStack BlockStack { get; private set; }
 
         public HandlebarsToken CurrentToken { get; private set; }
 
@@ -17,17 +17,17 @@ namespace Veil.Handlebars
 
         public bool TrimNextLiteral { get; set; }
 
-        public bool HtmlEscape { get; set; }
+        public bool HtmlEscapeCurrentExpression { get; set; }
 
         public bool ContinueProcessingToken { get; set; }
 
         public string TokenText { get; set; }
 
-        public SyntaxTreeNode RootNode { get { return ExtendNode ?? Scopes.GetCurrentBlock(); } }
+        public SyntaxTreeNode RootNode { get { return ExtendNode ?? BlockStack.GetCurrentBlockNode(); } }
 
         public HandlebarsParserState()
         {
-            this.Scopes = new HandlebarsScopeStack();
+            this.BlockStack = new HandlebarsBlockStack();
             this.ExpressionPrefixes = new Stack<string>();
         }
 
@@ -38,12 +38,12 @@ namespace Veil.Handlebars
                 s = s.TrimStart();
                 TrimNextLiteral = false;
             }
-            Scopes.AddToCurrentScope(SyntaxTree.WriteString(s));
+            AddNodeToCurrentBlock(SyntaxTree.WriteString(s));
         }
 
         public ExpressionNode ParseExpression(string expression)
         {
-            return HandlebarsExpressionParser.Parse(Scopes, PrefixExpression(expression));
+            return HandlebarsExpressionParser.Parse(BlockStack, PrefixExpression(expression));
         }
 
         private string PrefixExpression(string expression)
@@ -58,8 +58,19 @@ namespace Veil.Handlebars
         {
             CurrentToken = token;
             TokenText = token.Content.Trim(new[] { '{', '}', ' ', '\t' });
-            HtmlEscape = false;
+            HtmlEscapeCurrentExpression = false;
             ContinueProcessingToken = false;
+        }
+
+        internal SyntaxTreeNode AddNodeToCurrentBlock(SyntaxTreeNode node)
+        {
+            BlockStack.Peek().Block.Add(node);
+            return node;
+        }
+
+        internal SyntaxTreeNode LastNode()
+        {
+            return BlockStack.GetCurrentBlockNode().LastNode();
         }
     }
 }

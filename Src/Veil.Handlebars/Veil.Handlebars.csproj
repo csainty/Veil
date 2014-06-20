@@ -44,9 +44,9 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="HandlebarsExpressionParser.cs" />
     <Compile Include="HandlebarsParser.cs" />
-    <Compile Include="HandlebarsParserScope.cs" />
+    <Compile Include="HandlebarsParserBlock.cs" />
     <Compile Include="HandlebarsParserState.cs" />
-    <Compile Include="HandlebarsScopeStack.cs" />
+    <Compile Include="HandlebarsBlockStack.cs" />
     <Compile Include="HandlebarsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
