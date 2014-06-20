@@ -114,9 +114,9 @@ namespace Veil.Compiler
             {
                 emitter.CallMethod(((FunctionCallExpressionNode)expression).MethodInfo);
             }
-            else if (expression is CollectionHasItemsNode)
+            else if (expression is CollectionHasItemsExpressionNode)
             {
-                var hasItems = (CollectionHasItemsNode)expression;
+                var hasItems = (CollectionHasItemsExpressionNode)expression;
                 var count = typeof(ICollection).GetProperty("Count");
                 EvaluateExpressionAgainstModelOnStack(hasItems.CollectionExpression);
                 emitter.CallMethod(count.GetGetMethod());
@@ -125,9 +125,9 @@ namespace Veil.Compiler
                 emitter.LoadConstant(0);
                 emitter.CompareEqual();
             }
-            else if (expression is LateBoundNode)
+            else if (expression is LateBoundExpressionNode)
             {
-                emitter.LoadConstant(((LateBoundNode)expression).ItemName);
+                emitter.LoadConstant(((LateBoundExpressionNode)expression).ItemName);
                 emitter.CallMethod(runtimeBindMethod);
             }
             else if (expression is SelfExpressionNode)

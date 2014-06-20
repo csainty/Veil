@@ -88,9 +88,9 @@ namespace Veil.Parser
         /// Can only be used on types that implement <see cref="ICollection"/>
         /// </summary>
         /// <param name="collectionExpression">An expression referencing a Collection</param>
-        public static CollectionHasItemsNode HasItems(ExpressionNode collectionExpression)
+        public static CollectionHasItemsExpressionNode HasItems(ExpressionNode collectionExpression)
         {
-            return new CollectionHasItemsNode
+            return new CollectionHasItemsExpressionNode
             {
                 CollectionExpression = collectionExpression,
                 Scope = collectionExpression.Scope
@@ -102,9 +102,9 @@ namespace Veil.Parser
         /// </summary>
         /// <param name="itemName">The name of the proeprty that will be searched for</param>
         /// <param name="scope">The scope this expression evaluated in</param>
-        public static LateBoundNode LateBound(string itemName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        public static LateBoundExpressionNode LateBound(string itemName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
         {
-            return new LateBoundNode
+            return new LateBoundExpressionNode
             {
                 ItemName = itemName,
                 Scope = scope
