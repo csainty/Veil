@@ -3,10 +3,13 @@ using Veil.Parser.Nodes;
 
 namespace Veil.Parser
 {
+    /// <summary>
+    /// Factory methods for create expression nodes
+    /// </summary>
     public static class Expression
     {
         /// <summary>
-        /// Call the getter on the specified property
+        /// Evaluate a property on the model object
         /// </summary>
         /// <param name="modelType">The type of the scoped model</param>
         /// <param name="propertyName">The name of the property</param>
@@ -21,7 +24,7 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Get a field
+        /// Evaluate a field on the model object
         /// </summary>
         /// <param name="modelType">The type of the scoped model</param>
         /// <param name="fieldName">The name of the field</param>
@@ -36,7 +39,7 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Traverse one level down a model structure
+        /// Evaluate an expression on a sub model, can be nested to traverse any depth of sub models
         /// </summary>
         /// <param name="modelExpression">An expression referencing the model to traverse to</param>
         /// <param name="subModelExpression">An expression to evaluate in the scope of the model that has been traversed to</param>
@@ -52,7 +55,7 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Execute a function
+        /// Evaluate a function call on the model
         /// </summary>
         /// <param name="modelType">The type of the scoped model</param>
         /// <param name="functionName">The name of the function</param>
@@ -82,6 +85,7 @@ namespace Veil.Parser
 
         /// <summary>
         /// Evaluate whether the collectionExpression has Count > 0
+        /// Can only be used on types that implement <see cref="ICollection"/>
         /// </summary>
         /// <param name="collectionExpression">An expression referencing a Collection</param>
         public static CollectionHasItemsNode HasItems(ExpressionNode collectionExpression)
@@ -94,7 +98,7 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Evaluate a proeprty at runtime against an unknown model type
+        /// Evaluate a property at runtime against an unknown model type
         /// </summary>
         /// <param name="itemName">The name of the proeprty that will be searched for</param>
         /// <param name="scope">The scope this expression evaluated in</param>

@@ -3,6 +3,9 @@ using Veil.Parser.Nodes;
 
 namespace Veil.Parser
 {
+    /// <summary>
+    /// Factory methods for creating syntax tree nodes
+    /// </summary>
     public static class SyntaxTree
     {
         /// <summary>
@@ -42,7 +45,8 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Iterate a collection and execute the body block scoped to each item in the collection
+        /// Iterate a collection and execute the body block scoped to each item in the collection.
+        /// Optionally execute an empty block when there are no items to iterate
         /// </summary>
         /// <param name="collectionExpression">expression to load the collection</param>
         /// <param name="body">Block to execute in the scope of each item</param>
@@ -58,7 +62,7 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Choose a Block to execute based on a condition
+        /// Evaluates an expression and chooses between two blocks based on the truthy-ness of the result
         /// </summary>
         /// <param name="expression">The expression to evaluate</param>
         /// <param name="trueBlock">The block to execute when the expression is true</param>
@@ -75,7 +79,7 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Execute another template with the provided model and output the result
+        /// Execute another template in the scope of the provided model
         /// </summary>
         /// <param name="templateName">The name of the template to execute. It will be loaded from the <see cref="IVeilContext"/></param>
         /// <param name="modelExpression">An expression for the model to be used as the root scope when executing the template</param>

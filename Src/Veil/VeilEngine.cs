@@ -8,7 +8,7 @@ using Veil.Parser;
 namespace Veil
 {
     /// <summary>
-    /// Compiles templates once for execution
+    /// Compiles templates for execution
     /// </summary>
     public class VeilEngine : IVeilEngine
     {
@@ -62,6 +62,7 @@ namespace Veil
             var compiledTemplate = typedCompileMethod.Invoke(this, new object[] { templateType, templateContents });
             var compiledTemplateType = compiledTemplate.GetType();
 
+            // TODO: Optimize this without casting from object? Perhaps using Expressions
             var emitter = Emit<Action<TextWriter, object, object>>.NewDynamicMethod();
             emitter.LoadArgument(2);
             emitter.CastClass(compiledTemplateType);
