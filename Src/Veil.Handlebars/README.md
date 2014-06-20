@@ -119,6 +119,18 @@ var deptTemplate = "From {{ Department.Name }}";
 
 Partials always inherit the current model context.
 
+### Master pages - {{< masterName}} / {{body}}
+Handlebars supports single-sectioned master pages using the `{{< masterName}}` expression. The named template will be loaded and the rest of the content from the original template will be inserted into the master template in place of the `{{body}}` expression.  
+
+````
+var model = new {
+	Name = "Joe"
+};
+var master = "Hello {{body}}, Have Fun!"; 
+````  
+`{{< master}}{{Name}} - Hello Joe, Have Fun!`
+
+
 ### Comments {{! ... }}
 You can add comments to your template with the `{{! your comment here }}` expression.  
 These are simply ignored and removed during compilation.

@@ -18,6 +18,7 @@ namespace Veil.Handlebars
         {
             var template = templateReader.ReadToEnd();
             var scopes = new LinkedList<ParserScope>();
+            SyntaxTreeNode extendNode = null;
             scopes.AddFirst(new ParserScope { Block = SyntaxTree.Block(), ModelInScope = modelType });
 
             var matcher = new Regex(@"(?<!{)({{[^{}]+}})|({{{[^{}]+}}})(?!})");
@@ -135,6 +136,19 @@ namespace Veil.Handlebars
                     var self = Expression.Self(scopes.First().ModelInScope);
                     scopes.First().Block.Add(SyntaxTree.Include(partialName, self));
                 }
+                else if (token.StartsWith("<"))
+                {
+                    AssertSyntaxTreeIsEmpty(scopes);
+                    var masterName = token.Substring(1).Trim();
+                    extendNode = SyntaxTree.Extend(masterName, new Dictionary<string, SyntaxTreeNode>
+                    {
+                        {"body", scopes.First().Block}
+                    });
+                }
+                else if (token == "body")
+                {
+                    scopes.First().Block.Add(SyntaxTree.Override("body"));
+                }
                 else if (token.StartsWith("!"))
                 {
                     // do nothing for comments
@@ -152,7 +166,7 @@ namespace Veil.Handlebars
 
             AssertStackOnRootNode(scopes);
 
-            return scopes.First().Block;
+            return extendNode ?? scopes.First().Block;
         }
 
         private static void TrimLastLiteral(BlockNode blockNode)
@@ -183,6 +197,14 @@ namespace Veil.Handlebars
             if (faulted)
             {
                 throw new VeilParserException(String.Format("Found token '{0}' outside of a conditional block.", foundToken));
+            }
+        }
+
+        private static void AssertSyntaxTreeIsEmpty(LinkedList<ParserScope> scopes)
+        {
+            if (scopes.Count > 1 || !scopes.First().Block.IsEmpty())
+            {
+                throw new VeilParserException("There can be no content before a {{< }} expression.");
             }
         }
 

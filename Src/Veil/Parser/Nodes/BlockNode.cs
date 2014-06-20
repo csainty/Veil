@@ -25,5 +25,10 @@ namespace Veil.Parser.Nodes
         }
 
         public IEnumerable<SyntaxTreeNode> Nodes { get { return this.nodes; } }
+
+        public bool IsEmpty()
+        {
+            return this.nodes.Count == 0;
+        }
     }
 }

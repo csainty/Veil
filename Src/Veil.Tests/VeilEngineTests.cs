@@ -112,7 +112,8 @@ namespace Veil
                 new object[] {"Hey {{ Name }},{{#each Roles}} {{ ../Name }}{{/each}}", "Hey Chris, Chris Chris"},
                 new object[] {"<p>\r\n{{~Name~}}\r\n</p>", "<p>Chris</p>"},
                 new object[] {"{{#with Department}}Department: {{ GetDepartmentNumber() }}{{/with}}", "Department: 10"},
-                new object[] {"{{#each Reports}}{{this}}{{else}}No Reports{{/each}}", "No Reports"}
+                new object[] {"{{#each Reports}}{{this}}{{else}}No Reports{{/each}}", "No Reports"},
+                new object[] {"{{< master}}Testing 1.2.3", "Hello Chris Testing 1.2.3 See Ya!"},
             };
         }
 
@@ -146,6 +147,7 @@ namespace Veil
         private void RegisterHandlebarsTemplates()
         {
             context.RegisterTemplate("role", "{{ this }}");
+            context.RegisterTemplate("master", "Hello {{ Name }} {{body}} See Ya!");
         }
 
         private Action<TextWriter, ViewModel> Compile(string template, string templateType)
