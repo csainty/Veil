@@ -8,10 +8,12 @@ using Veil.Parser.Nodes;
 
 namespace Veil.Handlebars
 {
-    // TODO:
-    // - Stack assertions on #each
+    /// <summary>
+    /// Veil parser for the Handlebars syntax
+    /// </summary>
     public class HandlebarsParser : ITemplateParser
     {
+        // TODO: A serious refactor / rewrite is needed for this class
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var template = templateReader.ReadToEnd();

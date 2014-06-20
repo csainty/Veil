@@ -7,13 +7,14 @@ using Veil.Parser.Nodes;
 
 namespace Veil.SuperSimple
 {
-    // TODO:
-    // - Stack assertions for template end
-    // - Stack assertions for @If
-    // - Stack assertions for @Each
+    /// <summary>
+    /// A Veil parser for the SuperSimple syntax
+    /// </summary>
     public class SuperSimpleParser : ITemplateParser
     {
+        // TODO: A serious refactor / rewrite is needed for this class
         private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?(Null)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection|Flush)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
+
         private static Regex NameMatcher = new Regex(@".*?\[\'(?<Name>.*?)\'(,(?<Model>.*))?\]", RegexOptions.Compiled);
 
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
