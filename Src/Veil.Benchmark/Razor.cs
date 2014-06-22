@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using System.Web.Razor;
 
@@ -94,17 +95,17 @@ namespace Veil.Benchmark
 
         public virtual void Write(object value)
         {
-            WriteLiteral(HtmlEncode(value));
+            HtmlEncode(value);
         }
 
-        private static string HtmlEncode(object value)
+        private void HtmlEncode(object value)
         {
             if (value == null)
             {
-                return null;
+                return;
             }
 
-            return Hosts.HttpEncoder.HtmlEncode(Convert.ToString(value, CultureInfo.CurrentCulture));
+            WebUtility.HtmlEncode(Convert.ToString(value, CultureInfo.CurrentCulture), this.writer);
         }
     }
 
