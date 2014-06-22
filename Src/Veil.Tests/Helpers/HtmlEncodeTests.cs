@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace Veil.HelperTests
@@ -12,6 +13,17 @@ namespace Veil.HelperTests
             var writer = new StringWriter();
             Veil.Helpers.HtmlEncode(writer, input);
             Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
+        }
+
+        [TestCaseSource("TestCases")]
+        public void Should_encode_long_html(string input, string expectedOutput)
+        {
+            var longInput = input + new String('x', 100);
+            var longExpectedOutput = expectedOutput + new String('x', 100);
+
+            var writer = new StringWriter();
+            Veil.Helpers.HtmlEncode(writer, longInput);
+            Assert.That(writer.ToString(), Is.EqualTo(longExpectedOutput));
         }
 
         public object[] TestCases()

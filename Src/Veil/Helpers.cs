@@ -11,36 +11,61 @@ namespace Veil
         public static void HtmlEncode(TextWriter writer, string value)
         {
             if (value == null || value.Length == 0) return;
-
-            char[] chars = null;
             var startIndex = 0;
-            var length = 0;
-            for (int i = 0, j = value.Length; i < j; i++)
-            {
-                char c = value[i];
-                if (c == '&' || c == '<' || c == '>' || c == '"' || c == '\'')
-                {
-                    if (chars == null) chars = value.ToCharArray();
-                    if (length > 0) writer.Write(chars, startIndex, length);
-                    startIndex = i + 1;
-                    length = 0;
+            var currentIndex = 0;
+            var valueLength = value.Length;
+            char currentChar;
 
-                    switch (c)
+            if (valueLength < 50)
+            {
+                // For short string, we can just pump each char directly to the writer
+                for (; currentIndex < valueLength; ++currentIndex)
+                {
+                    currentChar = value[currentIndex];
+                    switch (currentChar)
                     {
                         case '&': writer.Write("&amp;"); break;
                         case '<': writer.Write("&lt;"); break;
                         case '>': writer.Write("&gt;"); break;
                         case '"': writer.Write("&quot;"); break;
                         case '\'': writer.Write("&#39;"); break;
-                        default: break;
+                        default: writer.Write(currentChar); break;
                     }
-                    continue;
+                }
+            }
+            else
+            {
+                // For longer strings, the number of Write calls becomes prohibitive, so sacrifice a call to ToCharArray to allos us to buffer the Write calls
+                char[] chars = null;
+                for (; currentIndex < valueLength; ++currentIndex)
+                {
+                    currentChar = value[currentIndex];
+                    switch (currentChar)
+                    {
+                        case '&':
+                        case '<':
+                        case '>':
+                        case '"':
+                        case '\'':
+                            if (chars == null) chars = value.ToCharArray();
+                            if (currentIndex != startIndex) writer.Write(chars, startIndex, currentIndex - startIndex);
+                            startIndex = currentIndex + 1;
+
+                            switch (currentChar)
+                            {
+                                case '&': writer.Write("&amp;"); break;
+                                case '<': writer.Write("&lt;"); break;
+                                case '>': writer.Write("&gt;"); break;
+                                case '"': writer.Write("&quot;"); break;
+                                case '\'': writer.Write("&#39;"); break;
+                            }
+                            break;
+                    }
                 }
 
-                length++;
+                if (startIndex == 0) writer.Write(value);
+                else if (currentIndex != startIndex) writer.Write(chars, startIndex, currentIndex - startIndex);
             }
-            if (startIndex == 0) writer.Write(value);
-            else if (length > 0) writer.Write(chars, startIndex, length);
         }
 
         public static void HtmlEncodeLateBound(TextWriter writer, object value)
