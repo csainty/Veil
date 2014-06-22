@@ -63,7 +63,6 @@ namespace Veil.Handlebars
             }
 
             state.AssertStackOnRootNode();
-            state.AssertPrefixesAreEmpty();
 
             return state.RootNode;
         }
@@ -182,13 +181,20 @@ namespace Veil.Handlebars
 
         private static void HandleWith(HandlebarsParserState state)
         {
-            state.ExpressionPrefixes.Push(state.TokenText.Substring(6).Trim());
+            var withBlock = SyntaxTree.Block();
+            var modelExpression = state.ParseExpression(state.TokenText.Substring(6).Trim());
+            state.AddNodeToCurrentBlock(SyntaxTree.ScopeBlock(modelExpression, withBlock));
+            state.BlockStack.PushBlock(new HandlebarsParserBlock
+            {
+                Block = withBlock,
+                ModelInScope = modelExpression.ResultType
+            });
         }
 
         private static void HandleEndWith(HandlebarsParserState state)
         {
-            state.AssertHaveWithPrefix("{{/with}}");
-            state.ExpressionPrefixes.Pop();
+            state.AssertInsideWith("{{/with}}");
+            state.BlockStack.PopBlock();
         }
 
         private static void HandlePartial(HandlebarsParserState state)

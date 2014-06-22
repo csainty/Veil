@@ -13,14 +13,6 @@ namespace Veil.Handlebars
             }
         }
 
-        public static void AssertPrefixesAreEmpty(this HandlebarsParserState state)
-        {
-            if (state.ExpressionPrefixes.Count > 0)
-            {
-                throw new VeilParserException(String.Format("Mismatched block found. Expected to find the end of the template but found open with block '{0}'", String.Join(".", state.ExpressionPrefixes)));
-            }
-        }
-
         public static void AssertInsideConditional(this HandlebarsParserState state, string foundToken)
         {
             var faulted = state.BlockStack.Count < 2;
@@ -43,6 +35,17 @@ namespace Veil.Handlebars
             }
         }
 
+        public static void AssertInsideWith(this HandlebarsParserState state, string foundToken)
+        {
+            var faulted = state.BlockStack.Count < 2;
+            faulted = faulted || !state.BlockStack.IsCurrentBlockContainerOfType<ScopedBlockNode>();
+
+            if (faulted)
+            {
+                throw new VeilParserException(String.Format("Found token '{0}' outside of a with block.", foundToken));
+            }
+        }
+
         public static void AssertInsideConditionalOrIteration(this HandlebarsParserState state, string foundToken)
         {
             var faulted = state.BlockStack.Count < 2;
@@ -59,14 +62,6 @@ namespace Veil.Handlebars
             if (state.BlockStack.Count > 1 || !state.BlockStack.GetCurrentBlockNode().IsEmpty())
             {
                 throw new VeilParserException(errorMessage);
-            }
-        }
-
-        public static void AssertHaveWithPrefix(this HandlebarsParserState state, string foundToken)
-        {
-            if (state.ExpressionPrefixes.Count == 0)
-            {
-                throw new VeilParserException(String.Format("Found token '{0}' outside of a with block.", foundToken));
             }
         }
 

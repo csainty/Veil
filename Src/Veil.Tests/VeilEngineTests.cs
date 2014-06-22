@@ -114,6 +114,7 @@ namespace Veil
                 new object[] {"{{#with Department}}Department: {{ GetDepartmentNumber() }}{{/with}}", "Department: 10"},
                 new object[] {"{{#each Reports}}{{this}}{{else}}No Reports{{/each}}", "No Reports"},
                 new object[] {"{{< master}}Testing 1.2.3", "Hello Chris Testing 1.2.3 See Ya!"},
+                new object[] {"{{#with Department}}{{../Name}}: {{DepartmentName}}{{/with}}", "Chris: Developers"}
             };
         }
 

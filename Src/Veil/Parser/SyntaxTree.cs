@@ -145,5 +145,19 @@ namespace Veil.Parser
         {
             return new FlushNode();
         }
+
+        /// <summary>
+        /// Scopes a block of nodes to a new model
+        /// </summary>
+        /// <param name="modelToScopeTo">An expression that evaluates to the model to scope to</param>
+        /// <param name="block">The block to execute in the new scope</param>
+        public static ScopedBlockNode ScopeBlock(ExpressionNode modelToScopeTo, BlockNode block)
+        {
+            return new ScopedBlockNode
+            {
+                ModelToScope = modelToScopeTo,
+                Block = block
+            };
+        }
     }
 }
