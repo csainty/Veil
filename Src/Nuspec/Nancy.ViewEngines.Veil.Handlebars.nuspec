@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>Nancy.ViewEngines.Veil.Handlebars</id>
     <version>0.0.0</version>
@@ -15,6 +15,7 @@
       <dependency id="Veil" version="$version$" />
       <dependency id="Veil.Handlebars" version="$version$" />
       <dependency id="Nancy" version="0.22.0" />
+      <dependency id="Nancy.ViewEngines.Veil" version="$version$" />
     </dependencies>    
   </metadata>
   <files>

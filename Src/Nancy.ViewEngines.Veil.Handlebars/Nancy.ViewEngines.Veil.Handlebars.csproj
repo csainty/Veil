@@ -42,14 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NancyVeilContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VeilHandlebarsViewEngine.cs" />
+    <Compile Include="HandlebarsViewEngineRegistration.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nancy.ViewEngines.Veil\Nancy.ViewEngines.Veil.csproj">
+      <Project>{d75aa844-9cc6-4a81-af27-9df312981f7e}</Project>
+      <Name>Nancy.ViewEngines.Veil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
       <Project>{3335691a-38b6-4dd1-96cb-a1c262cef4cc}</Project>
       <Name>Veil.Handlebars</Name>

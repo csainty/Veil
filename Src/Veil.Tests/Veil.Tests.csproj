@@ -115,6 +115,10 @@
       <Project>{0ce12322-8186-4521-9420-ecc63bb243af}</Project>
       <Name>Nancy.ViewEngines.Veil.SuperSimple</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Nancy.ViewEngines.Veil\Nancy.ViewEngines.Veil.csproj">
+      <Project>{d75aa844-9cc6-4a81-af27-9df312981f7e}</Project>
+      <Name>Nancy.ViewEngines.Veil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
       <Project>{3335691a-38b6-4dd1-96cb-a1c262cef4cc}</Project>
       <Name>Veil.Handlebars</Name>
