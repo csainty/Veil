@@ -2,6 +2,8 @@
 
 A [Handlebars](http://handlebarsjs.com/) inspired syntax parser for [Veil](https://github.com/csainty/Veil).
 
+The Handlebars parser is registered under the keys `handlebars` and `haml`.
+
 ### Syntax
 Expressions in Handlebars are wrapped in {{ and }}.
 

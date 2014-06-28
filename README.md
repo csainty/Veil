@@ -20,14 +20,11 @@ Veil is available as pre-release pacakges on nuget - https://www.nuget.org/packa
 
 You have two options for using Veil :-
 
-1. If you are using [Nancy](https://github.com/NancyFx/Nancy) then install a ViewEngine module e.g. [Nancy.ViewEngines.Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Nancy.ViewEngines.Veil.SuperSimple)
+1. If you are using [Nancy](https://github.com/NancyFx/Nancy) then install the [Nancy.ViewEngines.Veil](https://github.com/csainty/Veil/tree/master/Src/Nancy.ViewEngines.Veil) view engine and your preferred syntax e.g. [Veil.Handlebars](https://github.com/csainty/Veil/tree/master/Src/Veil.Handlebars)
 2. Alternatively you can use the [VeilEngine](https://github.com/csainty/Veil/blob/master/Src/Veil/IVeilEngine.cs) directly in any application e.g.
 
 ````
-// Register your parsers once at startup
-VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
-
---
+// Installed parsers are detected from your AppDomain at startup
 
 // Compile each template once with the chosen parser
 var template = "Hello {{ Name }}";
