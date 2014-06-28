@@ -8,12 +8,12 @@
     <owners>csainty</owners>
     <projectUrl>https://github.com/csainty/Veil</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A ViewEngine for Nancy that uses supports any Veil syntax parser</description>
+    <description>A ViewEngine for Nancy that uses all installed Veil parsers. Note: You must also install a Veil syntax parser.</description>
     <copyright>Copyright 2014</copyright>
     <tags>nancy view engine veil</tags>
     <dependencies>
       <dependency id="Veil" version="$version$" />
-      <dependency id="Nancy" version="0.22.0" />
+      <dependency id="Nancy" version="0.23.0" />
     </dependencies>    
   </metadata>
   <files>

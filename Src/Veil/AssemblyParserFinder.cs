@@ -20,9 +20,6 @@ namespace Veil
         }
     }
 
-    /// <summary>
-    /// Scans the app domain for assemblies and types
-    /// </summary>
     internal static class AppDomainAssemblyTypeScanner
     {
         static AppDomainAssemblyTypeScanner()
@@ -30,38 +27,19 @@ namespace Veil
             LoadAssembliesWithVeilReferences();
         }
 
-        /// <summary>
-        /// Nancy core assembly
-        /// </summary>
         private static Assembly veilAssembly = typeof(VeilEngine).Assembly;
 
-        /// <summary>
-        /// App domain type cache
-        /// </summary>
         private static IEnumerable<Type> types;
 
-        /// <summary>
-        /// App domain assemblies cache
-        /// </summary>
         private static IEnumerable<Assembly> assemblies;
 
-        /// <summary>
-        /// Indicates whether the all Assemblies, that references a Nancy assembly, have already been loaded
-        /// </summary>
         private static bool referencingAssembliesLoaded;
 
-        /// <summary>
-        /// The default assemblies for scanning.
-        /// Includes the nancy assembly and anything referencing a nancy assembly
-        /// </summary>
         public static Func<Assembly, bool>[] AssembliesToScan = new Func<Assembly, bool>[]
         {
             x => x.GetReferencedAssemblies().Any(r => r.Name.StartsWith("Veil", StringComparison.OrdinalIgnoreCase))
         };
 
-        /// <summary>
-        /// Gets app domain types.
-        /// </summary>
         public static IEnumerable<Type> Types
         {
             get
@@ -70,9 +48,6 @@ namespace Veil
             }
         }
 
-        /// <summary>
-        /// Gets app domain types.
-        /// </summary>
         public static IEnumerable<Assembly> Assemblies
         {
             get
@@ -81,10 +56,6 @@ namespace Veil
             }
         }
 
-        /// <summary>
-        /// Refreshes the type cache if additional assemblies have been loaded.
-        /// Note: This is called automatically if assemblies are loaded using LoadAssemblies.
-        /// </summary>
         public static void UpdateTypes()
         {
             UpdateAssemblies();
@@ -95,9 +66,6 @@ namespace Veil
                      select type).ToArray();
         }
 
-        /// <summary>
-        /// Updates the assembly cache from the appdomain
-        /// </summary>
         private static void UpdateAssemblies()
         {
             assemblies = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -107,9 +75,6 @@ namespace Veil
                           select assembly).ToArray();
         }
 
-        /// <summary>
-        /// Loads any assembly that references a Veil assembly.
-        /// </summary>
         public static void LoadAssembliesWithVeilReferences()
         {
             if (referencingAssembliesLoaded)
@@ -158,20 +123,11 @@ namespace Veil
             referencingAssembliesLoaded = true;
         }
 
-        /// <summary>
-        /// Gets all types implementing a particular interface/base class
-        /// </summary>
-        /// <typeparam name="TType">Type to search for</typeparam>
-        /// <returns>An <see cref="IEnumerable{T}"/> of types.</returns>
         public static IEnumerable<Type> TypesOf<TType>()
         {
             return Types.Where(typeof(TType).IsAssignableFrom);
         }
 
-        /// <summary>
-        /// Returns the directories containing dll files. It uses the default convention as stated by microsoft.
-        /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/library/system.appdomainsetup.privatebinpathprobe.aspx"/>
         private static IEnumerable<string> GetAssemblyDirectories()
         {
             var privateBinPathDirectories = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath == null

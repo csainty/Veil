@@ -7,6 +7,9 @@ namespace Veil
     /// </summary>
     public class VeilCompilerException : Exception
     {
+        /// <summary>
+        /// Creates an exception with the supplied messages
+        /// </summary>
         public VeilCompilerException(string message)
             : base(message)
         {

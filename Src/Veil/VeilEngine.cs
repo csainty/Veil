@@ -34,8 +34,8 @@ namespace Veil
         /// Parses and compiles the specified template
         /// </summary>
         /// <typeparam name="T">The type of the model that will be passed to the template</typeparam>
-        /// <param name="parserKey">Key of the <see cref="ITemplateParser"/> to use to parse the template.
-        /// <param name="templateContents">The contents of the template to compile</param>
+        /// <param name="parserKey">Key of the <see cref="ITemplateParser"/> to use to parse the template.</param>
+        /// <param name="templateContents">The contents of the template to compile
         /// <returns>A compiled action ready to be executed as needed to render the template</returns>
         public Action<TextWriter, T> Compile<T>(string parserKey, TextReader templateContents)
         {
@@ -51,14 +51,14 @@ namespace Veil
         /// <summary>
         /// Parses and compiles the specified template when the model type is not known
         /// </summary>
-        /// <param name="templateType">Name of the <see cref="ITemplateParser"/> to use to parse the template. See <see cref="VeilEngine.RegisterParser"/></param>
+        /// <param name="parserKey">Key of the <see cref="ITemplateParser"/> to use to parse the template.</param>
         /// <param name="templateContents">The contents of the template to compile</param>
         /// <param name="modelType">The type of the model that will be passed to the template</param>
         /// <returns>A compiled action that will cast the model before execution</returns>
-        public Action<TextWriter, object> CompileNonGeneric(string templateType, TextReader templateContents, Type modelType)
+        public Action<TextWriter, object> CompileNonGeneric(string parserKey, TextReader templateContents, Type modelType)
         {
             var typedCompileMethod = genericCompileMethod.MakeGenericMethod(modelType);
-            var compiledTemplate = typedCompileMethod.Invoke(this, new object[] { templateType, templateContents });
+            var compiledTemplate = typedCompileMethod.Invoke(this, new object[] { parserKey, templateContents });
             var compiledTemplateType = compiledTemplate.GetType();
 
             // TODO: Optimize this without casting from object? Perhaps using Expressions

@@ -10,7 +10,21 @@ namespace Veil.Parser.Nodes
     {
         private ExpressionNode collection;
 
-        public ExpressionNode Collection { get { return this.collection; } set { this.collection = value; this.ValidateCollection(); } }
+        /// <summary>
+        /// An expression that evaluates to the collection of items to be iterated
+        /// </summary>
+        public ExpressionNode Collection
+        {
+            get
+            {
+                return this.collection;
+            }
+            set
+            {
+                this.collection = value;
+                this.ValidateCollection();
+            }
+        }
 
         private void ValidateCollection()
         {
@@ -22,10 +36,19 @@ namespace Veil.Parser.Nodes
             }
         }
 
+        /// <summary>
+        /// The block to execute for each item in the collection
+        /// </summary>
         public BlockNode Body { get; set; }
 
+        /// <summary>
+        /// A optional block to execute when there are no items to iterate
+        /// </summary>
         public BlockNode EmptyBody { get; set; }
 
+        /// <summary>
+        /// The Type of the items in the collection
+        /// </summary>
         public Type ItemType
         {
             get

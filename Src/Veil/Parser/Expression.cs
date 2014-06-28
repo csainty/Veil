@@ -85,7 +85,7 @@ namespace Veil.Parser
 
         /// <summary>
         /// Evaluate whether the collectionExpression has Count > 0
-        /// Can only be used on types that implement <see cref="ICollection"/>
+        /// Can only be used on types that implement <see cref="System.Collections.ICollection"/>
         /// </summary>
         /// <param name="collectionExpression">An expression referencing a Collection</param>
         public static CollectionHasItemsExpressionNode HasItems(ExpressionNode collectionExpression)

@@ -10,6 +10,9 @@ namespace Veil.Parser.Nodes
     {
         private ExpressionNode collectionExpression;
 
+        /// <summary>
+        /// An expression that evaluates to an <see cref="System.Collections.ICollection"/> which is checked for items
+        /// </summary>
         public ExpressionNode CollectionExpression
         {
             get
@@ -29,6 +32,9 @@ namespace Veil.Parser.Nodes
             if (!typeof(ICollection).IsAssignableFrom(this.collectionExpression.ResultType)) throw new VeilParserException("Expression assigned to CollectionHasItemsNode.CollectionExpression is not an ICollection");
         }
 
+        /// <summary>
+        /// The type of result from this expression evaluation
+        /// </summary>
         public override Type ResultType { get { return typeof(bool); } }
     }
 }
