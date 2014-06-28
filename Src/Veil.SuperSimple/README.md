@@ -2,6 +2,8 @@
 
 A [SuperSimpleViewEngine](https://github.com/grumpydev/SuperSimpleViewEngine) inspired syntax parser for [Veil](https://github.com/csainty/Veil).
 
+The SuperSimple parser is registered under the keys `supersimple`, `sshtml` and `vsshtml`.
+
 ### Syntax
 Expressions in SuperSimple syntax all start with an `@` and are optionally terminated with a `;`. E.g. `@Model.Name` and `@Model.Name;` are equivalent. If your expressions has a natural separator such as a space, then the terminator is not needed.
 

@@ -4,15 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0CE12322-8186-4521-9420-ECC63BB243AF}</ProjectGuid>
+    <ProjectGuid>{D75AA844-9CC6-4A81-AF27-9DF312981F7E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nancy.ViewEngines.Veil.SuperSimple</RootNamespace>
-    <AssemblyName>Nancy.ViewEngines.Veil.SuperSimple</AssemblyName>
+    <RootNamespace>Nancy.ViewEngines.Veil</RootNamespace>
+    <AssemblyName>Nancy.ViewEngines.Veil</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,20 +44,16 @@
   <ItemGroup>
     <Compile Include="NancyVeilContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VeilSuperSimpleViewEngine.cs" />
+    <Compile Include="VeilViewEngine.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Veil.SuperSimple\Veil.SuperSimple.csproj">
-      <Project>{3478795d-95e0-45d8-bf31-b85f95b1e160}</Project>
-      <Name>Veil.SuperSimple</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Veil\Veil.csproj">
       <Project>{97d96b66-edfe-474b-bc72-d8439830fc76}</Project>
       <Name>Veil</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

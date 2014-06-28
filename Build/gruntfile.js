@@ -42,16 +42,8 @@ module.exports = function (grunt) {
                     stdout: true
                 }
             },
-            nancysupersimple: {
-                src: ['../src/Nancy.ViewEngines.Veil.SuperSimple/Nancy.ViewEngines.Veil.SuperSimple.csproj'],
-                options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true
-                }
-            },
-            nancyhandlebars: {
-                src: ['../src/Nancy.ViewEngines.Veil.Handlebars/Nancy.ViewEngines.Veil.Handlebars.csproj'],
+            nancy: {
+                src: ['../src/Nancy.ViewEngines.Veil/Nancy.ViewEngines.Veil.csproj'],
                 options: {
                     projectConfiguration: 'Release',
                     target: ['Clean', 'Rebuild'],
@@ -96,13 +88,8 @@ module.exports = function (grunt) {
                     dest: 'dist/lib/net40'
                 },{
                     expand: true,
-                    cwd: '../src/Nancy.ViewEngines.Veil.SuperSimple/bin/Release/',
-                    src: ['Nancy.ViewEngines.Veil.SuperSimple.*'],
-                    dest: 'dist/lib/net40'
-                },{
-                    expand: true,
-                    cwd: '../src/Nancy.ViewEngines.Veil.Handlebars/bin/Release/',
-                    src: ['Nancy.ViewEngines.Veil.Handlebars.*'],
+                    cwd: '../src/Nancy.ViewEngines.Veil/bin/Release/',
+                    src: ['Nancy.ViewEngines.Veil.*'],
                     dest: 'dist/lib/net40'
                 }]
             }
@@ -129,20 +116,13 @@ module.exports = function (grunt) {
                     version: pkg.version
                 }                
             },
-            nancysupersimple: {
-                src: 'dist/Nancy.ViewEngines.Veil.SuperSimple.nuspec',
+            nancy: {
+                src: 'dist/Nancy.ViewEngines.Veil.nuspec',
                 dest: 'dist/',
                 options: {
                     version: pkg.version
                 }                
-            },
-            nancyhandlebars: {
-                src: 'dist/Nancy.ViewEngines.Veil.Handlebars.nuspec',
-                dest: 'dist/',
-                options: {
-                    version: pkg.version
-                }                
-            }            
+            }
         },
         nugetpush: {
             dist: {

@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using System.IO;
 using Veil;
-using Veil.Handlebars;
 
-namespace Nancy.ViewEngines.Veil.Handlebars
+namespace Nancy.ViewEngines.Veil
 {
-    public class VeilHandlebarsViewEngine : IViewEngine
+    public class VeilViewEngine : IViewEngine
     {
-        private const string EngineKey = "handlebars";
         private IVeilContext context;
         private IVeilEngine engine;
+        private static List<string> supportedExtensions = new List<string>();
 
-        static VeilHandlebarsViewEngine()
+        static VeilViewEngine()
         {
-            VeilEngine.RegisterParser(EngineKey, () => new HandlebarsParser());
+            supportedExtensions.AddRange(VeilStaticConfiguration.RegisteredParserKeys);
         }
 
         public IEnumerable<string> Extensions
         {
-            get { return new[] { "haml" }; }
+            get { return supportedExtensions; }
         }
 
         public void Initialize(ViewEngineStartupContext viewEngineStartupContext)
         {
-            this.context = new NancyVeilContext(viewEngineStartupContext.ViewLocator);
+            this.context = new NancyVeilContext(viewEngineStartupContext.ViewLocator, supportedExtensions);
             this.engine = new VeilEngine(this.context);
         }
 
@@ -33,7 +32,7 @@ namespace Nancy.ViewEngines.Veil.Handlebars
             var template = renderContext.ViewCache.GetOrAdd(viewLocationResult, result =>
             {
                 Type modelType = model.GetType();
-                return this.engine.CompileNonGeneric(EngineKey, result.Contents(), modelType);
+                return this.engine.CompileNonGeneric(viewLocationResult.Extension, result.Contents(), modelType);
             });
 
             var response = new Response();
