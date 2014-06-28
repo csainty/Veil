@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Nancy.Bootstrapper;
 using Veil;
 
 namespace Nancy.ViewEngines.Veil
@@ -14,20 +13,7 @@ namespace Nancy.ViewEngines.Veil
 
         static VeilViewEngine()
         {
-            FindAndRegisterParsers();
-        }
-
-        private static void FindAndRegisterParsers()
-        {
-            foreach (var parserRegistrationType in AppDomainAssemblyTypeScanner.TypesOf<INancyVeilViewEngineRegistration>())
-            {
-                var parserRegistration = (INancyVeilViewEngineRegistration)Activator.CreateInstance(parserRegistrationType);
-                foreach (var ext in parserRegistration.Extensions)
-                {
-                    VeilEngine.RegisterParser(ext, parserRegistration.ParserFactory);
-                    supportedExtensions.Add(ext);
-                }
-            }
+            supportedExtensions.AddRange(VeilStaticConfiguration.RegisteredParserKeys);
         }
 
         public IEnumerable<string> Extensions

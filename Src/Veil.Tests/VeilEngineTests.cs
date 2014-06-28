@@ -33,10 +33,6 @@ namespace Veil
         [SetUp]
         public void SetUp()
         {
-            VeilEngine.ClearParserRegistrations();
-            VeilEngine.RegisterParser("handlebars", new HandlebarsParser());
-            VeilEngine.RegisterParser("supersimple", new SuperSimpleParser());
-
             context = new TestVeilContext();
             engine = new VeilEngine(context);
         }

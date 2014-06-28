@@ -107,14 +107,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nancy.ViewEngines.Veil.Handlebars\Nancy.ViewEngines.Veil.Handlebars.csproj">
-      <Project>{22f484bc-664c-48d0-878d-7b425d758a33}</Project>
-      <Name>Nancy.ViewEngines.Veil.Handlebars</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Nancy.ViewEngines.Veil.SuperSimple\Nancy.ViewEngines.Veil.SuperSimple.csproj">
-      <Project>{0ce12322-8186-4521-9420-ecc63bb243af}</Project>
-      <Name>Nancy.ViewEngines.Veil.SuperSimple</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Nancy.ViewEngines.Veil\Nancy.ViewEngines.Veil.csproj">
       <Project>{d75aa844-9cc6-4a81-af27-9df312981f7e}</Project>
       <Name>Nancy.ViewEngines.Veil</Name>

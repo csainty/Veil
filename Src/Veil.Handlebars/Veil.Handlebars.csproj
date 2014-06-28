@@ -48,6 +48,7 @@
     <Compile Include="HandlebarsParserState.cs" />
     <Compile Include="HandlebarsBlockStack.cs" />
     <Compile Include="HandlebarsTokenizer.cs" />
+    <Compile Include="HandlebarsTemplateParserRegistration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

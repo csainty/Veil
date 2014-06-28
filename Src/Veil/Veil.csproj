@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
+    <Compile Include="AssemblyParserFinder.cs" />
     <Compile Include="Compiler\Emit.cs" />
     <Compile Include="Compiler\EmitterExtensions.cs" />
     <Compile Include="Compiler\Local.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Compiler\VeilTemplateCompiler.EmitInclude.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitScopedBlockNode.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="Parser\ITemplateParserRegistration.cs" />
     <Compile Include="IVeilContext.cs" />
     <Compile Include="NullVeilContext.cs" />
     <Compile Include="Parser\Expression.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Parser\SyntaxTree.cs" />
     <Compile Include="VeilEngine.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.cs" />
+    <Compile Include="VeilStaticConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteExpression.cs" />

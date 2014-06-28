@@ -10,8 +10,6 @@ namespace Veil.Benchmark
         {
             bool isManual = args.Length == 0;
             string option = "";
-            VeilEngine.RegisterParser("haml", new HandlebarsParser());
-            VeilEngine.RegisterParser("sshtml", new SuperSimpleParser());
 
             Console.WriteLine("Veil.Benchmarks");
             Console.WriteLine("---------------");
