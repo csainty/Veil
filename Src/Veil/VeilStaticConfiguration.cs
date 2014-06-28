@@ -4,6 +4,9 @@ using Veil.Parser;
 
 namespace Veil
 {
+    /// <summary>
+    /// Configures Veil with syntax parsers
+    /// </summary>
     public static class VeilStaticConfiguration
     {
         private static IDictionary<string, Func<ITemplateParser>> parserFactories = new Dictionary<string, Func<ITemplateParser>>();

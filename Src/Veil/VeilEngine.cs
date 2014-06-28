@@ -35,7 +35,7 @@ namespace Veil
         /// </summary>
         /// <typeparam name="T">The type of the model that will be passed to the template</typeparam>
         /// <param name="parserKey">Key of the <see cref="ITemplateParser"/> to use to parse the template.</param>
-        /// <param name="templateContents">The contents of the template to compile
+        /// <param name="templateContents">The contents of the template to compile</param>
         /// <returns>A compiled action ready to be executed as needed to render the template</returns>
         public Action<TextWriter, T> Compile<T>(string parserKey, TextReader templateContents)
         {
