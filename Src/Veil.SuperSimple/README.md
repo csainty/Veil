@@ -2,6 +2,8 @@
 
 A [SuperSimpleViewEngine](https://github.com/grumpydev/SuperSimpleViewEngine) inspired syntax parser for [Veil](https://github.com/csainty/Veil).
 
+Get it on nuget `Install-Package Veil.SuperSimple`
+
 The SuperSimple parser is registered under the keys `supersimple`, `sshtml` and `vsshtml`.
 
 ### Syntax

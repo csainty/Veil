@@ -1,7 +1,7 @@
 # Veil
 
 Veil is a .NET template renderer / view engine. It is designed to support many syntax parsers which sit on top of a single IL-emitting compiler.  
-See [Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Veil.SuperSimple) and [Veil.Handlebars](https://github.com/csainty/Veil/tree/master/Src/Veil.Handlebars) for examples of syntax.
+See [Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Veil.SuperSimple) and [Veil.Handlebars](https://github.com/csainty/Veil/tree/master/Src/Veil.Handlebars) for examples of supported syntax.
 
 ### Design Goals
 
@@ -11,22 +11,20 @@ See [Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Veil.Supe
 * Mono support
 
 ### Not supported
-Unlike Razor, Veil templates are not compiled to full .NET assemblies. This is part of what makes Veil so much easier to integrate and work with. The cost of this approach is that arbitrary code blocks are not supported.  
+Unlike Razor, Veil templates are not compiled with the full .NET compilers. This is part of what makes Veil so much easier to integrate and work with. The cost of this approach is that arbitrary code blocks are not supported.  
 A purist may argue this is actually a good thing :) 
 
 
 ### Getting Started
-Veil is available as pre-release pacakges on nuget - https://www.nuget.org/packages?q=Veil  
-
 You have two options for using Veil :-
 
-1. If you are using [Nancy](https://github.com/NancyFx/Nancy) then install the [Nancy.ViewEngines.Veil](https://github.com/csainty/Veil/tree/master/Src/Nancy.ViewEngines.Veil) view engine and your preferred syntax e.g. [Veil.Handlebars](https://github.com/csainty/Veil/tree/master/Src/Veil.Handlebars)
-2. Alternatively you can use the [VeilEngine](https://github.com/csainty/Veil/blob/master/Src/Veil/IVeilEngine.cs) directly in any application e.g.
+1. If you are using [Nancy](https://github.com/NancyFx/Nancy) then install the [Nancy.ViewEngines.Veil](http://www.nuget.org/packages/Nancy.ViewEngines.Veil) package and your preferred syntax parsers e.g. [Veil.Handlebars](http://www.nuget.org/packages/Veil.Handlebars) or [Veil.SuperSimple](http://www.nuget.org/packages/Veil.SuperSimple)
+2. Alternatively you can install and use any Veil syntax parser directly in any application. E.g.
 
 ````
-// Installed parsers are detected from your AppDomain at startup
+Install-Package Veil.Handlebars
 
-// Compile each template once with the chosen parser
+// Compile your template once with the chosen parser
 var template = "Hello {{ Name }}";
 var compiledTemplate = new VeilEngine().Compile<ViewModel>("handlebars", new StringReader(template));
 
@@ -39,7 +37,6 @@ using (var writer = new StringWriter()) {
 ```` 
 
 ### Build Status
-
 
 Windows - [![Build Status](http://builds.nullreferenceexception.se/app/rest/builds/buildType:id:Veil_Continuos/statusIcon)](http://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuos&guest=1)
 
