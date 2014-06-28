@@ -103,6 +103,17 @@ namespace Veil.Compiler
             this.generator.Emit(OpCodes.Stloc, local.Index);
         }
 
+        internal void LoadLocalAddress(Local local)
+        {
+            if (local.Index >= SByte.MinValue && local.Index <= SByte.MaxValue)
+            {
+                this.generator.Emit(OpCodes.Ldloca_S, (sbyte)local.Index);
+                return;
+            }
+
+            this.generator.Emit(OpCodes.Ldloca, local.Index);
+        }
+
         internal void LoadLocal(Local local)
         {
             switch (local.Index)
@@ -122,8 +133,12 @@ namespace Veil.Compiler
             this.generator.Emit(OpCodes.Ldloc, local.Index);
         }
 
-        internal void CallVirtual(MethodInfo info)
+        internal void CallVirtual(MethodInfo info, Type constrainedType = null)
         {
+            if (constrainedType != null)
+            {
+                this.generator.Emit(OpCodes.Constrained, constrainedType);
+            }
             this.generator.Emit(OpCodes.Callvirt, info);
         }
 

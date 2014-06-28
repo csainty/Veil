@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Veil.Parser;
 
@@ -54,7 +55,7 @@ namespace Veil.Compiler
             var model = new Model<string>
             {
                 Name = "Root",
-                SubModels = new[] { 
+                SubModels = new[] {
                     new SubModel<string> { Name = "1", Strings = new [] { "A", "B" } },
                     new SubModel<string> { Name = "2", Strings = new [] { "C", "D" } }
                 }
@@ -110,7 +111,10 @@ namespace Veil.Compiler
                 new object[] { new Model<float> { DataField = 1.1F }, "1.1" },
                 new object[] { new Model<long> { DataField = 1234L }, "1234" },
                 new object[] { new Model<uint> { DataField = 12U }, "12" },
-                new object[] { new Model<ulong> { DataField = 12345UL }, "12345" }
+                new object[] { new Model<ulong> { DataField = 12345UL }, "12345" },
+                new object[] { new Model<object> { DataField = new object() }, "System.Object" },
+                new object[] { new Model<DateTime> { DataField = new DateTime(2014, 01, 01) }, "1/1/2014 12:00:00 AM" },
+                new object[] { new Model<EnumTest> { DataField = EnumTest.First }, "First" }
             };
         }
 
@@ -134,6 +138,12 @@ namespace Veil.Compiler
             public string[] Strings { get; set; }
 
             public string Name { get; set; }
+        }
+
+        internal enum EnumTest
+        {
+            First,
+            Second
         }
     }
 }

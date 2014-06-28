@@ -18,8 +18,8 @@ namespace Veil.Compiler
             var valueType = node.Expression.ResultType;
             if (!writers.ContainsKey(valueType))
             {
+                emitter.CallMethod(toStringMethod, valueType);
                 valueType = typeof(string);
-                emitter.CallMethod(toStringMethod);
             }
 
             if (node.HtmlEncode && CanHtmlEncodeType(valueType))
