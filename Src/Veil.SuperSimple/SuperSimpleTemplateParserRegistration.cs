@@ -4,6 +4,9 @@ using Veil.Parser;
 
 namespace Veil.SuperSimple
 {
+    /// <summary>
+    /// Used to auto-register this parser. You should not need touch it.
+    /// </summary>
     public class SuperSimpleTemplateParserRegistration : ITemplateParserRegistration
     {
         public IEnumerable<string> Keys

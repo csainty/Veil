@@ -4,6 +4,9 @@ using Veil.Parser;
 
 namespace Veil.Handlebars
 {
+    /// <summary>
+    /// Used to auto-register this parser. You should not need touch it.
+    /// </summary>
     public class HandlebarsTemplateParserRegistration : ITemplateParserRegistration
     {
         public IEnumerable<string> Keys
