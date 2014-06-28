@@ -7,34 +7,23 @@ namespace Nancy.ViewEngines.Veil
 {
     internal class NancyVeilContext : IVeilContext
     {
-        private readonly IDictionary<string, ViewLocationResult> views = new Dictionary<string, ViewLocationResult>();
+        private readonly IRenderContext context;
+        private readonly string[] extensions;
 
-        public NancyVeilContext(IViewLocator locator, IEnumerable<string> extensions)
+        public NancyVeilContext(IRenderContext context, IEnumerable<string> extensions)
         {
-            var extensionSet = new HashSet<string>(extensions);
-            var veilViews = locator
-                .GetAllCurrentlyDiscoveredViews()
-                .Where(x => extensionSet.Contains(x.Extension));
-
-            foreach (var view in veilViews)
-            {
-                if (!views.ContainsKey(view.Name + "." + view.Extension))
-                {
-                    views.Add(view.Name + "." + view.Extension, view);
-                }
-                if (!views.ContainsKey(view.Name))
-                {
-                    views.Add(view.Name, view);
-                }
-            }
+            this.context = context;
+            this.extensions = extensions.ToArray();
         }
 
         public TextReader GetTemplateByName(string name, string templateType)
         {
-            ViewLocationResult view;
-            if (!views.TryGetValue(name + "." + templateType, out view) && !views.TryGetValue(name, out view)) return null;
-
-            return view.Contents();
+            var view = this.context.LocateView(name + "." + templateType, null);
+            if (view == null)
+            {
+                view = this.context.LocateView(name, null);
+            }
+            return view == null ? null : view.Contents();
         }
     }
 }

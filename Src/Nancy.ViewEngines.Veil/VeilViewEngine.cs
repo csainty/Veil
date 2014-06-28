@@ -7,8 +7,6 @@ namespace Nancy.ViewEngines.Veil
 {
     public class VeilViewEngine : IViewEngine
     {
-        private IVeilContext context;
-        private IVeilEngine engine;
         private static List<string> supportedExtensions = new List<string>();
 
         static VeilViewEngine()
@@ -23,8 +21,6 @@ namespace Nancy.ViewEngines.Veil
 
         public void Initialize(ViewEngineStartupContext viewEngineStartupContext)
         {
-            this.context = new NancyVeilContext(viewEngineStartupContext.ViewLocator, supportedExtensions);
-            this.engine = new VeilEngine(this.context);
         }
 
         public Response RenderView(ViewLocationResult viewLocationResult, dynamic model, IRenderContext renderContext)
@@ -33,8 +29,10 @@ namespace Nancy.ViewEngines.Veil
             {
                 try
                 {
+                    var context = new NancyVeilContext(renderContext, Extensions);
+                    var engine = new VeilEngine(context);
                     Type modelType = model == null ? typeof(object) : model.GetType();
-                    return this.engine.CompileNonGeneric(viewLocationResult.Extension, result.Contents(), modelType);
+                    return engine.CompileNonGeneric(viewLocationResult.Extension, result.Contents(), modelType);
                 }
                 catch (Exception e)
                 {
