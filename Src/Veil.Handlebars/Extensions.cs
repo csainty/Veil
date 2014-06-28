@@ -38,7 +38,7 @@ namespace Veil.Handlebars
         public static void AssertInsideWith(this HandlebarsParserState state, string foundToken)
         {
             var faulted = state.BlockStack.Count < 2;
-            faulted = faulted || !state.BlockStack.IsCurrentBlockContainerOfType<ScopedBlockNode>();
+            faulted = faulted || !state.BlockStack.IsCurrentBlockContainerOfType<ScopedNode>();
 
             if (faulted)
             {

@@ -147,16 +147,16 @@ namespace Veil.Parser
         }
 
         /// <summary>
-        /// Scopes a block of nodes to a new model
+        /// Scopes a node to a new model
         /// </summary>
         /// <param name="modelToScopeTo">An expression that evaluates to the model to scope to</param>
-        /// <param name="block">The block to execute in the new scope</param>
-        public static ScopedBlockNode ScopeBlock(ExpressionNode modelToScopeTo, BlockNode block)
+        /// <param name="node">The node to execute in the new scope</param>
+        public static ScopedNode ScopeNode(ExpressionNode modelToScopeTo, SyntaxTreeNode node)
         {
-            return new ScopedBlockNode
+            return new ScopedNode
             {
                 ModelToScope = modelToScopeTo,
-                Block = block
+                Node = node
             };
         }
     }

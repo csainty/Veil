@@ -14,14 +14,14 @@ namespace Veil.Handlebars
             AssertSyntaxTree(
                 template,
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.ScopeBlock(
+                SyntaxTree.ScopeNode(
                     Expression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
                         SyntaxTree.WriteExpression(Expression.Property(model.User.GetType(), "Name"), true)
                     )
                 ),
                 SyntaxTree.WriteString(" from "),
-                SyntaxTree.ScopeBlock(
+                SyntaxTree.ScopeNode(
                     Expression.Property(model.GetType(), "Dept"),
                     SyntaxTree.Block(
                         SyntaxTree.WriteExpression(Expression.Property(model.Dept.GetType(), "Name"), true)
@@ -38,7 +38,7 @@ namespace Veil.Handlebars
             AssertSyntaxTree(
                 template,
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.ScopeBlock(
+                SyntaxTree.ScopeNode(
                     Expression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
                         SyntaxTree.WriteExpression(Expression.Self(model.User.GetType()), true)
@@ -55,7 +55,7 @@ namespace Veil.Handlebars
             AssertSyntaxTree(
                 template,
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.ScopeBlock(
+                SyntaxTree.ScopeNode(
                     Expression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
                         SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name", ExpressionScope.ModelOfParentScope), true),

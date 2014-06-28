@@ -183,7 +183,7 @@ namespace Veil.Handlebars
         {
             var withBlock = SyntaxTree.Block();
             var modelExpression = state.ParseExpression(state.TokenText.Substring(6).Trim());
-            state.AddNodeToCurrentBlock(SyntaxTree.ScopeBlock(modelExpression, withBlock));
+            state.AddNodeToCurrentBlock(SyntaxTree.ScopeNode(modelExpression, withBlock));
             state.BlockStack.PushBlock(new HandlebarsParserBlock
             {
                 Block = withBlock,

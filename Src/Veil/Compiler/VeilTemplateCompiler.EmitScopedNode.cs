@@ -4,14 +4,14 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private void EmitScopedBlockNode(ScopedBlockNode node)
+        private void EmitScopedNode(ScopedNode node)
         {
             using (var model = emitter.DeclareLocal(node.ModelToScope.ResultType))
             {
                 EvaluateExpression(node.ModelToScope);
                 emitter.StoreLocal(model);
                 AddModelScope(x => x.LoadLocal(model));
-                EmitNode(node.Block);
+                EmitNode(node.Node);
                 RemoveModelScope();
             }
         }

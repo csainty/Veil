@@ -4,7 +4,7 @@ using Veil.Parser;
 namespace Veil.Compiler
 {
     [TestFixture]
-    internal class ScopedBlockNodeTests : CompilerTestBase
+    internal class ScopedNodeTests : CompilerTestBase
     {
         [Test]
         public void Should_change_scope_in_a_scope_block()
@@ -12,7 +12,7 @@ namespace Veil.Compiler
             var model = new { User = new { Name = "Joe" }, Foo = "Bar" };
             var result = ExecuteTemplate(SyntaxTree.Block(
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.ScopeBlock(
+                SyntaxTree.ScopeNode(
                     Expression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
                         SyntaxTree.WriteExpression(Expression.Property(model.User.GetType(), "Name"))

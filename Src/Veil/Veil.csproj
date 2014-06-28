@@ -49,7 +49,7 @@
     <Compile Include="Compiler\VeilTemplateCompiler.EmitFlush.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitOverride.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitInclude.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitScopedBlockNode.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EmitScopedNode.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Parser\ITemplateParserRegistration.cs" />
     <Compile Include="IVeilContext.cs" />
@@ -71,7 +71,7 @@
     <Compile Include="Parser\Nodes\IncludeTemplateNode.cs" />
     <Compile Include="Parser\Nodes\IterateNode.cs" />
     <Compile Include="Parser\Nodes\OverridePointNode.cs" />
-    <Compile Include="Parser\Nodes\ScopedBlockNode.cs" />
+    <Compile Include="Parser\Nodes\ScopedNode.cs" />
     <Compile Include="Parser\Nodes\WriteExpressionNode.cs" />
     <Compile Include="Parser\Nodes\WriteLiteralNode.cs" />
     <Compile Include="Parser\SyntaxTreeNode.cs" />
