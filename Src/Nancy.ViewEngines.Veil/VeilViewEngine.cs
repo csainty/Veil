@@ -31,8 +31,15 @@ namespace Nancy.ViewEngines.Veil
         {
             var template = renderContext.ViewCache.GetOrAdd(viewLocationResult, result =>
             {
-                Type modelType = model.GetType();
-                return this.engine.CompileNonGeneric(viewLocationResult.Extension, result.Contents(), modelType);
+                try
+                {
+                    Type modelType = model == null ? typeof(object) : model.GetType();
+                    return this.engine.CompileNonGeneric(viewLocationResult.Extension, result.Contents(), modelType);
+                }
+                catch (Exception e)
+                {
+                    return CreateErrorPage(e);
+                }
             });
 
             var response = new Response();
@@ -44,5 +51,29 @@ namespace Nancy.ViewEngines.Veil
             };
             return response;
         }
+
+        private static Action<TextWriter, object> CreateErrorPage(Exception e)
+        {
+            return (writer, model) =>
+            {
+                var message = StaticConfiguration.DisableErrorTraces ? "Error details are currently disabled. Please set <code>StaticConfiguration.DisableErrorTraces = false;</code> to enable." : e.ToString();
+                writer.Write(ErrorTemplate.Value.Replace("[DETAILS]", e.ToString()));
+            };
+        }
+
+        private static Lazy<string> ErrorTemplate = new Lazy<string>(() =>
+        {
+            var resourceStream = typeof(VeilViewEngine).Assembly.GetManifestResourceStream("Nancy.ViewEngines.Veil.Resources.CompilationError.html");
+
+            if (resourceStream == null)
+            {
+                return string.Empty;
+            }
+
+            using (var reader = new StreamReader(resourceStream))
+            {
+                return reader.ReadToEnd();
+            }
+        });
     }
 }

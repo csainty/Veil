@@ -18,7 +18,10 @@ namespace Nancy.ViewEngines.Veil
 
             foreach (var view in veilViews)
             {
-                views.Add(view.Name + "." + view.Extension, view);
+                if (!views.ContainsKey(view.Name + "." + view.Extension))
+                {
+                    views.Add(view.Name + "." + view.Extension, view);
+                }
                 if (!views.ContainsKey(view.Name))
                 {
                     views.Add(view.Name, view);
