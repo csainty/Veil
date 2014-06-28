@@ -137,5 +137,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-dotnet-assembly-info');
  
     grunt.registerTask("default", ["clean", "assemblyinfo", "msbuild", "copy", "nugetpack"]);
-    grunt.registerTask("push", ["nugetpush"]);
+    grunt.registerTask("push", ["default", "nugetpush"]);
 };
