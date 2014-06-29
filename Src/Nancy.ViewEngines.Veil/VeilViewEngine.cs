@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Veil;
 
 namespace Nancy.ViewEngines.Veil
@@ -54,9 +55,18 @@ namespace Nancy.ViewEngines.Veil
         {
             return (writer, model) =>
             {
-                var message = StaticConfiguration.DisableErrorTraces ? "Error details are currently disabled. Please set <code>StaticConfiguration.DisableErrorTraces = false;</code> to enable." : e.ToString();
-                writer.Write(ErrorTemplate.Value.Replace("[DETAILS]", e.ToString()));
+                var message = GetErrorMessage(e);
+                writer.Write(ErrorTemplate.Value.Replace("[DETAILS]", message));
             };
+        }
+
+        private static string GetErrorMessage(Exception e)
+        {
+            if (StaticConfiguration.DisableErrorTraces) return "Error details are currently disabled. Please set <code>StaticConfiguration.DisableErrorTraces = false;</code> to enable.";
+            if (e is TargetInvocationException) return GetErrorMessage(e.InnerException);
+            if (e is VeilParserException) return e.Message;
+            if (e is VeilCompilerException) return e.Message;
+            return e.ToString();
         }
 
         private static Lazy<string> ErrorTemplate = new Lazy<string>(() =>
