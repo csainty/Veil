@@ -63,5 +63,38 @@ namespace Veil.SuperSimple
         {
             return SuperSimpleNameModelParser.Parse(this.CurrentToken.Content);
         }
+
+        public SyntaxTreeNode GetParentBlock()
+        {
+            if (this.scopeStack.Count < 2) return null;
+
+            return this.scopeStack.First.Next.Value.Block.LastNode();
+        }
+
+        public void AssertInsideConditionalBlock()
+        {
+            var parent = this.GetParentBlock() as ConditionalNode;
+            if (parent == null)
+            {
+                throw new VeilParserException("Found @EndIf; without a matching opening block");
+            }
+        }
+
+        public void AssertInsideIterationBlock()
+        {
+            var parent = this.GetParentBlock() as IterateNode;
+            if (parent == null)
+            {
+                throw new VeilParserException("Found @EndEach; without a matching @each");
+            }
+        }
+
+        public void AssertScopeStackIsBackToASingleScope()
+        {
+            if (this.scopeStack.Count > 1)
+            {
+                throw new VeilParserException("Template ended with an open block");
+            }
+        }
     }
 }

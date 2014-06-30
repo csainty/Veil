@@ -577,11 +577,32 @@ namespace Veil.Tests.SuperSimple
         [TestCase("@Master['Master'];@Section")]
         [TestCase("@Master['Master'];@Section[]")]
         [TestCase("@Master['Master'];@Section['']")]
+        [TestCase("@Master['Master'];@EndSection;")]
+        [TestCase("Foo @EndSection; Bar")]
+        [TestCase("Foo @EndIf; Bar")]
+        [TestCase("Foo @EndEach; Bar")]
+        [TestCase("@Section;")]
+        [TestCase("@Section[]")]
+        [TestCase("@Section['']")]
+        [TestCase("@Partial;")]
+        [TestCase("@Partial[]")]
+        [TestCase("@Partial['']")]
+        [TestCase("@If.;")]
+        [TestCase("@If;")]
+        [TestCase("@IfNull.;")]
+        [TestCase("@IfNull;")]
+        [TestCase("@IfNot.;")]
+        [TestCase("@IfNot;")]
+        [TestCase("@IfNotNull.;")]
+        [TestCase("@IfNotNull;")]
+        [TestCase("Hello @Each.Items; World")]
+        [TestCase("Hello @If.Test; World")]
         public void Should_throw_for_invalid_templates(string template)
         {
+            var model = new { Test = false, Items = new string[0] };
             Assert.Throws<VeilParserException>(() =>
             {
-                Parse(template);
+                Parse(template, model.GetType());
             });
         }
 

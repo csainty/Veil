@@ -38,6 +38,8 @@ namespace Veil.SuperSimple
 
         internal void FinalizeCurrentSection()
         {
+            if (!this.IsProcessingASection) throw new VeilParserException("Found token @EndSection without a matching @Section");
+
             var node = SuperSimpleTemplateParser.Parse(this.tokensInCurrentSection, this.ModelType);
             this.sections.Add(this.CurrentSectionName, node);
             this.IsProcessingASection = false;

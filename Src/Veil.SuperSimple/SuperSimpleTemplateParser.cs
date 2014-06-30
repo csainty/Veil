@@ -40,6 +40,7 @@ namespace Veil.SuperSimple
                 }
             }
 
+            state.AssertScopeStackIsBackToASingleScope();
             return state.CurrentBlock;
         }
 
@@ -70,6 +71,7 @@ namespace Veil.SuperSimple
 
         private static void HandleEndEach(SuperSimpleTemplateParserState state)
         {
+            state.AssertInsideIterationBlock();
             state.PopCurrentScope();
         }
 
@@ -96,6 +98,7 @@ namespace Veil.SuperSimple
 
         private static void HandleEndConditional(SuperSimpleTemplateParserState state)
         {
+            state.AssertInsideConditionalBlock();
             state.PopCurrentScope();
         }
 
