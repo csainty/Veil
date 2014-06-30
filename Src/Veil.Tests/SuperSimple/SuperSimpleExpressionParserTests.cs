@@ -123,13 +123,13 @@ namespace Veil.SuperSimple
             };
         }
 
-        private LinkedList<SuperSimpleParserScope> CreateScopes(Type rootScope, Type currentScope = null)
+        private LinkedList<SuperSimpleTemplateParserScope> CreateScopes(Type rootScope, Type currentScope = null)
         {
-            var scopes = new LinkedList<SuperSimpleParserScope>();
-            scopes.AddFirst(new SuperSimpleParserScope { ModelType = rootScope });
+            var scopes = new LinkedList<SuperSimpleTemplateParserScope>();
+            scopes.AddFirst(new SuperSimpleTemplateParserScope { ModelType = rootScope });
             if (currentScope != null)
             {
-                scopes.AddFirst(new SuperSimpleParserScope { ModelType = currentScope });
+                scopes.AddFirst(new SuperSimpleTemplateParserScope { ModelType = currentScope });
             }
             return scopes;
         }

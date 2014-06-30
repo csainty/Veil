@@ -1,106 +1,137 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Veil.Parser;
 
 namespace Veil.SuperSimple
 {
     internal static class SuperSimpleTemplateParser
     {
+        private static readonly Dictionary<Func<SuperSimpleToken, bool>, Action<SuperSimpleTemplateParserState>> handlers = new Dictionary<Func<SuperSimpleToken, bool>, Action<SuperSimpleTemplateParserState>>
+        {
+            { t => !t.IsSyntaxToken, HandleStringLiteral },
+            { t => t.Content == "Each", HandleEachOverSelf },
+            { t => t.Content.StartsWith("Each"), HandleEachOverExpression },
+            { t => t.Content == "EndEach", HandleEndEach },
+            { t => t.Content.StartsWith("If.") || t.Content.StartsWith("IfNotNull."), HandlePositiveConditional },
+            { t => t.Content.StartsWith("IfNot.") || t.Content.StartsWith("IfNull."), HandleNegativeConditional },
+            { t => t.Content == "EndIf", HandleEndConditional },
+            { t => t.Content.StartsWith("Partial"), HandlePartial },
+            { t => t.Content.StartsWith("Section"), HandleSection },
+            { t => t.Content == "Flush", HandleFlush },
+            { t => true, HandleWriteLiteral }
+        };
+
         public static SyntaxTreeNode Parse(IEnumerable<SuperSimpleToken> tokens, Type modelType)
         {
-            var scopeStack = new LinkedList<SuperSimpleParserScope>();
-            scopeStack.AddFirst(new SuperSimpleParserScope { Block = SyntaxTree.Block(), ModelType = modelType });
+            var state = new SuperSimpleTemplateParserState();
+            state.PushNewScope(modelType);
 
             foreach (var token in tokens)
             {
-                if (!token.IsSyntaxToken)
-                {
-                    scopeStack.First().Block.Add(SyntaxTree.WriteString(token.Content));
-                    continue;
-                }
+                state.CurrentToken = token;
 
-                var currentToken = token.Content.Trim(new[] { '@', ';' });
-                if (currentToken == "Each")
+                foreach (var handler in handlers)
                 {
-                    var each = SyntaxTree.Iterate(
-                        Expression.Self(scopeStack.First.Value.ModelType),
-                        SyntaxTree.Block()
-                    );
-                    scopeStack.First.Value.Block.Add(each);
-                    scopeStack.AddFirst(new SuperSimpleParserScope { Block = each.Body, ModelType = each.ItemType });
-                }
-                else if (currentToken.StartsWith("Each"))
-                {
-                    currentToken = currentToken.Substring(5);
-                    var each = SyntaxTree.Iterate(
-                        SuperSimpleExpressionParser.Parse(scopeStack, currentToken),
-                        SyntaxTree.Block()
-                    );
-                    scopeStack.First.Value.Block.Add(each);
-                    scopeStack.AddFirst(new SuperSimpleParserScope { Block = each.Body, ModelType = each.ItemType });
-                }
-                else if (currentToken == "EndEach")
-                {
-                    scopeStack.RemoveFirst();
-                }
-                else if (currentToken.StartsWith("If.") || currentToken.StartsWith("IfNotNull."))
-                {
-                    currentToken = currentToken.Substring(currentToken.IndexOf('.') + 1);
-                    var condition = SyntaxTree.Conditional(
-                        SuperSimpleExpressionParser.Parse(scopeStack, currentToken),
-                        SyntaxTree.Block()
-                    );
-                    scopeStack.First.Value.Block.Add(condition);
-                    scopeStack.AddFirst(new SuperSimpleParserScope { Block = condition.TrueBlock, ModelType = scopeStack.First.Value.ModelType });
-                }
-                else if (currentToken.StartsWith("IfNot.") || currentToken.StartsWith("IfNull."))
-                {
-                    currentToken = currentToken.Substring(currentToken.IndexOf('.') + 1);
-                    var condition = SyntaxTree.Conditional(
-                        SuperSimpleExpressionParser.Parse(scopeStack, currentToken),
-                        SyntaxTree.Block(),
-                        SyntaxTree.Block()
-                    );
-                    scopeStack.First.Value.Block.Add(condition);
-                    scopeStack.AddFirst(new SuperSimpleParserScope { Block = condition.FalseBlock, ModelType = scopeStack.First.Value.ModelType });
-                }
-                else if (currentToken == "EndIf")
-                {
-                    scopeStack.RemoveFirst();
-                }
-                else if (currentToken.StartsWith("Partial"))
-                {
-                    var details = SuperSimpleNameModelParser.Parse(currentToken);
-                    ExpressionNode modelExpression = Expression.Self(scopeStack.First.Value.ModelType);
-
-                    if (!String.IsNullOrEmpty(details.Model))
+                    if (handler.Key(token))
                     {
-                        modelExpression = SuperSimpleExpressionParser.Parse(scopeStack, details.Model);
+                        handler.Value(state);
+                        break;
                     }
-                    scopeStack.First.Value.Block.Add(SyntaxTree.Include(details.Name, modelExpression));
-                }
-                else if (currentToken.StartsWith("Section"))
-                {
-                    scopeStack.First.Value.Block.Add(SyntaxTree.Override(SuperSimpleNameModelParser.Parse(currentToken).Name));
-                }
-                else if (currentToken == "Flush")
-                {
-                    scopeStack.First.Value.Block.Add(SyntaxTree.Flush());
-                }
-                else if (currentToken.StartsWith("!"))
-                {
-                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, currentToken.Substring(1));
-                    scopeStack.First.Value.Block.Add(SyntaxTree.WriteExpression(expression, true));
-                }
-                else
-                {
-                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, currentToken);
-                    scopeStack.First.Value.Block.Add(SyntaxTree.WriteExpression(expression));
                 }
             }
 
-            return scopeStack.First.Value.Block;
+            return state.CurrentBlock;
+        }
+
+        private static void HandleStringLiteral(SuperSimpleTemplateParserState state)
+        {
+            state.AddNodeToCurrentBlock(SyntaxTree.WriteString(state.CurrentToken.Content));
+        }
+
+        private static void HandleEachOverSelf(SuperSimpleTemplateParserState state)
+        {
+            var each = SyntaxTree.Iterate(
+                Expression.Self(state.CurrentTypeInScope()),
+                SyntaxTree.Block()
+            );
+            state.AddNodeToCurrentBlock(each);
+            state.PushNewScope(each.Body, each.ItemType);
+        }
+
+        private static void HandleEachOverExpression(SuperSimpleTemplateParserState state)
+        {
+            var each = SyntaxTree.Iterate(
+                state.ParseCurrentTokenExpression(),
+                SyntaxTree.Block()
+            );
+            state.AddNodeToCurrentBlock(each);
+            state.PushNewScope(each.Body, each.ItemType);
+        }
+
+        private static void HandleEndEach(SuperSimpleTemplateParserState state)
+        {
+            state.PopCurrentScope();
+        }
+
+        private static void HandlePositiveConditional(SuperSimpleTemplateParserState state)
+        {
+            var condition = SyntaxTree.Conditional(
+                state.ParseCurrentTokenExpression(),
+                SyntaxTree.Block()
+            );
+            state.AddNodeToCurrentBlock(condition);
+            state.PushNewScope(condition.TrueBlock);
+        }
+
+        private static void HandleNegativeConditional(SuperSimpleTemplateParserState state)
+        {
+            var condition = SyntaxTree.Conditional(
+                state.ParseCurrentTokenExpression(),
+                SyntaxTree.Block(),
+                SyntaxTree.Block()
+            );
+            state.AddNodeToCurrentBlock(condition);
+            state.PushNewScope(condition.FalseBlock);
+        }
+
+        private static void HandleEndConditional(SuperSimpleTemplateParserState state)
+        {
+            state.PopCurrentScope();
+        }
+
+        private static void HandlePartial(SuperSimpleTemplateParserState state)
+        {
+            var details = state.ParseCurrentTokenNameAndModelExpression();
+            ExpressionNode expression = Expression.Self(state.CurrentTypeInScope());
+
+            if (!String.IsNullOrEmpty(details.Model))
+            {
+                expression = state.ParseExpression(details.Model);
+            }
+            state.AddNodeToCurrentBlock(SyntaxTree.Include(details.Name, expression));
+        }
+
+        private static void HandleSection(SuperSimpleTemplateParserState state)
+        {
+            var details = state.ParseCurrentTokenNameAndModelExpression();
+            state.AddNodeToCurrentBlock(SyntaxTree.Override(details.Name));
+        }
+
+        private static void HandleFlush(SuperSimpleTemplateParserState state)
+        {
+            state.AddNodeToCurrentBlock(SyntaxTree.Flush());
+        }
+
+        private static void HandleWriteLiteral(SuperSimpleTemplateParserState state)
+        {
+            var expression = state.CurrentToken.Content;
+            var htmlEncode = false;
+            if (expression.StartsWith("!"))
+            {
+                htmlEncode = true;
+                expression = expression.Substring(1);
+            }
+            state.AddNodeToCurrentBlock(SyntaxTree.WriteExpression(state.ParseExpression(expression), htmlEncode));
         }
     }
 }

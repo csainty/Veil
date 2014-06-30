@@ -12,16 +12,15 @@ namespace Veil.SuperSimple
 
             foreach (var token in tokens)
             {
-                var currentToken = token.Content.Trim(new[] { '@', ';' });
-                if (currentToken.StartsWith("Master"))
+                if (token.Content.StartsWith("Master"))
                 {
-                    state.MasterPageName = SuperSimpleNameModelParser.Parse(currentToken).Name;
+                    state.MasterPageName = SuperSimpleNameModelParser.Parse(token.Content).Name;
                 }
-                else if (currentToken.StartsWith("Section") && !state.IsProcessingASection)
+                else if (token.Content.StartsWith("Section") && !state.IsProcessingASection)
                 {
-                    state.StartSection(SuperSimpleNameModelParser.Parse(currentToken).Name);
+                    state.StartSection(SuperSimpleNameModelParser.Parse(token.Content).Name);
                 }
-                else if (currentToken == "EndSection")
+                else if (token.Content == "EndSection")
                 {
                     state.FinalizeCurrentSection();
                 }

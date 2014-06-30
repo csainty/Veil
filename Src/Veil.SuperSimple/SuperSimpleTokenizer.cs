@@ -19,7 +19,7 @@ namespace Veil.SuperSimple
                 {
                     yield return new SuperSimpleToken(false, template.Substring(index, match.Index - index));
                 }
-                yield return new SuperSimpleToken(true, match.Value);
+                yield return new SuperSimpleToken(true, match.Value.Trim(' ', '\t', '@', ';'));
                 index = match.Index + match.Length;
             }
             if (index < template.Length)

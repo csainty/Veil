@@ -7,7 +7,7 @@ namespace Veil.SuperSimple
 {
     internal static class SuperSimpleExpressionParser
     {
-        public static ExpressionNode Parse(LinkedList<SuperSimpleParserScope> scopes, string originalExpression)
+        public static ExpressionNode Parse(LinkedList<SuperSimpleTemplateParserScope> scopes, string originalExpression)
         {
             var expression = originalExpression.Trim();
 
@@ -37,7 +37,7 @@ namespace Veil.SuperSimple
             return ParseAgainstModel(originalExpression, expression, chosenScope, expressionScope);
         }
 
-        private static ExpressionNode ParseAgainstModel(string originalExpression, string expression, SuperSimpleParserScope scope, ExpressionScope expressionScope)
+        private static ExpressionNode ParseAgainstModel(string originalExpression, string expression, SuperSimpleTemplateParserScope scope, ExpressionScope expressionScope)
         {
             var subModelIndex = expression.IndexOf('.');
             if (subModelIndex >= 0)
@@ -45,7 +45,7 @@ namespace Veil.SuperSimple
                 var subModel = ParseAgainstModel(originalExpression, expression.Substring(0, subModelIndex), scope, expressionScope);
                 return Expression.SubModel(
                     subModel,
-                    ParseAgainstModel(originalExpression, expression.Substring(subModelIndex + 1), new SuperSimpleParserScope { Block = scope.Block, ModelType = subModel.ResultType }, ExpressionScope.CurrentModelOnStack)
+                    ParseAgainstModel(originalExpression, expression.Substring(subModelIndex + 1), new SuperSimpleTemplateParserScope { Block = scope.Block, ModelType = subModel.ResultType }, ExpressionScope.CurrentModelOnStack)
                 );
             }
 

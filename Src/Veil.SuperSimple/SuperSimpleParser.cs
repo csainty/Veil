@@ -14,7 +14,7 @@ namespace Veil.SuperSimple
         {
             var tokens = SuperSimpleTokenizer.Tokenize(templateReader).ToArray();
             var firstToken = tokens.First();
-            if (firstToken.IsSyntaxToken && firstToken.Content.StartsWith("@Master"))
+            if (firstToken.IsSyntaxToken && firstToken.Content.StartsWith("Master"))
             {
                 return SuperSimpleMasterPageParser.Parse(tokens, modelType);
             }

@@ -3,7 +3,7 @@ using Veil.Parser.Nodes;
 
 namespace Veil.SuperSimple
 {
-    internal class SuperSimpleParserScope
+    internal class SuperSimpleTemplateParserScope
     {
         public BlockNode Block { get; set; }
 
