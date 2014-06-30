@@ -13,8 +13,6 @@ namespace Veil.SuperSimple
     /// </summary>
     public class SuperSimpleParser : ITemplateParser
     {
-        private static Regex NameMatcher = new Regex(@".*?\[\'(?<Name>.*?)\'(,(?<Model>.*))?\]", RegexOptions.Compiled);
-
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
             var tokens = SuperSimpleTokenizer.Tokenize(templateReader).ToArray();
@@ -91,18 +89,18 @@ namespace Veil.SuperSimple
                 }
                 else if (currentToken.StartsWith("Partial"))
                 {
-                    var details = GetNameAndModelFromToken(currentToken);
+                    var details = SuperSimpleNameModelParser.Parse(currentToken);
                     ExpressionNode modelExpression = Expression.Self(scopeStack.First.Value.ModelType);
 
-                    if (!String.IsNullOrEmpty(details.Item2))
+                    if (!String.IsNullOrEmpty(details.Model))
                     {
-                        modelExpression = SuperSimpleExpressionParser.Parse(scopeStack, details.Item2);
+                        modelExpression = SuperSimpleExpressionParser.Parse(scopeStack, details.Model);
                     }
-                    scopeStack.First.Value.Block.Add(SyntaxTree.Include(details.Item1, modelExpression));
+                    scopeStack.First.Value.Block.Add(SyntaxTree.Include(details.Name, modelExpression));
                 }
                 else if (currentToken.StartsWith("Section"))
                 {
-                    scopeStack.First.Value.Block.Add(SyntaxTree.Override(GetNameAndModelFromToken(currentToken).Item1));
+                    scopeStack.First.Value.Block.Add(SyntaxTree.Override(SuperSimpleNameModelParser.Parse(currentToken).Name));
                 }
                 else if (currentToken == "Flush")
                 {
@@ -136,11 +134,11 @@ namespace Veil.SuperSimple
                 var currentToken = token.Content.Trim(new[] { '@', ';' });
                 if (currentToken.StartsWith("Master["))
                 {
-                    masterName = GetNameAndModelFromToken(currentToken).Item1;
+                    masterName = SuperSimpleNameModelParser.Parse(currentToken).Name;
                 }
                 else if (currentToken.StartsWith("Section[") && !inSection)
                 {
-                    sectionName = GetNameAndModelFromToken(currentToken).Item1;
+                    sectionName = SuperSimpleNameModelParser.Parse(currentToken).Name;
                     inSection = true;
                 }
                 else if (currentToken == "EndSection")
@@ -156,12 +154,6 @@ namespace Veil.SuperSimple
                 }
             }
             return SyntaxTree.Extend(masterName, sections);
-        }
-
-        public Tuple<string, string> GetNameAndModelFromToken(string token)
-        {
-            var match = NameMatcher.Match(token);
-            return Tuple.Create(match.Groups["Name"].Value, match.Groups["Model"].Value);
         }
 
         internal class ParserScope
