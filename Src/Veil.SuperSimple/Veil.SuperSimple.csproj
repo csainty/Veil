@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SuperSimpleParserScope.cs" />
+    <Compile Include="SuperSimpleMasterPageParser.cs" />
     <Compile Include="SuperSimpleNameModelParser.cs" />
+    <Compile Include="SuperSimpleTemplateParser.cs" />
     <Compile Include="SuperSimpleTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SuperSimpleExpressionParser.cs" />
