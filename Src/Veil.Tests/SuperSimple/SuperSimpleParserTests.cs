@@ -476,8 +476,8 @@ namespace Veil.Tests.SuperSimple
             output.ShouldDeepEqual(
                 SyntaxTree.Extend("myMaster", new Dictionary<string, SyntaxTreeNode>
                 {
-                    { "Header", SyntaxTree.Block(SyntaxTree.WriteString("Header")) },
-                    { "Footer", SyntaxTree.Block(SyntaxTree.WriteString("Footer")) }
+                    { "Header", SyntaxTree.Block(SyntaxTree.WriteString("\r\nHeader\r\n")) },
+                    { "Footer", SyntaxTree.Block(SyntaxTree.WriteString("\r\nFooter\r\n")) }
                 })
             );
         }

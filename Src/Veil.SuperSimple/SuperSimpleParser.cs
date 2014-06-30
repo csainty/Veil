@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Veil.Parser;
 using Veil.Parser.Nodes;
@@ -12,39 +13,35 @@ namespace Veil.SuperSimple
     /// </summary>
     public class SuperSimpleParser : ITemplateParser
     {
-        // TODO: A serious refactor / rewrite is needed for this class
-        private static Regex SuperSimpleMatcher = new Regex(@"@!?(Model|Current|If(Not)?(Null)?|EndIf|Each|EndEach|Partial|Master|Section|EndSection|Flush)(\.[a-zA-Z0-9-_\.]*)?(\[.*?\])?;?", RegexOptions.Compiled);
-
         private static Regex NameMatcher = new Regex(@".*?\[\'(?<Name>.*?)\'(,(?<Model>.*))?\]", RegexOptions.Compiled);
 
         public SyntaxTreeNode Parse(TextReader templateReader, Type modelType)
         {
-            var template = templateReader.ReadToEnd().Trim();
-            if (template.StartsWith("@Master"))
+            var tokens = SuperSimpleTokenizer.Tokenize(templateReader).ToArray();
+            var firstToken = tokens.First();
+            if (firstToken.IsSyntaxToken && firstToken.Content.StartsWith("@Master"))
             {
-                return ParseMaster(template, modelType);
+                return ParseMaster(tokens, modelType);
             }
 
-            return ParseTemplate(template, modelType);
+            return ParseTemplate(tokens, modelType);
         }
 
-        private SyntaxTreeNode ParseTemplate(string template, Type modelType)
+        private SyntaxTreeNode ParseTemplate(IEnumerable<SuperSimpleToken> tokens, Type modelType)
         {
             var scopeStack = new LinkedList<ParserScope>();
             scopeStack.AddFirst(new ParserScope { Block = SyntaxTree.Block(), ModelType = modelType });
 
-            var matches = SuperSimpleMatcher.Matches(template);
-            var index = 0;
-            foreach (Match match in matches)
+            foreach (var token in tokens)
             {
-                if (index < match.Index)
+                if (!token.IsSyntaxToken)
                 {
-                    scopeStack.First.Value.Block.Add(SyntaxTree.WriteString(template.Substring(index, match.Index - index)));
+                    scopeStack.First().Block.Add(SyntaxTree.WriteString(token.Content));
+                    continue;
                 }
-                index = match.Index + match.Length;
 
-                var token = match.Value.Trim(new[] { '@', ';' });
-                if (token == "Each")
+                var currentToken = token.Content.Trim(new[] { '@', ';' });
+                if (currentToken == "Each")
                 {
                     var each = SyntaxTree.Iterate(
                         Expression.Self(scopeStack.First.Value.ModelType),
@@ -53,48 +50,48 @@ namespace Veil.SuperSimple
                     scopeStack.First.Value.Block.Add(each);
                     scopeStack.AddFirst(new ParserScope { Block = each.Body, ModelType = each.ItemType });
                 }
-                else if (token.StartsWith("Each"))
+                else if (currentToken.StartsWith("Each"))
                 {
-                    token = token.Substring(5);
+                    currentToken = currentToken.Substring(5);
                     var each = SyntaxTree.Iterate(
-                        SuperSimpleExpressionParser.Parse(scopeStack, token),
+                        SuperSimpleExpressionParser.Parse(scopeStack, currentToken),
                         SyntaxTree.Block()
                     );
                     scopeStack.First.Value.Block.Add(each);
                     scopeStack.AddFirst(new ParserScope { Block = each.Body, ModelType = each.ItemType });
                 }
-                else if (token == "EndEach")
+                else if (currentToken == "EndEach")
                 {
                     scopeStack.RemoveFirst();
                 }
-                else if (token.StartsWith("If.") || token.StartsWith("IfNotNull."))
+                else if (currentToken.StartsWith("If.") || currentToken.StartsWith("IfNotNull."))
                 {
-                    token = token.Substring(token.IndexOf('.') + 1);
+                    currentToken = currentToken.Substring(currentToken.IndexOf('.') + 1);
                     var condition = SyntaxTree.Conditional(
-                        SuperSimpleExpressionParser.Parse(scopeStack, token),
+                        SuperSimpleExpressionParser.Parse(scopeStack, currentToken),
                         SyntaxTree.Block()
                     );
                     scopeStack.First.Value.Block.Add(condition);
                     scopeStack.AddFirst(new ParserScope { Block = condition.TrueBlock, ModelType = scopeStack.First.Value.ModelType });
                 }
-                else if (token.StartsWith("IfNot.") || token.StartsWith("IfNull."))
+                else if (currentToken.StartsWith("IfNot.") || currentToken.StartsWith("IfNull."))
                 {
-                    token = token.Substring(token.IndexOf('.') + 1);
+                    currentToken = currentToken.Substring(currentToken.IndexOf('.') + 1);
                     var condition = SyntaxTree.Conditional(
-                        SuperSimpleExpressionParser.Parse(scopeStack, token),
+                        SuperSimpleExpressionParser.Parse(scopeStack, currentToken),
                         SyntaxTree.Block(),
                         SyntaxTree.Block()
                     );
                     scopeStack.First.Value.Block.Add(condition);
                     scopeStack.AddFirst(new ParserScope { Block = condition.FalseBlock, ModelType = scopeStack.First.Value.ModelType });
                 }
-                else if (token == "EndIf")
+                else if (currentToken == "EndIf")
                 {
                     scopeStack.RemoveFirst();
                 }
-                else if (token.StartsWith("Partial"))
+                else if (currentToken.StartsWith("Partial"))
                 {
-                    var details = GetNameAndModelFromToken(token);
+                    var details = GetNameAndModelFromToken(currentToken);
                     ExpressionNode modelExpression = Expression.Self(scopeStack.First.Value.ModelType);
 
                     if (!String.IsNullOrEmpty(details.Item2))
@@ -103,61 +100,59 @@ namespace Veil.SuperSimple
                     }
                     scopeStack.First.Value.Block.Add(SyntaxTree.Include(details.Item1, modelExpression));
                 }
-                else if (token.StartsWith("Section"))
+                else if (currentToken.StartsWith("Section"))
                 {
-                    scopeStack.First.Value.Block.Add(SyntaxTree.Override(GetNameAndModelFromToken(token).Item1));
+                    scopeStack.First.Value.Block.Add(SyntaxTree.Override(GetNameAndModelFromToken(currentToken).Item1));
                 }
-                else if (token == "Flush")
+                else if (currentToken == "Flush")
                 {
                     scopeStack.First.Value.Block.Add(SyntaxTree.Flush());
                 }
-                else if (token.StartsWith("!"))
+                else if (currentToken.StartsWith("!"))
                 {
-                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, token.Substring(1));
+                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, currentToken.Substring(1));
                     scopeStack.First.Value.Block.Add(SyntaxTree.WriteExpression(expression, true));
                 }
                 else
                 {
-                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, token);
+                    var expression = SuperSimpleExpressionParser.Parse(scopeStack, currentToken);
                     scopeStack.First.Value.Block.Add(SyntaxTree.WriteExpression(expression));
                 }
-            }
-            if (index < template.Length)
-            {
-                scopeStack.First.Value.Block.Add(SyntaxTree.WriteString(template.Substring(index)));
             }
 
             return scopeStack.First.Value.Block;
         }
 
-        private ExtendTemplateNode ParseMaster(string template, Type modelType)
+        private ExtendTemplateNode ParseMaster(IEnumerable<SuperSimpleToken> tokens, Type modelType)
         {
-            var matches = SuperSimpleMatcher.Matches(template);
             var masterName = "";
             var sections = new Dictionary<string, SyntaxTreeNode>();
-            var sectionStartindex = 0;
+            var currentSectionTokens = new List<SuperSimpleToken>();
             var sectionName = "";
             var inSection = false;
 
-            foreach (Match match in matches)
+            foreach (var token in tokens)
             {
-                var token = match.Value.Trim(new[] { '@', ';' });
-                if (token.StartsWith("Master["))
+                var currentToken = token.Content.Trim(new[] { '@', ';' });
+                if (currentToken.StartsWith("Master["))
                 {
-                    masterName = GetNameAndModelFromToken(token).Item1;
+                    masterName = GetNameAndModelFromToken(currentToken).Item1;
                 }
-                else if (token.StartsWith("Section["))
+                else if (currentToken.StartsWith("Section[") && !inSection)
                 {
-                    if (inSection) continue;
-                    sectionName = GetNameAndModelFromToken(token).Item1;
-                    sectionStartindex = match.Index + match.Length;
+                    sectionName = GetNameAndModelFromToken(currentToken).Item1;
                     inSection = true;
                 }
-                else if (token == "EndSection")
+                else if (currentToken == "EndSection")
                 {
-                    var block = Parse(new StringReader(template.Substring(sectionStartindex, match.Index - sectionStartindex)), modelType);
+                    var block = ParseTemplate(currentSectionTokens, modelType);
                     sections.Add(sectionName, block);
                     inSection = false;
+                    currentSectionTokens.Clear();
+                }
+                else if (inSection)
+                {
+                    currentSectionTokens.Add(token);
                 }
             }
             return SyntaxTree.Extend(masterName, sections);
