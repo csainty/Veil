@@ -569,6 +569,22 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
+        [TestCase("@Master['Master'];@Section['Middle'];Hello@EndSection;Content out here")]
+        [TestCase("@Master['Master'];@Section['Middle'];Hello@EndSection;@Model;")]
+        [TestCase("@Master;")]
+        [TestCase("@Master[];")]
+        [TestCase("@Master[''];")]
+        [TestCase("@Master['Master'];@Section")]
+        [TestCase("@Master['Master'];@Section[]")]
+        [TestCase("@Master['Master'];@Section['']")]
+        public void Should_throw_for_invalid_templates(string template)
+        {
+            Assert.Throws<VeilParserException>(() =>
+            {
+                Parse(template);
+            });
+        }
+
         /*
                 [Test]
                 public void Should_call_to_expand_paths()

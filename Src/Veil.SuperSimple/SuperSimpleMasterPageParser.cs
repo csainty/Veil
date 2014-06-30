@@ -8,37 +8,37 @@ namespace Veil.SuperSimple
     {
         public static SyntaxTreeNode Parse(IEnumerable<SuperSimpleToken> tokens, Type modelType)
         {
-            var masterName = "";
-            var sections = new Dictionary<string, SyntaxTreeNode>();
-            var currentSectionTokens = new List<SuperSimpleToken>();
-            var sectionName = "";
-            var inSection = false;
+            var state = new SuperSimpleMasterPageParserState(modelType);
 
             foreach (var token in tokens)
             {
                 var currentToken = token.Content.Trim(new[] { '@', ';' });
-                if (currentToken.StartsWith("Master["))
+                if (currentToken.StartsWith("Master"))
                 {
-                    masterName = SuperSimpleNameModelParser.Parse(currentToken).Name;
+                    state.MasterPageName = SuperSimpleNameModelParser.Parse(currentToken).Name;
                 }
-                else if (currentToken.StartsWith("Section[") && !inSection)
+                else if (currentToken.StartsWith("Section") && !state.IsProcessingASection)
                 {
-                    sectionName = SuperSimpleNameModelParser.Parse(currentToken).Name;
-                    inSection = true;
+                    state.StartSection(SuperSimpleNameModelParser.Parse(currentToken).Name);
                 }
                 else if (currentToken == "EndSection")
                 {
-                    var block = SuperSimpleTemplateParser.Parse(currentSectionTokens, modelType);
-                    sections.Add(sectionName, block);
-                    inSection = false;
-                    currentSectionTokens.Clear();
+                    state.FinalizeCurrentSection();
                 }
-                else if (inSection)
+                else if (state.IsProcessingASection)
                 {
-                    currentSectionTokens.Add(token);
+                    state.AddTokenToCurrentSection(token);
+                }
+                else if (token.IsSyntaxToken)
+                {
+                    throw new VeilParserException(String.Format("Found expression '{0}' outside of a @Section block", token.Content));
+                }
+                else if (!String.IsNullOrWhiteSpace(token.Content))
+                {
+                    throw new VeilParserException(String.Format("Found content '{0}' outside of a @Section block", token.Content));
                 }
             }
-            return SyntaxTree.Extend(masterName, sections);
+            return SyntaxTree.Extend(state.MasterPageName, state.Sections);
         }
     }
 }

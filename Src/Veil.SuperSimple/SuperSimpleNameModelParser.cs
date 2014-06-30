@@ -9,11 +9,18 @@ namespace Veil.SuperSimple
         public static SuperSimpleNameModel Parse(string expression)
         {
             var match = NameMatcher.Match(expression);
-            return new SuperSimpleNameModel
+            var model = new SuperSimpleNameModel
             {
                 Name = match.Groups["Name"].Value,
                 Model = match.Groups["Model"].Value
             };
+
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                throw new VeilParserException(string.Format("Failed to extract a name from '{0}'", expression));
+            }
+
+            return model;
         }
     }
 
