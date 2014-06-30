@@ -9,3 +9,8 @@ In addition to installing this package, you need to install one or more syntax p
 
 * [Veil.Handlebars](https://github.com/csainty/Veil/tree/master/Src/Veil.Handlebars)
 * [Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Veil.SuperSimple)
+
+
+### Further Reading
+
+* [Getting Started with Nancy](http://blog.csainty.com/2014/06/veil-getting-started-nancy.html)

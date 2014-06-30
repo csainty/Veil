@@ -36,6 +36,10 @@ using (var writer = new StringWriter()) {
 }
 ```` 
 
+### Further Reading
+
+* [Getting Started with Nancy](http://blog.csainty.com/2014/06/veil-getting-started-nancy.html)
+
 ### Build Status
 
 Windows - [![Build Status](http://builds.nullreferenceexception.se/app/rest/builds/buildType:id:Veil_Continuos/statusIcon)](http://builds.nullreferenceexception.se/viewType.html?buildTypeId=Veil_Continuos&guest=1)
