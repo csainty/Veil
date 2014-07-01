@@ -12,7 +12,7 @@ namespace Veil.Benchmark.Hosts
             registeredTemplates.Add(name, content);
         }
 
-        public TextReader GetTemplateByName(string name, string templateType)
+        public TextReader GetTemplateByName(string name, string parserKey)
         {
             return new StringReader(registeredTemplates[name]);
         }

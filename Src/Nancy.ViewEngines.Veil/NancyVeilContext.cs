@@ -16,9 +16,9 @@ namespace Nancy.ViewEngines.Veil
             this.extensions = extensions.ToArray();
         }
 
-        public TextReader GetTemplateByName(string name, string templateType)
+        public TextReader GetTemplateByName(string name, string parserKey)
         {
-            var view = this.context.LocateView(name + "." + templateType, null);
+            var view = this.context.LocateView(name + "." + parserKey, null);
             if (view == null)
             {
                 view = this.context.LocateView(name, null);

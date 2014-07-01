@@ -39,9 +39,9 @@ namespace Veil
         /// <returns>A compiled action ready to be executed as needed to render the template</returns>
         public Action<TextWriter, T> Compile<T>(string parserKey, TextReader templateContents)
         {
-            if (String.IsNullOrEmpty(parserKey)) throw new ArgumentNullException("templateType");
+            if (String.IsNullOrEmpty(parserKey)) throw new ArgumentNullException("parserKey");
             if (templateContents == null) throw new ArgumentNullException("templateContents");
-            if (!VeilStaticConfiguration.IsParserRegistered(parserKey)) throw new ArgumentException("A parser for templateType '{0}' is not registered.".FormatInvariant(parserKey), "templateType");
+            if (!VeilStaticConfiguration.IsParserRegistered(parserKey)) throw new ArgumentException("A parser with key '{0}' is not registered.".FormatInvariant(parserKey), "parserKey");
 
             var parser = VeilStaticConfiguration.GetParserInstance(parserKey);
             var syntaxTree = parser.Parse(templateContents, typeof(T));
@@ -74,13 +74,13 @@ namespace Veil
             return new Action<TextWriter, object>((w, m) => del(w, m, compiledTemplate));
         }
 
-        private static Func<string, Type, SyntaxTreeNode> CreateIncludeParser(string templateType, IVeilContext context)
+        private static Func<string, Type, SyntaxTreeNode> CreateIncludeParser(string parserKey, IVeilContext context)
         {
             return (includeName, modelType) =>
             {
-                var template = context.GetTemplateByName(includeName, templateType);
-                if (template == null) throw new InvalidOperationException("Unable to load template '{0}' using parser '{1}'".FormatInvariant(includeName, templateType));
-                return VeilStaticConfiguration.GetParserInstance(templateType).Parse(template, modelType);
+                var template = context.GetTemplateByName(includeName, parserKey);
+                if (template == null) throw new InvalidOperationException("Unable to load template '{0}' using parser '{1}'".FormatInvariant(includeName, parserKey));
+                return VeilStaticConfiguration.GetParserInstance(parserKey).Parse(template, modelType);
             };
         }
     }

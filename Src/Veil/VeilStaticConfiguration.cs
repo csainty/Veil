@@ -30,24 +30,24 @@ namespace Veil
         /// <summary>
         /// Registers a parser instance for use by the engine
         /// </summary>
-        /// <param name="templateType">The key that will be used to signal the engine to use this parser. See <see cref="VeilEngine.Compile"/></param>
+        /// <param name="parserKey">The key that will be used to signal the engine to use this parser. See <see cref="VeilEngine.Compile"/></param>
         /// <param name="parser">An instance of the parser that will be reused for each compile</param>
-        public static void RegisterParser(string templateType, ITemplateParser parser)
+        public static void RegisterParser(string parserKey, ITemplateParser parser)
         {
-            RegisterParser(templateType, () => parser);
+            RegisterParser(parserKey, () => parser);
         }
 
         /// <summary>
         /// Registers a parser factory for use by the engine
         /// </summary>
-        /// <param name="templateType">The key that will be used to signal the engine to use this parser. See <see cref="VeilEngine.Compile"/></param>
+        /// <param name="parserKey">The key that will be used to signal the engine to use this parser. See <see cref="VeilEngine.Compile"/></param>
         /// <param name="parserFactory">A factory for the parser. The factory is invoked once for each compile</param>
-        public static void RegisterParser(string templateType, Func<ITemplateParser> parserFactory)
+        public static void RegisterParser(string parserKey, Func<ITemplateParser> parserFactory)
         {
-            if (String.IsNullOrEmpty(templateType)) throw new ArgumentNullException("templateType");
-            if (parserFactories.ContainsKey(templateType)) throw new ArgumentException("A parser for templateType '{0}' ({1}) is already registered.".FormatInvariant(templateType, parserFactories[templateType].GetType().Name), "templateType");
+            if (String.IsNullOrEmpty(parserKey)) throw new ArgumentNullException("parserKey");
+            if (parserFactories.ContainsKey(parserKey)) throw new ArgumentException("A parser with key '{0}' ({1}) is already registered.".FormatInvariant(parserKey, parserFactories[parserKey].GetType().Name), "parserKey");
 
-            parserFactories.Add(templateType, parserFactory);
+            parserFactories.Add(parserKey, parserFactory);
         }
 
         /// <summary>

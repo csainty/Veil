@@ -147,19 +147,19 @@ namespace Veil
             context.RegisterTemplate("master", "Hello {{ Name }} {{body}} See Ya!");
         }
 
-        private Action<TextWriter, ViewModel> Compile(string template, string templateType)
+        private Action<TextWriter, ViewModel> Compile(string template, string parserKey)
         {
             using (var reader = new StringReader(template))
             {
-                return engine.Compile<ViewModel>(templateType, reader);
+                return engine.Compile<ViewModel>(parserKey, reader);
             }
         }
 
-        private Action<TextWriter, object> CompileNonGeneric(string template, string templateType)
+        private Action<TextWriter, object> CompileNonGeneric(string template, string parserKey)
         {
             using (var reader = new StringReader(template))
             {
-                return engine.CompileNonGeneric(templateType, reader, typeof(ViewModel));
+                return engine.CompileNonGeneric(parserKey, reader, typeof(ViewModel));
             }
         }
 

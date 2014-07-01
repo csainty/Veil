@@ -7,7 +7,7 @@ namespace Veil
     {
         private readonly Dictionary<string, string> registeredTemplates = new Dictionary<string, string>();
 
-        public TextReader GetTemplateByName(string name, string templateType)
+        public TextReader GetTemplateByName(string name, string parserKey)
         {
             return new StringReader(registeredTemplates[name]);
         }
