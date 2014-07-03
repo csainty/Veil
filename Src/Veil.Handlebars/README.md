@@ -6,7 +6,7 @@ Get it on nuget `Install-Package Veil.Handlebars`
 
 The Handlebars parser is registered under the keys `handlebars` and `haml`.
 
-You can experiment with the syntax online - [http://tryveil.azurewebsites.net](http://tryveil.azurewebsites.net)
+You can experiment with the syntax online - [http://tryveil.com](http://tryveil.com)
 
 ### Syntax
 Expressions in Handlebars are wrapped in {{ and }}.

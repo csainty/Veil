@@ -6,7 +6,7 @@ Get it on nuget `Install-Package Veil.SuperSimple`
 
 The SuperSimple parser is registered under the keys `supersimple`, `sshtml` and `vsshtml`.
 
-You can experiment with the syntax online - [http://tryveil.azurewebsites.net](http://tryveil.azurewebsites.net)
+You can experiment with the syntax online - [http://tryveil.com](http://tryveil.com)
 
 
 ### Syntax
