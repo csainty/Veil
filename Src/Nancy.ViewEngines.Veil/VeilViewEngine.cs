@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using Nancy.Responses;
 using Veil;
 
 namespace Nancy.ViewEngines.Veil
@@ -41,10 +43,11 @@ namespace Nancy.ViewEngines.Veil
                 }
             });
 
-            var response = new Response();
+            var response = new HtmlResponse();
+            response.ContentType = "text/html; charset=utf-8";
             response.Contents = s =>
             {
-                var writer = new StreamWriter(s);
+                var writer = new StreamWriter(s, Encoding.UTF8);
                 template(writer, model);
                 writer.Flush();
             };
