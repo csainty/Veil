@@ -33,7 +33,9 @@ namespace Veil.Expressions
                 new object[] { new { Items = new ArrayList() } },
                 new object[] { new { Items = new List<string>() } },
                 new object[] { new { Items = new Dictionary<string, string>() } },
-                new object[] { new { Items = new [] { "" } } }
+                new object[] { new { Items = new [] { "" } } },
+                new object[] { new { Items = new object[0] } },
+                new object[] { new { Items = (ICollection<object>)new object[0] } }
             };
         }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Veil.Parser;
 using Veil.Parser.Nodes;
@@ -117,7 +118,7 @@ namespace Veil.Compiler
             else if (expression is CollectionHasItemsExpressionNode)
             {
                 var hasItems = (CollectionHasItemsExpressionNode)expression;
-                var count = typeof(ICollection).GetProperty("Count");
+                var count = hasItems.CollectionExpression.ResultType.GetCollectionInterface().GetProperty("Count");
                 EvaluateExpressionAgainstModelOnStack(hasItems.CollectionExpression);
                 emitter.CallMethod(count.GetGetMethod());
                 emitter.LoadConstant(0);
