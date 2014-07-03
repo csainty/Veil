@@ -36,9 +36,12 @@ using (var writer = new StringWriter()) {
 }
 ```` 
 
-### Further Reading
+### Further Information
 
+* [Try the Veil parsers in your browser](http://tryveil.azurewebsites.net)
 * [Getting Started with Nancy](http://blog.csainty.com/2014/06/veil-getting-started-nancy.html)
+* [Getting Started Standalone](http://blog.csainty.com/2014/07/veil-getting-started-standalone.html)
+
 
 ### Build Status
 
