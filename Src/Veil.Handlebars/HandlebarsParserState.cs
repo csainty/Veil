@@ -15,11 +15,7 @@ namespace Veil.Handlebars
 
         public bool TrimNextLiteral { get; set; }
 
-        public bool HtmlEscapeCurrentExpression { get; set; }
-
         public bool ContinueProcessingToken { get; set; }
-
-        public string TokenText { get; set; }
 
         public SyntaxTreeNode RootNode { get { return ExtendNode ?? BlockStack.GetCurrentBlockNode(); } }
 
@@ -46,8 +42,6 @@ namespace Veil.Handlebars
         internal void SetCurrentToken(HandlebarsToken token)
         {
             CurrentToken = token;
-            TokenText = token.Content.Trim(new[] { '{', '}', ' ', '\t' });
-            HtmlEscapeCurrentExpression = false;
             ContinueProcessingToken = false;
         }
 

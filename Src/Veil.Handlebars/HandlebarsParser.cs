@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Veil.Parser;
 using Veil.Parser.Nodes;
 
@@ -14,26 +13,25 @@ namespace Veil.Handlebars
     {
         private const string OverrideSectionName = "body";
 
-        private static readonly Dictionary<Func<string, bool>, Action<HandlebarsParserState>> SyntaxHandlers = new Dictionary<Func<string, bool>, Action<HandlebarsParserState>>
+        private static readonly Dictionary<Func<HandlebarsToken, bool>, Action<HandlebarsParserState>> SyntaxHandlers = new Dictionary<Func<HandlebarsToken, bool>, Action<HandlebarsParserState>>
         {
-            { x => true, HandleStringLiteral },
-            { x => true, HandleHtmlEscape },
-            { x => x.StartsWith("~"), HandleTrimLastLiteral },
-            { x => x.EndsWith("~"), HandleTrimNextLiteral },
-            { x => x.StartsWith("!"), x => { /* Ignore Comments */ }},
-            { x => x.StartsWith("#if"), HandleIf },
-            { x => x == "else", HandleElse },
-            { x => x == "/if", HandleEndIf },
-            { x => x.StartsWith("#unless"), HandleUnless },
-            { x => x == "/unless", HandleEndUnless },
-            { x => x.StartsWith("#each"), HandleEach },
-            { x => x == "/each", HandleEndEach },
-            { x => x == "#flush", HandleFlush },
-            { x => x.StartsWith("#with"), HandleWith },
-            { x => x == "/with", HandleEndWith },
-            { x => x.StartsWith(">"), HandlePartial },
-            { x => x.StartsWith("<"), HandleMaster },
-            { x => x == "body", HandleBody },
+            { x => !x.IsSyntaxToken, HandleStringLiteral },
+            { x => x.TrimLastLiteral, HandleTrimLastLiteral },
+            { x => x.TrimNextLiteral, HandleTrimNextLiteral },
+            { x => x.Content.StartsWith("!"), x => { /* Ignore Comments */ }},
+            { x => x.Content.StartsWith("#if"), HandleIf },
+            { x => x.Content == "else", HandleElse },
+            { x => x.Content == "/if", HandleEndIf },
+            { x => x.Content.StartsWith("#unless"), HandleUnless },
+            { x => x.Content == "/unless", HandleEndUnless },
+            { x => x.Content.StartsWith("#each"), HandleEach },
+            { x => x.Content == "/each", HandleEndEach },
+            { x => x.Content == "#flush", HandleFlush },
+            { x => x.Content.StartsWith("#with"), HandleWith },
+            { x => x.Content == "/with", HandleEndWith },
+            { x => x.Content.StartsWith(">"), HandlePartial },
+            { x => x.Content.StartsWith("<"), HandleMaster },
+            { x => x.Content == "body", HandleBody },
             { x => true, HandleExpression }
         };
 
@@ -49,7 +47,7 @@ namespace Veil.Handlebars
 
                 foreach (var handler in SyntaxHandlers)
                 {
-                    if (handler.Key(state.TokenText))
+                    if (handler.Key(token))
                     {
                         handler.Value.Invoke(state);
                         if (state.ContinueProcessingToken)
@@ -69,12 +67,6 @@ namespace Veil.Handlebars
 
         private static void HandleStringLiteral(HandlebarsParserState state)
         {
-            if (state.CurrentToken.IsSyntaxToken)
-            {
-                state.ContinueProcessingToken = true;
-                return;
-            }
-
             state.WriteLiteral(state.CurrentToken.Content);
         }
 
@@ -85,27 +77,19 @@ namespace Veil.Handlebars
             {
                 literal.LiteralContent = literal.LiteralContent.TrimEnd();
             }
-            state.TokenText = state.TokenText.TrimStart('~', ' ', '\t');
             state.ContinueProcessingToken = true;
         }
 
         private static void HandleTrimNextLiteral(HandlebarsParserState state)
         {
             state.TrimNextLiteral = true;
-            state.TokenText = state.TokenText.TrimEnd('~', ' ', '\t');
-            state.ContinueProcessingToken = true;
-        }
-
-        private static void HandleHtmlEscape(HandlebarsParserState state)
-        {
-            state.HtmlEscapeCurrentExpression = state.CurrentToken.Content.Count(c => c == '{') == 2;
             state.ContinueProcessingToken = true;
         }
 
         private static void HandleIf(HandlebarsParserState state)
         {
             var block = SyntaxTree.Block();
-            var conditional = SyntaxTree.Conditional(state.ParseExpression(state.TokenText.Substring(4)), block);
+            var conditional = SyntaxTree.Conditional(state.ParseExpression(state.CurrentToken.Content.Substring(4)), block);
             state.AddNodeToCurrentBlock(conditional);
             state.BlockStack.PushModelInheritingBlock(block);
         }
@@ -147,7 +131,7 @@ namespace Veil.Handlebars
         private static void HandleUnless(HandlebarsParserState state)
         {
             var block = SyntaxTree.Block();
-            var conditional = SyntaxTree.Conditional(state.ParseExpression(state.TokenText.Substring(8)), SyntaxTree.Block(), block);
+            var conditional = SyntaxTree.Conditional(state.ParseExpression(state.CurrentToken.Content.Substring(8)), SyntaxTree.Block(), block);
             state.AddNodeToCurrentBlock(conditional);
             state.BlockStack.PushModelInheritingBlock(block);
         }
@@ -161,7 +145,7 @@ namespace Veil.Handlebars
         private static void HandleEach(HandlebarsParserState state)
         {
             var iteration = SyntaxTree.Iterate(
-                state.ParseExpression(state.TokenText.Substring(6)),
+                state.ParseExpression(state.CurrentToken.Content.Substring(6)),
                 SyntaxTree.Block()
             );
             state.AddNodeToCurrentBlock(iteration);
@@ -182,7 +166,7 @@ namespace Veil.Handlebars
         private static void HandleWith(HandlebarsParserState state)
         {
             var withBlock = SyntaxTree.Block();
-            var modelExpression = state.ParseExpression(state.TokenText.Substring(6).Trim());
+            var modelExpression = state.ParseExpression(state.CurrentToken.Content.Substring(6).Trim());
             state.AddNodeToCurrentBlock(SyntaxTree.ScopeNode(modelExpression, withBlock));
             state.BlockStack.PushBlock(new HandlebarsParserBlock
             {
@@ -199,7 +183,7 @@ namespace Veil.Handlebars
 
         private static void HandlePartial(HandlebarsParserState state)
         {
-            var partialTemplateName = state.TokenText.Substring(1).Trim();
+            var partialTemplateName = state.CurrentToken.Content.Substring(1).Trim();
             var self = Expression.Self(state.BlockStack.GetCurrentModelType());
             state.AddNodeToCurrentBlock(SyntaxTree.Include(partialTemplateName, self));
         }
@@ -207,7 +191,7 @@ namespace Veil.Handlebars
         private static void HandleMaster(HandlebarsParserState state)
         {
             state.AssertSyntaxTreeIsEmpty("There can be no content before a {{< }} expression.");
-            var masterTemplateName = state.TokenText.Substring(1).Trim();
+            var masterTemplateName = state.CurrentToken.Content.Substring(1).Trim();
             state.ExtendNode = SyntaxTree.Extend(masterTemplateName, new Dictionary<string, SyntaxTreeNode>
             {
                 { OverrideSectionName, state.BlockStack.GetCurrentBlockNode() }
@@ -221,8 +205,8 @@ namespace Veil.Handlebars
 
         private static void HandleExpression(HandlebarsParserState state)
         {
-            var expression = state.ParseExpression(state.TokenText);
-            state.AddNodeToCurrentBlock(SyntaxTree.WriteExpression(expression, state.HtmlEscapeCurrentExpression));
+            var expression = state.ParseExpression(state.CurrentToken.Content);
+            state.AddNodeToCurrentBlock(SyntaxTree.WriteExpression(expression, state.CurrentToken.IsHtmlEscape));
         }
     }
 }
