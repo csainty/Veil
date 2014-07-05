@@ -120,19 +120,12 @@ namespace Veil.Compiler
                 var hasItems = (CollectionHasItemsExpressionNode)expression;
                 EvaluateExpressionAgainstModelOnStack(hasItems.CollectionExpression);
 
-                if (hasItems.CollectionExpression.ResultType == typeof(object))
-                {
-                    emitter.CallMethod(runtimeHasItemsMethod);
-                }
-                else
-                {
                     var count = hasItems.CollectionExpression.ResultType.GetCollectionInterface().GetProperty("Count");
                     emitter.CallMethod(count.GetGetMethod());
                     emitter.LoadConstant(0);
                     emitter.CompareEqual();
                     emitter.LoadConstant(0);
                     emitter.CompareEqual();
-                }
             }
             else if (expression is LateBoundExpressionNode)
             {
@@ -162,8 +155,6 @@ namespace Veil.Compiler
         }
 
         private static readonly MethodInfo runtimeBindMethod = typeof(Helpers).GetMethod("RuntimeBind");
-
-        private static readonly MethodInfo runtimeHasItemsMethod = typeof(Helpers).GetMethod("RuntimeHasItems");
 
         private static readonly IDictionary<Type, MethodInfo> writers = new Dictionary<Type, MethodInfo>
         {

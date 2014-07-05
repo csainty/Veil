@@ -183,8 +183,6 @@ namespace Veil.Compiler
                 new object[] { new { Items = new[] { "Hello" } }, "HasItems" },
                 new object[] { new { Items = new List<int>() }, "HasNoItems" },
                 new object[] { new { Items = (ICollection<object>)new object[0] }, "HasNoItems" },
-                new object[] { new { Items = (object)new object[0] }, "HasNoItems" },
-                new object[] { new { Items = (object)new[] { "Hello" } }, "HasItems" }
             };
         }
 

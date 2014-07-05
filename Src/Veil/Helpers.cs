@@ -87,14 +87,6 @@ namespace Veil
             return o != null;
         }
 
-        public static bool RuntimeHasItems(object collection)
-        {
-            var castCollection = collection as ICollection;
-            if (castCollection != null) return castCollection.Count > 0;
-
-            throw new VeilCompilerException("Unable to late-bind HasItems check on " + collection.ToString());
-        }
-
         private static ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> lateBoundCache = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
 
         public static object RuntimeBind(object model, string itemName, bool isCaseSensitive)

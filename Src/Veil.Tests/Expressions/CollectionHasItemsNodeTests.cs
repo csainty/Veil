@@ -35,8 +35,7 @@ namespace Veil.Expressions
                 new object[] { new { Items = new Dictionary<string, string>() } },
                 new object[] { new { Items = new [] { "" } } },
                 new object[] { new { Items = new object[0] } },
-                new object[] { new { Items = (ICollection<object>)new object[0] } },
-                new object[] { new { Items = new object() } }
+                new object[] { new { Items = (ICollection<object>)new object[0] } }
             };
         }
 
@@ -46,7 +45,8 @@ namespace Veil.Expressions
                 new object[] { new { Items = "" } },
                 new object[] { new { Items = 1 } },
                 new object[] { new { Items = false } },
-                new object[] { new { Items = DateTime.Now } }
+                new object[] { new { Items = DateTime.Now } },
+                new object[] { new { Items = new object() } }
             };
         }
     }
