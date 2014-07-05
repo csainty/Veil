@@ -64,7 +64,7 @@ namespace Veil.Parser
         {
             return new FunctionCallExpressionNode
             {
-                MethodInfo = modelType.GetMethod(functionName),
+                MethodInfo = modelType.GetMethod(functionName, new Type[0]),
                 Scope = scope
             };
         }

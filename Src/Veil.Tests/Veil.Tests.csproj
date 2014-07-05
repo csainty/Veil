@@ -76,6 +76,7 @@
     <Compile Include="Compiler\WriteExpressionTests.cs" />
     <Compile Include="Expressions\CollectionHasItemsNodeTests.cs" />
     <Compile Include="Expressions\ConditionalNodeTests.cs" />
+    <Compile Include="Expressions\FunctionCallExpressionNodeTests.cs" />
     <Compile Include="Expressions\IterateNodeTests.cs" />
     <Compile Include="Handlebars\CommentTests.cs" />
     <Compile Include="Handlebars\ConditionalTests.cs" />
