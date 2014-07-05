@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
@@ -86,6 +87,14 @@ namespace Veil
             return o != null;
         }
 
+        public static bool RuntimeHasItems(object collection)
+        {
+            var castCollection = collection as ICollection;
+            if (castCollection != null) return castCollection.Count > 0;
+
+            throw new VeilCompilerException("Unable to late-bind HasItems check on " + collection.ToString());
+        }
+
         private static ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> lateBoundCache = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
 
         public static object RuntimeBind(object model, string itemName)
@@ -93,6 +102,12 @@ namespace Veil
             var binder = lateBoundCache.GetOrAdd(Tuple.Create(model.GetType(), itemName), new Func<Tuple<Type, string>, Func<object, object>>(pair =>
             {
                 var type = pair.Item1;
+
+                if (pair.Item2.EndsWith("()"))
+                {
+                    var function = type.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), new Type[0]);
+                    if (function != null) return CreateFunctionAccess(type, function);
+                }
 
                 var property = type.GetProperty(pair.Item2);
                 if (property != null) return CreatePropertyAccess(type, property);
@@ -107,7 +122,32 @@ namespace Veil
             }));
 
             if (binder == null) return null;
-            return binder(model);
+            var result = binder(model);
+            return result;
+        }
+
+        private static Func<object, object> CreateFunctionAccess(Type modelType, MethodInfo function)
+        {
+            var method = new DynamicMethod("LateBoundFunctionAccess_{0}_{1}".FormatInvariant(modelType.Name, function.Name), typeof(object), new[] { typeof(object) }, true);
+            var il = method.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Castclass, modelType);
+
+            if (function.IsVirtual)
+            {
+                il.Emit(OpCodes.Callvirt, function);
+            }
+            else
+            {
+                il.Emit(OpCodes.Call, function);
+            }
+            if (function.ReturnType.IsValueType)
+            {
+                il.Emit(OpCodes.Box, function.ReturnType);
+            }
+            il.Emit(OpCodes.Ret);
+
+            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
         }
 
         private static Func<object, object> CreatePropertyAccess(Type modelType, PropertyInfo property)
@@ -120,9 +160,18 @@ namespace Veil
             il.Emit(OpCodes.Castclass, modelType);
 
             if (getter.IsVirtual)
+            {
                 il.Emit(OpCodes.Callvirt, getter);
+            }
             else
+            {
                 il.Emit(OpCodes.Call, getter);
+            }
+
+            if (property.PropertyType.IsValueType)
+            {
+                il.Emit(OpCodes.Box, property.PropertyType);
+            }
             il.Emit(OpCodes.Ret);
 
             return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
@@ -135,6 +184,7 @@ namespace Veil
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Castclass, modelType);
             il.Emit(OpCodes.Ldfld, field);
+            if (field.FieldType.IsValueType) il.Emit(OpCodes.Box, field.FieldType);
             il.Emit(OpCodes.Ret);
 
             return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));

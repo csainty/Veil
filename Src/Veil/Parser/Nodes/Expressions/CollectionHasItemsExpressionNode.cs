@@ -31,6 +31,7 @@ namespace Veil.Parser.Nodes
         private void Validate()
         {
             if (this.collectionExpression == null) throw new ArgumentNullException("CollectionExpression");
+            if (this.collectionExpression.ResultType == typeof(object)) return; // Late bound
             if (!this.collectionExpression.ResultType.HasCollectionInterface()) throw new VeilParserException("Expression assigned to CollectionHasItemsNode.CollectionExpression is not an ICollection");
         }
 
