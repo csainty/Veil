@@ -62,7 +62,7 @@ namespace Veil.Handlebars
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(T)), "Name");
-            result.ShouldDeepEqual(Expression.LateBound("Name", ExpressionScope.CurrentModelOnStack));
+            result.ShouldDeepEqual(Expression.LateBound("Name", false, ExpressionScope.CurrentModelOnStack));
         }
 
         [Test]
@@ -77,14 +77,19 @@ namespace Veil.Handlebars
             result.ShouldDeepEqual(Expression.Property(parent.GetType(), "Name", ExpressionScope.ModelOfParentScope));
         }
 
+        [TestCaseSource("CaseInsensitiveTests")]
+        public void Should_match_case_insensitivity_correctly(string expression, ExpressionNode expectedResult)
+        {
+            var scopes = CreateScopes(typeof(CaseTestModel));
+            var result = HandlebarsExpressionParser.Parse(scopes, expression);
+            result.ShouldDeepEqual(expectedResult);
+        }
+
         [TestCase("Foo")]
         [TestCase("Foo.Bar")]
         [TestCase("SubModel.Foo")]
-        [TestCase("property")]
-        [TestCase("field")]
         [TestCase("Property[]")]
-        [TestCase("function()")]
-        [TestCase("Property.toString()")]
+        [TestCase("Property.foo()")]
         public void Should_throw_if_expression_cant_be_parsed(string expression)
         {
             Assert.Throws<VeilParserException>(() =>
@@ -99,6 +104,20 @@ namespace Veil.Handlebars
                 new object[] { new object() },
                 new object[] { new Dictionary<string, object>() },
                 new object[] { new ExpandoObject() }
+            };
+        }
+
+        public object[] CaseInsensitiveTests()
+        {
+            return new object[] {
+                new object[] { "UserName", Expression.Property(typeof(CaseTestModel), "UserName") },
+                new object[] { "userName", Expression.Field(typeof(CaseTestModel), "userName") },
+                new object[] { "username", Expression.Property(typeof(CaseTestModel), "UserName") },
+                new object[] { "USERNAME", Expression.Property(typeof(CaseTestModel), "UserName") },
+                new object[] { "FOO", Expression.Field(typeof(CaseTestModel), "foo") },
+                new object[] { "function()", Expression.Function(typeof(CaseTestModel), "Function") },
+                new object[] { "submodel.subproperty", Expression.SubModel(Expression.Property(typeof(CaseTestModel), "SubModel"), Expression.Property(typeof(SubModel), "SubProperty")) },
+                new object[] { "submodel.subsubmodel.subsubfield", Expression.SubModel(Expression.Property(typeof(CaseTestModel), "SubModel"),Expression.SubModel(Expression.Field(typeof(SubModel), "SubSubModel"), Expression.Field(typeof(SubSubModel), "SubSubField")))}
             };
         }
 
@@ -126,6 +145,22 @@ namespace Veil.Handlebars
         private class SubSubModel
         {
             public string SubSubField = "";
+        }
+
+        private class CaseTestModel
+        {
+            public string foo = "";
+
+            public string userName = "";
+
+            public string UserName { get { return userName; } }
+
+            public string Function()
+            {
+                return "";
+            }
+
+            public SubModel SubModel { get; set; }
         }
 
         private static HandlebarsBlockStack CreateScopes(params Type[] modelTypes)

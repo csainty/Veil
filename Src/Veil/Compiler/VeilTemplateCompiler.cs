@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Veil.Parser;
 using Veil.Parser.Nodes;
@@ -74,72 +72,6 @@ namespace Veil.Compiler
             scopeStack.First.Value.Invoke(emitter);
         }
 
-        private void EvaluateExpression(ExpressionNode expression)
-        {
-            switch (expression.Scope)
-            {
-                case ExpressionScope.CurrentModelOnStack:
-                    scopeStack.First.Value.Invoke(emitter);
-                    break;
-
-                case ExpressionScope.RootModel:
-                    scopeStack.Last.Value.Invoke(emitter);
-                    break;
-
-                case ExpressionScope.ModelOfParentScope:
-                    scopeStack.First.Next.Value.Invoke(emitter);
-                    break;
-
-                default:
-                    throw new VeilCompilerException("Unknown expression scope '{0}'".FormatInvariant(expression.Scope));
-            }
-            EvaluateExpressionAgainstModelOnStack(expression);
-        }
-
-        private void EvaluateExpressionAgainstModelOnStack(ExpressionNode expression)
-        {
-            if (expression is PropertyExpressionNode)
-            {
-                emitter.CallMethod(((PropertyExpressionNode)expression).PropertyInfo.GetGetMethod());
-            }
-            else if (expression is FieldExpressionNode)
-            {
-                emitter.LoadField(((FieldExpressionNode)expression).FieldInfo);
-            }
-            else if (expression is SubModelExpressionNode)
-            {
-                EvaluateExpressionAgainstModelOnStack(((SubModelExpressionNode)expression).ModelExpression);
-                EvaluateExpressionAgainstModelOnStack(((SubModelExpressionNode)expression).SubModelExpression);
-            }
-            else if (expression is FunctionCallExpressionNode)
-            {
-                emitter.CallMethod(((FunctionCallExpressionNode)expression).MethodInfo);
-            }
-            else if (expression is CollectionHasItemsExpressionNode)
-            {
-                var hasItems = (CollectionHasItemsExpressionNode)expression;
-                var count = hasItems.CollectionExpression.ResultType.GetCollectionInterface().GetProperty("Count");
-                EvaluateExpressionAgainstModelOnStack(hasItems.CollectionExpression);
-                emitter.CallMethod(count.GetGetMethod());
-                emitter.LoadConstant(0);
-                emitter.CompareEqual();
-                emitter.LoadConstant(0);
-                emitter.CompareEqual();
-            }
-            else if (expression is LateBoundExpressionNode)
-            {
-                emitter.LoadConstant(((LateBoundExpressionNode)expression).ItemName);
-                emitter.CallMethod(runtimeBindMethod);
-            }
-            else if (expression is SelfExpressionNode)
-            {
-            }
-            else
-            {
-                throw new VeilCompilerException("Unknown expression type '{0}'".FormatInvariant(expression.GetType().Name));
-            }
-        }
-
         private void LoadWriterToStack()
         {
             emitter.LoadArgument(0);
@@ -151,8 +83,6 @@ namespace Veil.Compiler
             emitter.CallMethod(writers[typeOfItemOnStack]);
         }
 
-        private static readonly MethodInfo runtimeBindMethod = typeof(Helpers).GetMethod("RuntimeBind");
-
         private static readonly IDictionary<Type, MethodInfo> writers = new Dictionary<Type, MethodInfo>
         {
             { typeof(string), typeof(TextWriter).GetMethod("Write", new[] { typeof(string) }) },
@@ -162,6 +92,7 @@ namespace Veil.Compiler
             { typeof(long), typeof(TextWriter).GetMethod("Write", new[] { typeof(long) }) },
             { typeof(uint), typeof(TextWriter).GetMethod("Write", new[] { typeof(uint) }) },
             { typeof(ulong), typeof(TextWriter).GetMethod("Write", new[] { typeof(ulong) }) },
+            { typeof(object), typeof(TextWriter).GetMethod("Write", new[] { typeof(object) }) },
         };
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Veil.Parser;
 
 namespace Veil.Handlebars
@@ -37,19 +38,32 @@ namespace Veil.Handlebars
 
             if (expression.EndsWith("()"))
             {
-                var methodInfo = modelType.GetMethod(expression.Substring(0, expression.Length - 2));
-                if (methodInfo != null) return Expression.Function(modelType, expression.Substring(0, expression.Length - 2), expressionScope);
+                var func = FindMember(modelType, expression.Substring(0, expression.Length - 2), MemberTypes.Method);
+                if (func != null) return Expression.Function(modelType, func.Name, expressionScope);
             }
 
-            var propertyInfo = modelType.GetProperty(expression);
-            if (propertyInfo != null) return Expression.Property(modelType, expression, expressionScope);
+            var prop = FindMember(modelType, expression, MemberTypes.Property | MemberTypes.Field);
+            if (prop != null)
+            {
+                switch (prop.MemberType)
+                {
+                    case MemberTypes.Property: return Expression.Property(modelType, prop.Name, expressionScope);
+                    case MemberTypes.Field: return Expression.Field(modelType, prop.Name, expressionScope);
+                }
+            }
 
-            var fieldInfo = modelType.GetField(expression);
-            if (fieldInfo != null) return Expression.Field(modelType, expression, expressionScope);
-
-            if (IsLateBoundAcceptingType(modelType)) return Expression.LateBound(expression);
+            if (IsLateBoundAcceptingType(modelType)) return Expression.LateBound(expression, false, expressionScope);
 
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt model '{1}'", expression, modelType.Name));
+        }
+
+        private static MemberInfo FindMember(Type t, string name, MemberTypes types)
+        {
+            return t
+                .FindMembers(types, BindingFlags.Instance | BindingFlags.Public, Type.FilterNameIgnoreCase, name)
+                .OrderByDescending(x => x.Name == name)
+                .ThenByDescending(x => x.MemberType == MemberTypes.Property)
+                .FirstOrDefault();
         }
 
         private static bool IsLateBoundAcceptingType(Type type)

@@ -19,5 +19,10 @@ namespace Veil.Parser.Nodes
         {
             get { return typeof(object); }
         }
+
+        /// <summary>
+        /// Indiicates whether the expression should be evaluated with case sensitivity
+        /// </summary>
+        public bool IsCaseSensitive { get; set; }
     }
 }

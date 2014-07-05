@@ -101,8 +101,9 @@ namespace Veil.Parser
         /// Evaluate a property at runtime against an unknown model type
         /// </summary>
         /// <param name="itemName">The name of the proeprty that will be searched for</param>
+        /// <param name="isCaseSenstiive">Indcates whether the expression should be evaluated with case sensitivity</param>
         /// <param name="scope">The scope this expression evaluated in</param>
-        public static LateBoundExpressionNode LateBound(string itemName, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
+        public static LateBoundExpressionNode LateBound(string itemName, bool isCaseSenstiive = true, ExpressionScope scope = ExpressionScope.CurrentModelOnStack)
         {
             return new LateBoundExpressionNode
             {

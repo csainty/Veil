@@ -100,7 +100,15 @@ namespace Veil.SuperSimple
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(T)), "Model.Name");
-            result.ShouldDeepEqual(Expression.LateBound("Name", ExpressionScope.RootModel));
+            result.ShouldDeepEqual(Expression.LateBound("Name", true, ExpressionScope.RootModel));
+        }
+
+        [Test]
+        public void Should_preference_late_binding_over_Has_prefix()
+        {
+            var model = new { HasItems = true, Items = new string[0] };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(object)), "Model.HasItems");
+            result.ShouldDeepEqual(Expression.LateBound("HasItems", true, ExpressionScope.RootModel));
         }
 
         [TestCase("Model.Wrong")]

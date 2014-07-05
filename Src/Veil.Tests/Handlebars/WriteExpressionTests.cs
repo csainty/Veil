@@ -30,7 +30,7 @@ namespace Veil.Handlebars
             var model = new { Name = "" };
             Assert.Throws<VeilParserException>(() =>
             {
-                Parse("Hello {{ name }} !", model.GetType());
+                Parse("Hello {{ foo }} !", model.GetType());
             });
         }
 
