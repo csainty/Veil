@@ -50,7 +50,7 @@
     <Compile Include="Compiler\VeilTemplateCompiler.EmitOverride.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitInclude.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.EmitScopedNode.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EvaluateExprtession.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.EvaluateExpression.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Parser\ITemplateParserRegistration.cs" />
     <Compile Include="IVeilContext.cs" />
