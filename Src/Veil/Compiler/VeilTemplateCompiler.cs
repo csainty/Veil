@@ -136,7 +136,9 @@ namespace Veil.Compiler
             }
             else if (expression is LateBoundExpressionNode)
             {
-                emitter.LoadConstant(((LateBoundExpressionNode)expression).ItemName);
+                var node = (LateBoundExpressionNode)expression;
+                emitter.LoadConstant(node.ItemName);
+                emitter.LoadConstant(node.IsCaseSensitive);
                 emitter.CallMethod(runtimeBindMethod);
             }
             else if (expression is SelfExpressionNode)

@@ -113,6 +113,7 @@ namespace Veil
         {
             return new object[] {
                 new object[] {"Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!"},
+                new object[] {"Hello {{ name }}. You have visited us {{ viewCount }} times!", "Hello Chris. You have visited us 10 times!"},
                 new object[] {"{{#if Name}}Hello {{Name}}{{/if}}", "Hello Chris"},
                 new object[] {"{{#if HasViewCount}}Count: {{ViewCount}}{{/if}}", "Count: 10"},
                 new object[] {"{{#if IsAdmin}}Yo Admin!{{/if}}", ""},

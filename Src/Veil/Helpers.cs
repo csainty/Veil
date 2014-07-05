@@ -97,7 +97,7 @@ namespace Veil
 
         private static ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> lateBoundCache = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
 
-        public static object RuntimeBind(object model, string itemName)
+        public static object RuntimeBind(object model, string itemName, bool isCaseSensitive)
         {
             var binder = lateBoundCache.GetOrAdd(Tuple.Create(model.GetType(), itemName), new Func<Tuple<Type, string>, Func<object, object>>(pair =>
             {
@@ -105,14 +105,14 @@ namespace Veil
 
                 if (pair.Item2.EndsWith("()"))
                 {
-                    var function = type.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), new Type[0]);
+                    var function = type.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), GetBindingFlags(isCaseSensitive), null, new Type[0], new ParameterModifier[0]);
                     if (function != null) return CreateFunctionAccess(type, function);
                 }
 
-                var property = type.GetProperty(pair.Item2);
+                var property = type.GetProperty(pair.Item2, GetBindingFlags(isCaseSensitive));
                 if (property != null) return CreatePropertyAccess(type, property);
 
-                var field = type.GetField(pair.Item2);
+                var field = type.GetField(pair.Item2, GetBindingFlags(isCaseSensitive));
                 if (field != null) return CreateFieldAccess(type, field);
 
                 var dictionaryType = type.GetDictionaryTypeWithKey<string>();
@@ -121,9 +121,19 @@ namespace Veil
                 return null;
             }));
 
-            if (binder == null) return null;
+            if (binder == null) throw new VeilCompilerException("Unable to late-bind '{0}' against model {1}".FormatInvariant(itemName, model.GetType().Name));
             var result = binder(model);
             return result;
+        }
+
+        private static BindingFlags GetBindingFlags(bool isCaseSensitive)
+        {
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            if (!isCaseSensitive)
+            {
+                flags = flags | BindingFlags.IgnoreCase;
+            }
+            return flags;
         }
 
         private static Func<object, object> CreateFunctionAccess(Type modelType, MethodInfo function)

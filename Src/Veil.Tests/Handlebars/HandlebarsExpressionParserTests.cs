@@ -62,7 +62,7 @@ namespace Veil.Handlebars
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(T)), "Name");
-            result.ShouldDeepEqual(Expression.LateBound("Name", ExpressionScope.CurrentModelOnStack));
+            result.ShouldDeepEqual(Expression.LateBound("Name", false, ExpressionScope.CurrentModelOnStack));
         }
 
         [Test]

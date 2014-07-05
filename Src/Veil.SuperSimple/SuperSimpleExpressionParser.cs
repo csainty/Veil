@@ -55,7 +55,7 @@ namespace Veil.SuperSimple
             var fieldInfo = scope.ModelType.GetField(expression);
             if (fieldInfo != null) return Expression.Field(scope.ModelType, expression, expressionScope);
 
-            if (IsLateBoundAcceptingType(scope.ModelType)) return Expression.LateBound(expression, expressionScope);
+            if (IsLateBoundAcceptingType(scope.ModelType)) return Expression.LateBound(expression, true, expressionScope);
 
             if (expression.StartsWith("Has"))
             {

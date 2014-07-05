@@ -54,6 +54,11 @@ namespace Veil.Compiler
             this.generator.Emit(OpCodes.Ldstr, value);
         }
 
+        public void LoadConstant(bool value)
+        {
+            LoadConstant(value ? 1 : 0);
+        }
+
         public void LoadConstant(int value)
         {
             switch (value)
