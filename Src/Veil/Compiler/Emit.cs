@@ -227,6 +227,11 @@ namespace Veil.Compiler
             this.generator.Emit(OpCodes.Clt);
         }
 
+        internal void Box(Type valueType)
+        {
+            generator.Emit(OpCodes.Box, valueType);
+        }
+
 #if DEBUG
 
         internal void Debug(Local local)

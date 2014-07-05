@@ -17,22 +17,5 @@ namespace Veil.Compiler
                 emitter.Call(info);
             }
         }
-
-        public static void CallMethod<T>(this Emit<Action<TextWriter, T>> emitter, MethodInfo info, Type typeBeingCalledOn)
-        {
-            if (info.IsVirtual && typeBeingCalledOn.IsValueType)
-            {
-                using (var holder = emitter.DeclareLocal(typeBeingCalledOn))
-                {
-                    emitter.StoreLocal(holder);
-                    emitter.LoadLocalAddress(holder);
-                    emitter.CallVirtual(info, typeBeingCalledOn);
-                }
-            }
-            else
-            {
-                CallMethod(emitter, info);
-            }
-        }
     }
 }
