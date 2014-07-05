@@ -103,6 +103,14 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(Expression.LateBound("Name", ExpressionScope.RootModel));
         }
 
+        [Test]
+        public void Should_preference_late_binding_over_Has_prefix()
+        {
+            var model = new { HasItems = true, Items = new string[0] };
+            var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(object)), "Model.HasItems");
+            result.ShouldDeepEqual(Expression.LateBound("HasItems", ExpressionScope.RootModel));
+        }
+
         [TestCase("Model.Wrong")]
         [TestCase("Model.name")]
         public void Should_throw_for_invalid_expressions(string expression)

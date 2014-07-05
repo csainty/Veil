@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using Veil.Handlebars;
-using Veil.SuperSimple;
 
 namespace Veil
 {
@@ -55,6 +53,15 @@ namespace Veil
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [TestCaseSource("HandlebarsTemplates")]
+        public void Should_render_handlebars_template_latebound(string template, string expectedResult)
+        {
+            RegisterHandlebarsTemplates();
+            var view = CompileLateBound(template, "handlebars");
+            var result = Execute(view, viewModel);
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         [TestCaseSource("SuperSimpleTemplates")]
         public void Should_render_supersimple_template(string template, string expectedResult)
         {
@@ -69,6 +76,15 @@ namespace Veil
         {
             RegisterSuperSimpleTemplates();
             var view = CompileNonGeneric(template, "supersimple");
+            var result = Execute(view, viewModel);
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [TestCaseSource("SuperSimpleTemplates")]
+        public void Should_render_supersimple_template_latebound(string template, string expectedResult)
+        {
+            RegisterSuperSimpleTemplates();
+            var view = CompileLateBound(template, "supersimple");
             var result = Execute(view, viewModel);
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -160,6 +176,14 @@ namespace Veil
             using (var reader = new StringReader(template))
             {
                 return engine.CompileNonGeneric(parserKey, reader, typeof(ViewModel));
+            }
+        }
+
+        private Action<TextWriter, object> CompileLateBound(string template, string parserKey)
+        {
+            using (var reader = new StringReader(template))
+            {
+                return engine.Compile<object>(parserKey, reader);
             }
         }
 
