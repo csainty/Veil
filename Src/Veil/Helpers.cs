@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Veil
 {
@@ -94,21 +92,22 @@ namespace Veil
             var binder = lateBoundCache.GetOrAdd(Tuple.Create(model.GetType(), itemName), new Func<Tuple<Type, string>, Func<object, object>>(pair =>
             {
                 var type = pair.Item1;
+                var flags = GetBindingFlags(isCaseSensitive);
 
                 if (pair.Item2.EndsWith("()"))
                 {
-                    var function = type.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), GetBindingFlags(isCaseSensitive), null, new Type[0], new ParameterModifier[0]);
-                    if (function != null) return CreateFunctionAccess(type, function);
+                    var function = type.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), flags, null, new Type[0], new ParameterModifier[0]);
+                    if (function != null) return DelegateBuilder.FunctionCall(type, function);
                 }
 
-                var property = type.GetProperty(pair.Item2, GetBindingFlags(isCaseSensitive));
-                if (property != null) return CreatePropertyAccess(type, property);
+                var property = type.GetProperty(pair.Item2, flags);
+                if (property != null) return DelegateBuilder.Property(type, property);
 
-                var field = type.GetField(pair.Item2, GetBindingFlags(isCaseSensitive));
-                if (field != null) return CreateFieldAccess(type, field);
+                var field = type.GetField(pair.Item2, flags);
+                if (field != null) return DelegateBuilder.Field(type, field);
 
                 var dictionaryType = type.GetDictionaryTypeWithKey<string>();
-                if (dictionaryType != null) return CreateDictionaryAccess(dictionaryType, pair.Item2);
+                if (dictionaryType != null) return DelegateBuilder.Dictionary(dictionaryType, pair.Item2);
 
                 return null;
             }));
@@ -126,87 +125,6 @@ namespace Veil
                 flags = flags | BindingFlags.IgnoreCase;
             }
             return flags;
-        }
-
-        private static Func<object, object> CreateFunctionAccess(Type modelType, MethodInfo function)
-        {
-            var method = new DynamicMethod("LateBoundFunctionAccess_{0}_{1}".FormatInvariant(modelType.Name, function.Name), typeof(object), new[] { typeof(object) }, true);
-            var il = method.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Castclass, modelType);
-
-            if (function.IsVirtual)
-            {
-                il.Emit(OpCodes.Callvirt, function);
-            }
-            else
-            {
-                il.Emit(OpCodes.Call, function);
-            }
-            if (function.ReturnType.IsValueType)
-            {
-                il.Emit(OpCodes.Box, function.ReturnType);
-            }
-            il.Emit(OpCodes.Ret);
-
-            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
-        }
-
-        private static Func<object, object> CreatePropertyAccess(Type modelType, PropertyInfo property)
-        {
-            var getter = property.GetGetMethod();
-
-            var method = new DynamicMethod("LateBoundPropertyAccess_{0}_{1}".FormatInvariant(modelType.Name, property.Name), typeof(object), new[] { typeof(object) }, true);
-            var il = method.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Castclass, modelType);
-
-            if (getter.IsVirtual)
-            {
-                il.Emit(OpCodes.Callvirt, getter);
-            }
-            else
-            {
-                il.Emit(OpCodes.Call, getter);
-            }
-
-            if (property.PropertyType.IsValueType)
-            {
-                il.Emit(OpCodes.Box, property.PropertyType);
-            }
-            il.Emit(OpCodes.Ret);
-
-            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
-        }
-
-        private static Func<object, object> CreateFieldAccess(Type modelType, FieldInfo field)
-        {
-            var method = new DynamicMethod("LateBoundFieldAccess_{0}_{1}".FormatInvariant(modelType.Name, field.Name), typeof(object), new[] { typeof(object) }, true);
-            var il = method.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Castclass, modelType);
-            il.Emit(OpCodes.Ldfld, field);
-            if (field.FieldType.IsValueType) il.Emit(OpCodes.Box, field.FieldType);
-            il.Emit(OpCodes.Ret);
-
-            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
-        }
-
-        private static Func<object, object> CreateDictionaryAccess(Type modelType, string key)
-        {
-            var getItem = modelType.GetMethod("get_Item");
-            var method = new DynamicMethod("LateBoundDictionaryAccess_{0}_{1}".FormatInvariant(modelType.Name, key), typeof(object), new[] { typeof(object) }, true);
-            var il = method.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Castclass, modelType);
-            il.Emit(OpCodes.Ldstr, key);
-            if (getItem.IsVirtual)
-                il.Emit(OpCodes.Callvirt, getItem);
-            else
-                il.Emit(OpCodes.Call, getItem);
-            il.Emit(OpCodes.Ret);
-
-            return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
         }
     }
 }
