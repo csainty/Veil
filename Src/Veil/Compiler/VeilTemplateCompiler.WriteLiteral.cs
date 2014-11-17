@@ -5,7 +5,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression WriteLiteral(WriteLiteralNode node)
+        private Expression HandleWriteLiteral(WriteLiteralNode node)
         {
             return Expression.Call(this.writer, writeMethod, Expression.Constant(node.LiteralContent, typeof(string)));
         }

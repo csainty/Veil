@@ -9,24 +9,23 @@ namespace Veil.Compiler
     internal partial class VeilTemplateCompiler<T>
     {
         private static readonly MethodInfo writeMethod = typeof(TextWriter).GetMethod("Write", new[] { typeof(string) });
+        private static readonly MethodInfo encodeMethod = typeof(Helpers).GetMethod("HtmlEncode");
 
-        private Expression WriteExpression(WriteExpressionNode node)
+        private Expression HandleWriteExpression(WriteExpressionNode node)
         {
             var expression = ParseExpression(node.Expression);
 
-            var ex = expression;
             if (expression.Type != typeof(string))
             {
                 var toStringMethod = expression.Type.GetMethod("ToString", new Type[0]);
-                ex = Expression.Call(expression, toStringMethod);
+                expression = Expression.Call(expression, toStringMethod);
             }
             if (node.HtmlEncode)
             {
-                var encodeMethod = typeof(Helpers).GetMethod("HtmlEncode");
-                return Expression.Call(encodeMethod, writer, ex);
+                return Expression.Call(encodeMethod, this.writer, expression);
             }
 
-            return Expression.Call(writer, writeMethod, ex);
+            return Expression.Call(this.writer, writeMethod, expression);
         }
     }
 }

@@ -24,11 +24,11 @@ namespace Veil.Compiler
         {
             while (templateSyntaxTree is ExtendTemplateNode)
             {
-                templateSyntaxTree = Extend((ExtendTemplateNode)templateSyntaxTree);
+                templateSyntaxTree = this.Extend((ExtendTemplateNode)templateSyntaxTree);
             }
 
-            this.PushScope(model);
-            return Expression.Lambda<Action<TextWriter, T>>(Node(templateSyntaxTree), writer, model).Compile();
+            this.PushScope(this.model);
+            return Expression.Lambda<Action<TextWriter, T>>(this.HandleNode(templateSyntaxTree), this.writer, this.model).Compile();
         }
 
         private void PushScope(Expression scope)
@@ -45,9 +45,9 @@ namespace Veil.Compiler
         {
             foreach (var o in extendNode.Overrides)
             {
-                if (overrideSections.ContainsKey(o.Key)) continue;
+                if (this.overrideSections.ContainsKey(o.Key)) continue;
 
-                overrideSections.Add(o.Key, o.Value);
+                this.overrideSections.Add(o.Key, o.Value);
             }
             return includeParser(extendNode.TemplateName, typeof(T));
         }

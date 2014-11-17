@@ -7,22 +7,22 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Include(IncludeTemplateNode node)
+        private Expression HandleInclude(IncludeTemplateNode node)
         {
-            var model = ParseExpression(node.ModelExpression);
-            var template = this.includeParser(node.TemplateName, model.Type);
+            var includeModel = ParseExpression(node.ModelExpression);
+            var template = this.includeParser(node.TemplateName, includeModel.Type);
             if (template == null) throw new VeilCompilerException("Unable to load template '{0}'".FormatInvariant(node.TemplateName));
 
-            var storedModel = Expression.Variable(model.Type);
+            var storedModel = Expression.Variable(includeModel.Type);
             using (CreateLocalModelStack())
             {
                 PushScope(storedModel);
-                var body = Node(template);
+                var body = HandleNode(template);
                 PopScope();
 
                 return Expression.Block(
                     new[] { storedModel },
-                    Expression.Assign(storedModel, model),
+                    Expression.Assign(storedModel, includeModel),
                     body
                 );
             }

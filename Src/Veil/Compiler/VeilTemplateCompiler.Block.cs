@@ -6,16 +6,16 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Block(BlockNode block)
+        private Expression HandleBlock(BlockNode block)
         {
             if (!block.Nodes.Any())
             {
                 return Expression.Empty();
             }
 
-            var nodes = from node in block.Nodes
-                        select Node(node);
-            return Expression.Block(nodes);
+            var blockNodes = from node in block.Nodes
+                             select this.HandleNode(node);
+            return Expression.Block(blockNodes);
         }
     }
 }

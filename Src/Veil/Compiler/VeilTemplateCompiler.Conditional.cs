@@ -7,7 +7,7 @@ namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Conditional(ConditionalNode node)
+        private Expression HandleConditional(ConditionalNode node)
         {
             var hasTrueBlock = node.TrueBlock != null && node.TrueBlock.Nodes.Any();
             var hasFalseBlock = node.FalseBlock != null && node.FalseBlock.Nodes.Any();
@@ -17,18 +17,18 @@ namespace Veil.Compiler
                 throw new VeilCompilerException("Conditionals must have a True or False block");
             }
 
-            var value = ParseExpression(node.Expression);
-            var check = BoolifyExpression(value);
+            var valueToCheck = ParseExpression(node.Expression);
+            var booleanCheck = BoolifyExpression(valueToCheck);
 
             if (!hasFalseBlock)
             {
-                return Expression.IfThen(check, Node(node.TrueBlock));
+                return Expression.IfThen(booleanCheck, HandleNode(node.TrueBlock));
             }
             else if (!hasTrueBlock)
             {
-                return Expression.IfThen(Expression.IsFalse(check), Node(node.FalseBlock));
+                return Expression.IfThen(Expression.IsFalse(booleanCheck), HandleNode(node.FalseBlock));
             }
-            return Expression.IfThenElse(check, Node(node.TrueBlock), Node(node.FalseBlock));
+            return Expression.IfThenElse(booleanCheck, HandleNode(node.TrueBlock), HandleNode(node.FalseBlock));
         }
 
         private static readonly MethodInfo boolify = typeof(Helpers).GetMethod("Boolify");

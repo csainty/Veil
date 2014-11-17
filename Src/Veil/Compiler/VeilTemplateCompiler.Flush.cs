@@ -8,9 +8,9 @@ namespace Veil.Compiler
     {
         private static readonly MethodInfo flushMethod = typeof(TextWriter).GetMethod("Flush");
 
-        private Expression Flush()
+        private Expression HandleFlush()
         {
-            return Expression.Call(writer, flushMethod);
+            return Expression.Call(this.writer, flushMethod);
         }
     }
 }
