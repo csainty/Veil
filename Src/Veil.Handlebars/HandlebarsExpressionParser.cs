@@ -68,7 +68,10 @@ namespace Veil.Handlebars
 
         private static bool IsLateBoundAcceptingType(Type type)
         {
-            return type == typeof(object) || (type.IsDictionary() || type.GetInterfaces().Any(IsDictionary));
+            return type == typeof(object) 
+                || type.IsDictionary()
+                || type.GetInterfaces().Any(IsDictionary)
+                || type.GetProperties().Any(p => p.GetIndexParameters().Any());
         }
 
         private static bool IsDictionary(this Type t)

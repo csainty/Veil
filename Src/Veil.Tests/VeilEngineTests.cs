@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using NUnit.Framework;
 
@@ -25,7 +26,11 @@ namespace Veil
                 }
             },
             Roles = new[] { "User", "Browser" },
-            Reports = new string[0]
+            Reports = new string[0],
+            Properties = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
+            {
+                { "EnableFoo", "True" }
+            })
         };
 
         [SetUp]
@@ -127,7 +132,8 @@ namespace Veil
                 new object[] {"{{#with Department}}Department: {{ GetDepartmentNumber() }}{{/with}}", "Department: 10"},
                 new object[] {"{{#each Reports}}{{this}}{{else}}No Reports{{/each}}", "No Reports"},
                 new object[] {"{{< master}}Testing 1.2.3", "Hello Chris Testing 1.2.3 See Ya!"},
-                new object[] {"{{#with Department}}{{../Name}}: {{DepartmentName}}{{/with}}", "Chris: Developers"}
+                new object[] {"{{#with Department}}{{../Name}}: {{DepartmentName}}{{/with}}", "Chris: Developers"},
+                new object[] {"{{ Properties.EnableFoo }}", "True"}
             };
         }
 
@@ -145,7 +151,8 @@ namespace Veil
                 new object[] {"Hey @Model.Name, You are in roles @Partial['Roles', Model.Roles];", "Hey Chris, You are in roles <ul><li>User</li><li>Browser</li></ul>"},
                 new object[] {"Hey @Model.Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"},
                 new object[] {"@Master['Master']; @Section['Middle'];Testing 1.2.3@EndSection;", "Hello Chris Testing 1.2.3 See Ya!"},
-                new object[] {"@Master['MiddleMaster']; @Section['Content'];Testing 1.2.3@EndSection;", "Hello Chris from Developers Testing 1.2.3 See Ya!"}
+                new object[] {"@Master['MiddleMaster']; @Section['Content'];Testing 1.2.3@EndSection;", "Hello Chris from Developers Testing 1.2.3 See Ya!"},
+                new object[] {"@Model.Properties.EnableFoo", "True"}
             };
         }
 
@@ -212,6 +219,8 @@ namespace Veil
             public IEnumerable<string> Roles { get; set; }
 
             public IEnumerable<string> Reports { get; set; }
+
+            public IReadOnlyDictionary<string, string> Properties { get; set; }
         }
 
         private class Department
