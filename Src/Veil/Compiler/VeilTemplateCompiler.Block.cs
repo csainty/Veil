@@ -13,8 +13,13 @@ namespace Veil.Compiler
                 return Expression.Empty();
             }
 
-            var blockNodes = from node in block.Nodes
-                             select this.HandleNode(node);
+            var blockNodes = (from node in block.Nodes
+                              select this.HandleNode(node)).ToArray();
+            if (blockNodes.Length == 1)
+            {
+                return blockNodes[0];
+            }
+
             return Expression.Block(blockNodes);
         }
     }

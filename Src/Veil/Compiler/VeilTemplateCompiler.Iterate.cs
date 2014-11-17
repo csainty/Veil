@@ -13,6 +13,11 @@ namespace Veil.Compiler
 
         private Expression HandleIterate(IterateNode node)
         {
+            if (node.Collection.ResultType.IsArray)
+            {
+                return HandleIterateArray(node);
+            }
+
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(node.ItemType);
             var getEnumeratorMethod = enumerableType.GetMethod("GetEnumerator");
             var getCurrentMethod = getEnumeratorMethod.ReturnType.GetProperty("Current").GetGetMethod();
@@ -33,7 +38,7 @@ namespace Veil.Compiler
             var loopBody = HandleNode(node.Body);
             this.PopScope();
 
-            var result = Expression.Block(
+            return Expression.Block(
                 new[] { enumerator, hasElements },
                 Expression.Assign(hasElements, Expression.Constant(false)),
                 Expression.Assign(enumerator, Expression.Call(collection, getEnumeratorMethod)),
@@ -53,7 +58,41 @@ namespace Veil.Compiler
                 DisposeIfNeeded(enumerator),
                 Expression.IfThen(Expression.IsFalse(hasElements), HandleNode(node.EmptyBody))
             );
-            return result;
+        }
+
+        private Expression HandleIterateArray(IterateNode node)
+        {
+            var index = Expression.Variable(typeof(int));
+            var length = Expression.Variable(typeof(int));
+            var currentElement = Expression.Variable(node.ItemType, "current");
+            var exitLabel = Expression.Label();
+
+            PushScope(currentElement);
+            var body = HandleNode(node.Body);
+            PopScope();
+
+            var array = ParseExpression(node.Collection);
+            var storedArray = Expression.Variable(array.Type);
+
+            return Expression.Block(
+                new[] { length, storedArray },
+                Expression.Assign(storedArray, array),
+                Expression.Assign(length, Expression.ArrayLength(storedArray)),
+                Expression.IfThenElse(Expression.Equal(length, Expression.Constant(0)),
+                    HandleNode(node.EmptyBody),
+                    Expression.Block(
+                        new[] { index },
+                        Expression.Assign(index, Expression.Constant(0)),
+                        Expression.Loop(Expression.Block(
+                            new[] { currentElement },
+                            Expression.Assign(currentElement, Expression.ArrayIndex(storedArray, index)),
+                            body,
+                            Expression.Assign(index, Expression.Increment(index)),
+                            Expression.IfThen(Expression.Equal(index, length), Expression.Break(exitLabel))
+                        ), exitLabel)
+                    )
+                )
+            );
         }
 
         private static Expression DisposeIfNeeded(Expression instance)
