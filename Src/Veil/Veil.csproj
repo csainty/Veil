@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="AssemblyParserFinder.cs" />
-    <Compile Include="Compiler\TypedExpression.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.Block.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.Conditional.cs" />
     <Compile Include="Compiler\VeilTemplateCompiler.cs" />

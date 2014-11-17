@@ -17,7 +17,7 @@ namespace Veil.Compiler
             }
 
             var value = ParseExpression(node.Expression);
-            var check = BoolifyExpression(ref value);
+            var check = BoolifyExpression(value);
 
             if (!hasFalseBlock)
             {
@@ -32,13 +32,13 @@ namespace Veil.Compiler
 
         private static readonly MethodInfo boolify = typeof(Helpers).GetMethod("Boolify");
 
-        private static Expression BoolifyExpression(ref TypedExpression expression)
+        private static Expression BoolifyExpression(Expression expression)
         {
             if (expression.Type == typeof(bool))
             {
-                return expression.Expression;
+                return expression;
             }
-            return Expression.Call(null, boolify, expression.Expression);
+            return Expression.Call(null, boolify, expression);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Veil.Compiler
 
                 return Expression.Block(
                     new[] { local },
-                    Expression.Assign(local, model.Expression),
+                    Expression.Assign(local, model),
                     body
 
                 );

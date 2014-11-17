@@ -24,7 +24,7 @@ namespace Veil.Compiler
             var exit = Expression.Label();
             var collection = ParseExpression(node.Collection);
 
-            var x = collection.Expression;
+            var x = collection;
             if (collection.Type == typeof(object))
             {
                 x = Expression.Convert(x, enumerable);

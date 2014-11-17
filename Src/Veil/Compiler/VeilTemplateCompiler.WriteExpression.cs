@@ -13,11 +13,11 @@ namespace Veil.Compiler
         {
             var expression = ParseExpression(node.Expression);
 
-            var ex = expression.Expression;
+            var ex = expression;
             if (expression.Type != typeof(string))
             {
                 var toStringMethod = expression.Type.GetMethod("ToString", new Type[0]);
-                ex = Expression.Call(expression.Expression, toStringMethod);
+                ex = Expression.Call(expression, toStringMethod);
             }
             if (node.HtmlEncode)
             {
