@@ -43,16 +43,19 @@
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="AssemblyParserFinder.cs" />
-    <Compile Include="Compiler\Emit.cs" />
-    <Compile Include="Compiler\EmitterExtensions.cs" />
-    <Compile Include="Compiler\Local.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitFlush.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitOverride.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitInclude.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitScopedNode.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EvaluateExpression.cs" />
+    <Compile Include="Compiler\TypedExpression.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Block.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Conditional.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.cs" />
     <Compile Include="DelegateBuilder.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Flush.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Include.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Iterate.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Override.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.ParseExpression.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.ScopedNode.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.WriteLiteral.cs" />
     <Compile Include="Parser\ITemplateParserRegistration.cs" />
     <Compile Include="IVeilContext.cs" />
     <Compile Include="NullVeilContext.cs" />
@@ -78,10 +81,6 @@
     <Compile Include="Parser\Nodes\WriteLiteralNode.cs" />
     <Compile Include="Parser\SyntaxTreeNode.cs" />
     <Compile Include="VeilCompilerException.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitConditional.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitIterate.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitNode.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteLiteral.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IVeilEngine.cs" />
     <Compile Include="Parser\ITemplateParser.cs" />
@@ -89,14 +88,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parser\SyntaxTree.cs" />
     <Compile Include="VeilEngine.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.cs" />
     <Compile Include="VeilStaticConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitWriteExpression.cs" />
-    <Compile Include="Compiler\VeilTemplateCompiler.EmitBlock.cs" />
+    <Compile Include="Compiler\VeilTemplateCompiler.Node.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Compiler\VeilTemplateCompiler.WriteExpression.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

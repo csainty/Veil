@@ -59,19 +59,21 @@ namespace Veil
         {
             var typedCompileMethod = genericCompileMethod.MakeGenericMethod(modelType);
             var compiledTemplate = typedCompileMethod.Invoke(this, new object[] { parserKey, templateContents });
-            var compiledTemplateType = compiledTemplate.GetType();
 
-            // TODO: Optimize this without casting from object? Perhaps using Expressions
-            var emitter = Emit<Action<TextWriter, object, object>>.NewDynamicMethod();
-            emitter.LoadArgument(2);
-            emitter.CastClass(compiledTemplateType);
-            emitter.LoadArgument(0);
-            emitter.LoadArgument(1);
-            emitter.CastClass(modelType);
-            emitter.Call(compiledTemplateType.GetMethod("Invoke"));
-            emitter.Return();
-            var del = emitter.CreateDelegate();
-            return new Action<TextWriter, object>((w, m) => del(w, m, compiledTemplate));
+            var writer = System.Linq.Expressions.Expression.Parameter(typeof(TextWriter));
+            var model = System.Linq.Expressions.Expression.Parameter(typeof(object));
+            var castModel = System.Linq.Expressions.Expression.Variable(modelType);
+            var template = System.Linq.Expressions.Expression.Constant(compiledTemplate);
+            var lambda = System.Linq.Expressions.Expression.Lambda<Action<TextWriter, object>>(
+                System.Linq.Expressions.Expression.Block(
+                    new [] { castModel },
+                    System.Linq.Expressions.Expression.Assign(castModel, System.Linq.Expressions.Expression.TypeAs(model, modelType)),
+                    System.Linq.Expressions.Expression.Call(template, compiledTemplate.GetType().GetMethod("Invoke"), writer, castModel)
+                ),
+                writer,
+                model
+            );
+            return lambda.Compile();
         }
 
         private static Func<string, Type, SyntaxTreeNode> CreateIncludeParser(string parserKey, IVeilContext context)

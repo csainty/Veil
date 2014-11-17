@@ -1,42 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using Veil.Parser;
-using Veil.Parser.Nodes;
+using System.Linq.Expressions;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private LinkedList<Action<Emit<Action<TextWriter, T>>>> scopeStack;
-        private readonly Emit<Action<TextWriter, T>> emitter;
-        private readonly Func<string, Type, SyntaxTreeNode> includeParser;
-        private readonly IDictionary<string, SyntaxTreeNode> overrideSections;
+        private readonly ParameterExpression writer = Expression.Parameter(typeof(TextWriter), "writer");
+        private readonly ParameterExpression model = Expression.Parameter(typeof(T), "model");
+        private LinkedList<Expression> modelStack = new LinkedList<Expression>();
+        private readonly Func<string, Type, Veil.Parser.SyntaxTreeNode> includeParser;
+        private readonly IDictionary<string, Veil.Parser.SyntaxTreeNode> overrideSections = new Dictionary<string, Veil.Parser.SyntaxTreeNode>();
 
-        public VeilTemplateCompiler(Func<string, Type, SyntaxTreeNode> includeParser)
+        public VeilTemplateCompiler(Func<string, Type, Veil.Parser.SyntaxTreeNode> includeParser)
         {
-            scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
-            emitter = Emit<Action<TextWriter, T>>.NewDynamicMethod();
-            overrideSections = new Dictionary<string, SyntaxTreeNode>();
             this.includeParser = includeParser;
         }
 
-        public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)
+        public Action<TextWriter, T> Compile(Parser.SyntaxTreeNode templateSyntaxTree)
         {
-            while (templateSyntaxTree is ExtendTemplateNode)
+            while (templateSyntaxTree is Veil.Parser.Nodes.ExtendTemplateNode)
             {
-                templateSyntaxTree = Extend((ExtendTemplateNode)templateSyntaxTree);
+                templateSyntaxTree = Extend((Veil.Parser.Nodes.ExtendTemplateNode)templateSyntaxTree);
             }
 
-            AddModelScope(e => e.LoadArgument(1));
-            EmitNode(templateSyntaxTree);
-
-            emitter.Return();
-            return emitter.CreateDelegate();
+            this.PushScope(model);
+            return Expression.Lambda<Action<TextWriter, T>>(Node(templateSyntaxTree), writer, model).Compile();
         }
 
-        private SyntaxTreeNode Extend(ExtendTemplateNode extendNode)
+        private void PushScope(Expression scope)
+        {
+            this.modelStack.AddFirst(scope);
+        }
+
+        private void PopScope()
+        {
+            this.modelStack.RemoveFirst();
+        }
+
+        private Veil.Parser.SyntaxTreeNode Extend(Veil.Parser.Nodes.ExtendTemplateNode extendNode)
         {
             foreach (var o in extendNode.Overrides)
             {
@@ -46,53 +49,5 @@ namespace Veil.Compiler
             }
             return includeParser(extendNode.TemplateName, typeof(T));
         }
-
-        private IDisposable CreateLocalScopeStack()
-        {
-            var oldScopeStack = scopeStack;
-            scopeStack = new LinkedList<Action<Emit<Action<TextWriter, T>>>>();
-            return new ActionDisposable(() =>
-            {
-                scopeStack = oldScopeStack;
-            });
-        }
-
-        private void AddModelScope(Action<Emit<Action<TextWriter, T>>> scope)
-        {
-            scopeStack.AddFirst(scope);
-        }
-
-        private void RemoveModelScope()
-        {
-            scopeStack.RemoveFirst();
-        }
-
-        private void PushCurrentModelOnStack()
-        {
-            scopeStack.First.Value.Invoke(emitter);
-        }
-
-        private void LoadWriterToStack()
-        {
-            emitter.LoadArgument(0);
-        }
-
-        private void CallWriteFor(Type typeOfItemOnStack)
-        {
-            if (!writers.ContainsKey(typeOfItemOnStack)) throw new VeilCompilerException("Unable to call TextWriter.Write() for item of type '{0}'".FormatInvariant(typeOfItemOnStack.Name));
-            emitter.CallMethod(writers[typeOfItemOnStack]);
-        }
-
-        private static readonly IDictionary<Type, MethodInfo> writers = new Dictionary<Type, MethodInfo>
-        {
-            { typeof(string), typeof(TextWriter).GetMethod("Write", new[] { typeof(string) }) },
-            { typeof(int), typeof(TextWriter).GetMethod("Write", new[] { typeof(int) }) },
-            { typeof(double), typeof(TextWriter).GetMethod("Write", new[] { typeof(double) }) },
-            { typeof(float), typeof(TextWriter).GetMethod("Write", new[] { typeof(float) }) },
-            { typeof(long), typeof(TextWriter).GetMethod("Write", new[] { typeof(long) }) },
-            { typeof(uint), typeof(TextWriter).GetMethod("Write", new[] { typeof(uint) }) },
-            { typeof(ulong), typeof(TextWriter).GetMethod("Write", new[] { typeof(ulong) }) },
-            { typeof(object), typeof(TextWriter).GetMethod("Write", new[] { typeof(object) }) },
-        };
     }
 }
