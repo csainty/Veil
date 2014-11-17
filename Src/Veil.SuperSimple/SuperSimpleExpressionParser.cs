@@ -13,11 +13,11 @@ namespace Veil.SuperSimple
 
             if (expression == "Model")
             {
-                return Expression.Self(scopes.Last.Value.ModelType, ExpressionScope.RootModel);
+                return SyntaxTreeExpression.Self(scopes.Last.Value.ModelType, ExpressionScope.RootModel);
             }
             if (expression == "Current")
             {
-                return Expression.Self(scopes.First.Value.ModelType, ExpressionScope.CurrentModelOnStack);
+                return SyntaxTreeExpression.Self(scopes.First.Value.ModelType, ExpressionScope.CurrentModelOnStack);
             }
 
             var chosenScope = scopes.First.Value;
@@ -43,24 +43,24 @@ namespace Veil.SuperSimple
             if (subModelIndex >= 0)
             {
                 var subModel = ParseAgainstModel(originalExpression, expression.Substring(0, subModelIndex), scope, expressionScope);
-                return Expression.SubModel(
+                return SyntaxTreeExpression.SubModel(
                     subModel,
                     ParseAgainstModel(originalExpression, expression.Substring(subModelIndex + 1), new SuperSimpleTemplateParserScope { Block = scope.Block, ModelType = subModel.ResultType }, ExpressionScope.CurrentModelOnStack)
                 );
             }
 
             var propertyInfo = scope.ModelType.GetProperty(expression);
-            if (propertyInfo != null) return Expression.Property(scope.ModelType, expression, expressionScope);
+            if (propertyInfo != null) return SyntaxTreeExpression.Property(scope.ModelType, expression, expressionScope);
 
             var fieldInfo = scope.ModelType.GetField(expression);
-            if (fieldInfo != null) return Expression.Field(scope.ModelType, expression, expressionScope);
+            if (fieldInfo != null) return SyntaxTreeExpression.Field(scope.ModelType, expression, expressionScope);
 
-            if (IsLateBoundAcceptingType(scope.ModelType)) return Expression.LateBound(expression, true, expressionScope);
+            if (IsLateBoundAcceptingType(scope.ModelType)) return SyntaxTreeExpression.LateBound(expression, true, expressionScope);
 
             if (expression.StartsWith("Has"))
             {
                 var collectionExpression = ParseAgainstModel(originalExpression, expression.Substring(3), scope, expressionScope);
-                return Expression.HasItems(collectionExpression);
+                return SyntaxTreeExpression.HasItems(collectionExpression);
             }
 
             throw new VeilParserException(String.Format("Unable to parse model expression '{0}'", originalExpression));

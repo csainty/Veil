@@ -6,7 +6,7 @@ namespace Veil.Parser
     /// <summary>
     /// Factory methods for create expression nodes
     /// </summary>
-    public static class Expression
+    public static class SyntaxTreeExpression
     {
         /// <summary>
         /// Evaluate a property on the model object

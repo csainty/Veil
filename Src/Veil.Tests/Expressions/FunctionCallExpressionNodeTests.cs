@@ -11,7 +11,7 @@ namespace Veil.Expressions
         {
             Assert.DoesNotThrow(() =>
             {
-                var result = Expression.Function(typeof(string), "ToString");
+                var result = SyntaxTreeExpression.Function(typeof(string), "ToString");
             });
         }
     }

@@ -13,12 +13,12 @@ namespace Veil.Compiler
             var result = ExecuteTemplate(SyntaxTree.Block(
                 SyntaxTree.WriteString("Hello "),
                 SyntaxTree.ScopeNode(
-                    Expression.Property(model.GetType(), "User"),
+                    SyntaxTreeExpression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Property(model.User.GetType(), "Name"))
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.User.GetType(), "Name"))
                     )
                 ),
-                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Foo"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Foo"))
             ), model);
             Assert.That(result, Is.EqualTo("Hello JoeBar"));
         }

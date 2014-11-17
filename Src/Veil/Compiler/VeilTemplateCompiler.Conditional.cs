@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Conditional(Parser.Nodes.ConditionalNode node)
+        private Expression Conditional(ConditionalNode node)
         {
             var hasTrueBlock = node.TrueBlock != null && node.TrueBlock.Nodes.Any();
             var hasFalseBlock = node.FalseBlock != null && node.FalseBlock.Nodes.Any();

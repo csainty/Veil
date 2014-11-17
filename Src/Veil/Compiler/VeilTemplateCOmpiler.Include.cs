@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Include(Parser.Nodes.IncludeTemplateNode node)
+        private Expression Include(IncludeTemplateNode node)
         {
-            var template = includeParser(node.TemplateName, node.ModelExpression.ResultType);
+            var model = ParseExpression(node.ModelExpression);
+            var template = this.includeParser(node.TemplateName, model.Type);
             if (template == null) throw new VeilCompilerException("Unable to load template '{0}'".FormatInvariant(node.TemplateName));
 
-            var local = Expression.Variable(node.ModelExpression.ResultType);
-            var model = ParseExpression(node.ModelExpression);
-
+            var storedModel = Expression.Variable(model.Type);
             using (CreateLocalModelStack())
             {
-                PushScope(local);
+                PushScope(storedModel);
                 var body = Node(template);
                 PopScope();
 
                 return Expression.Block(
-                    new[] { local },
-                    Expression.Assign(local, model),
+                    new[] { storedModel },
+                    Expression.Assign(storedModel, model),
                     body
-
                 );
             }
         }

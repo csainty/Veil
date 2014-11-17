@@ -58,7 +58,7 @@
     <Compile Include="Parser\ITemplateParserRegistration.cs" />
     <Compile Include="IVeilContext.cs" />
     <Compile Include="NullVeilContext.cs" />
-    <Compile Include="Parser\Expression.cs" />
+    <Compile Include="Parser\SyntaxTreeExpression.cs" />
     <Compile Include="Parser\ExpressionNode.cs" />
     <Compile Include="Parser\ExpressionScope.cs" />
     <Compile Include="Parser\Nodes\BlockNode.cs" />

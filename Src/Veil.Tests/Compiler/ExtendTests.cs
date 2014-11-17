@@ -21,7 +21,7 @@ namespace Veil.Compiler
                     "head",
                     SyntaxTree.Block(
                         SyntaxTree.WriteString("<title>"),
-                        SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name")),
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Name")),
                         SyntaxTree.WriteString("</title>")
                     )
                 }

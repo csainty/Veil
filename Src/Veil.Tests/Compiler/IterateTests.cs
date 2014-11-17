@@ -12,7 +12,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new List<string> { "1", "2" } };
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.Property(model.GetType(), "Items"),
+                SyntaxTreeExpression.Property(model.GetType(), "Items"),
                 SyntaxTree.Block(
                     SyntaxTree.WriteString("Item")
                 ),
@@ -30,7 +30,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { "1", "2" } };
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.Property(model.GetType(), "Items"),
+                SyntaxTreeExpression.Property(model.GetType(), "Items"),
                 SyntaxTree.Block(
                     SyntaxTree.WriteString("Item")
                 ),
@@ -48,9 +48,9 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.Property(model.GetType(), "Items"),
+                SyntaxTreeExpression.Property(model.GetType(), "Items"),
                 SyntaxTree.Block(
-                    SyntaxTree.WriteExpression(Expression.Property(typeof(ItemModel), "Name"))
+                    SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(ItemModel), "Name"))
                 )
             ));
             var result = ExecuteTemplate(template, model);
@@ -62,9 +62,9 @@ namespace Veil.Compiler
         {
             var model = new { Items = new[] { "1", "2", "3", "4" } };
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.Property(model.GetType(), "Items"),
+                SyntaxTreeExpression.Property(model.GetType(), "Items"),
                 SyntaxTree.Block(
-                    SyntaxTree.WriteExpression(Expression.Self(typeof(string)))
+                    SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(string)))
                 )
             ));
 
@@ -78,9 +78,9 @@ namespace Veil.Compiler
             var model = new Dictionary<string, object>();
             model.Add("Items", new string[] { "1", "2" });
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.LateBound("Items"),
+                SyntaxTreeExpression.LateBound("Items"),
                 SyntaxTree.Block(
-                    SyntaxTree.WriteExpression(Expression.Self(typeof(object)))
+                    SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(object)))
                 )
             ));
 
@@ -93,7 +93,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new List<string> { } };
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.Property(model.GetType(), "Items"),
+                SyntaxTreeExpression.Property(model.GetType(), "Items"),
                 SyntaxTree.Block(
                     SyntaxTree.WriteString("Item")
                 ),
@@ -111,7 +111,7 @@ namespace Veil.Compiler
         {
             var model = new { Items = new string[0] };
             var template = SyntaxTree.Block(SyntaxTree.Iterate(
-                Expression.Property(model.GetType(), "Items"),
+                SyntaxTreeExpression.Property(model.GetType(), "Items"),
                 SyntaxTree.Block(
                     SyntaxTree.WriteString("Item")
                 ),

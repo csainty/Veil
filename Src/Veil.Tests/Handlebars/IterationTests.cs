@@ -13,9 +13,9 @@ namespace Veil.Handlebars
             var result = Parse("{{#each Items }}{{ this }}{{/each}}", typeof(TestModel));
             AssertSyntaxTree(result,
                 SyntaxTree.Iterate(
-                    Expression.Property(typeof(TestModel), "Items"),
+                    SyntaxTreeExpression.Property(typeof(TestModel), "Items"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Self(typeof(string)), true)
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(string)), true)
                     )
                 )
             );
@@ -27,10 +27,10 @@ namespace Veil.Handlebars
             var result = Parse("{{#each Items }}{{ ../Prefix }}{{ this }}{{/each}}", typeof(TestModel));
             AssertSyntaxTree(result,
                 SyntaxTree.Iterate(
-                    Expression.Property(typeof(TestModel), "Items"),
+                    SyntaxTreeExpression.Property(typeof(TestModel), "Items"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Prefix", ExpressionScope.ModelOfParentScope), true),
-                        SyntaxTree.WriteExpression(Expression.Self(typeof(string)), true)
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Prefix", ExpressionScope.ModelOfParentScope), true),
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(string)), true)
                     )
                 )
             );
@@ -42,7 +42,7 @@ namespace Veil.Handlebars
             var result = Parse("{{#each Items }}Foo{{else}}Bar{{/each}}", typeof(TestModel));
             AssertSyntaxTree(result,
                 SyntaxTree.Iterate(
-                    Expression.Property(typeof(TestModel), "Items"),
+                    SyntaxTreeExpression.Property(typeof(TestModel), "Items"),
                     SyntaxTree.Block(
                         SyntaxTree.WriteString("Foo")
                     ),

@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Block(Parser.Nodes.BlockNode block)
+        private Expression Block(BlockNode block)
         {
             if (!block.Nodes.Any())
             {

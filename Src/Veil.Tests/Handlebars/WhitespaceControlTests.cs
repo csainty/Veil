@@ -13,7 +13,7 @@ namespace Veil.Handlebars
             AssertSyntaxTree(
                 template,
                 SyntaxTree.WriteString("Hello"),
-                SyntaxTree.WriteExpression(Expression.Self(typeof(string)), true)
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(string)), true)
             );
         }
 
@@ -24,7 +24,7 @@ namespace Veil.Handlebars
             AssertSyntaxTree(
                 template,
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.WriteExpression(Expression.Self(typeof(string)), true),
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(string)), true),
                 SyntaxTree.WriteString("!")
             );
         }

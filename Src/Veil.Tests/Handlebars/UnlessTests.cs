@@ -15,7 +15,7 @@ namespace Veil.Handlebars
                 template,
                 SyntaxTree.WriteString("Hello "),
                 SyntaxTree.Conditional(
-                    Expression.Property(model.GetType(), "Test"),
+                    SyntaxTreeExpression.Property(model.GetType(), "Test"),
                     SyntaxTree.Block(),
                     SyntaxTree.Block(
                         SyntaxTree.WriteString("World")

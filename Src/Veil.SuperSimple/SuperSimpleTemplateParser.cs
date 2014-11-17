@@ -52,7 +52,7 @@ namespace Veil.SuperSimple
         private static void HandleEachOverSelf(SuperSimpleTemplateParserState state)
         {
             var each = SyntaxTree.Iterate(
-                Expression.Self(state.CurrentTypeInScope()),
+                SyntaxTreeExpression.Self(state.CurrentTypeInScope()),
                 SyntaxTree.Block()
             );
             state.AddNodeToCurrentBlock(each);
@@ -105,7 +105,7 @@ namespace Veil.SuperSimple
         private static void HandlePartial(SuperSimpleTemplateParserState state)
         {
             var details = state.ParseCurrentTokenNameAndModelExpression();
-            ExpressionNode expression = Expression.Self(state.CurrentTypeInScope());
+            ExpressionNode expression = SyntaxTreeExpression.Self(state.CurrentTypeInScope());
 
             if (!String.IsNullOrEmpty(details.Model))
             {

@@ -13,7 +13,7 @@ namespace Veil.Compiler
             var model = new { Name = "Joe" };
             var template = SyntaxTree.Block(
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.Include("person", Expression.Self(model.GetType()))
+                SyntaxTree.Include("person", SyntaxTreeExpression.Self(model.GetType()))
             );
 
             Assert.Throws<VeilCompilerException>(() =>
@@ -27,11 +27,11 @@ namespace Veil.Compiler
         {
             var model = new { Name = "Joe" };
             RegisterTemplate("person", SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Name"))
             ));
             var template = SyntaxTree.Block(
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.Include("person", Expression.Self(model.GetType()))
+                SyntaxTree.Include("person", SyntaxTreeExpression.Self(model.GetType()))
             );
 
             var result = ExecuteTemplate(template, model);
@@ -43,16 +43,16 @@ namespace Veil.Compiler
         {
             var model = new { Name = "Joe", Company = new { Name = "Foo" } };
             RegisterTemplate("company", SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.Property(model.Company.GetType(), "Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.Company.GetType(), "Name"))
             ));
             RegisterTemplate("person", SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Name"))
             ));
             var template = SyntaxTree.Block(
                 SyntaxTree.WriteString("Welcome from "),
-                SyntaxTree.Include("company", Expression.Property(model.GetType(), "Company")),
+                SyntaxTree.Include("company", SyntaxTreeExpression.Property(model.GetType(), "Company")),
                 SyntaxTree.WriteString(" the amazing "),
-                SyntaxTree.Include("person", Expression.Self(model.GetType())),
+                SyntaxTree.Include("person", SyntaxTreeExpression.Self(model.GetType())),
                 SyntaxTree.WriteString(".")
             );
 
@@ -65,14 +65,14 @@ namespace Veil.Compiler
         {
             var model = new { Name = "Joe", Company = new { Name = "Foo", Departments = new[] { "IT", "Admin" } } };
             RegisterTemplate("company", SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.Property(model.Company.GetType(), "Name")),
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.Company.GetType(), "Name")),
                 SyntaxTree.WriteString(" - "),
-                SyntaxTree.Iterate(Expression.Property(model.Company.GetType(), "Departments"), SyntaxTree.Block(
-                    SyntaxTree.WriteExpression(Expression.Property(model.Company.GetType(), "Name", ExpressionScope.RootModel))
+                SyntaxTree.Iterate(SyntaxTreeExpression.Property(model.Company.GetType(), "Departments"), SyntaxTree.Block(
+                    SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.Company.GetType(), "Name", ExpressionScope.RootModel))
                 ))
             ));
             var template = SyntaxTree.Block(
-                SyntaxTree.Include("company", Expression.Property(model.GetType(), "Company"))
+                SyntaxTree.Include("company", SyntaxTreeExpression.Property(model.GetType(), "Company"))
             );
 
             var result = ExecuteTemplate(template, model);
@@ -86,11 +86,11 @@ namespace Veil.Compiler
             model.Add("Name", "Joe");
 
             RegisterTemplate("person", SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name"))
             ));
             var template = SyntaxTree.Block(
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.Include("person", Expression.Self(model.GetType()))
+                SyntaxTree.Include("person", SyntaxTreeExpression.Self(model.GetType()))
             );
 
             var result = ExecuteTemplate(template, model);
@@ -104,11 +104,11 @@ namespace Veil.Compiler
             model.Add("Person", new { Name = "Joe" });
 
             RegisterTemplate("person", SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name"))
             ));
             var template = SyntaxTree.Block(
                 SyntaxTree.WriteString("Hello "),
-                SyntaxTree.Include("person", Expression.LateBound("Person"))
+                SyntaxTree.Include("person", SyntaxTreeExpression.LateBound("Person"))
             );
 
             var result = ExecuteTemplate(template, model);

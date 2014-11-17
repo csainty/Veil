@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
@@ -9,7 +10,7 @@ namespace Veil.Compiler
     {
         private static readonly MethodInfo writeMethod = typeof(TextWriter).GetMethod("Write", new[] { typeof(string) });
 
-        private Expression WriteExpression(Parser.Nodes.WriteExpressionNode node)
+        private Expression WriteExpression(WriteExpressionNode node)
         {
             var expression = ParseExpression(node.Expression);
 

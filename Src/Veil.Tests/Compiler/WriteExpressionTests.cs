@@ -12,7 +12,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_write_model_property<T>(T model, string expectedResult)
         {
-            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Data")));
+            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Data")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -22,7 +22,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_write_model_field<T>(T model, string expectedResult)
         {
-            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.Field(model.GetType(), "DataField")));
+            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(SyntaxTreeExpression.Field(model.GetType(), "DataField")));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -32,7 +32,7 @@ namespace Veil.Compiler
         [TestCaseSource("TestCases")]
         public void Should_be_able_to_write_from_sub_model<T>(T model, string expectedResult)
         {
-            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(Expression.SubModel(Expression.Property(model.GetType(), "Sub"), Expression.Property(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
+            var template = SyntaxTree.Block(SyntaxTree.WriteExpression(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Property(model.GetType(), "Sub"), SyntaxTreeExpression.Property(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
             var result = ExecuteTemplate(template, model);
 
             Assert.That(result, Is.EqualTo(expectedResult));
@@ -43,7 +43,7 @@ namespace Veil.Compiler
         {
             var model = new { Text = "Hello!" };
             var template = SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Text", ExpressionScope.RootModel))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Text", ExpressionScope.RootModel))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Hello!"));
@@ -62,14 +62,14 @@ namespace Veil.Compiler
             };
             var template = SyntaxTree.Block(
                 SyntaxTree.Iterate(
-                    Expression.Property(model.GetType(), "SubModels", ExpressionScope.RootModel),
+                    SyntaxTreeExpression.Property(model.GetType(), "SubModels", ExpressionScope.RootModel),
                     SyntaxTree.Block(
                         SyntaxTree.Iterate(
-                            Expression.Property(model.Sub.GetType(), "Strings", ExpressionScope.CurrentModelOnStack),
+                            SyntaxTreeExpression.Property(model.Sub.GetType(), "Strings", ExpressionScope.CurrentModelOnStack),
                             SyntaxTree.Block(
-                                SyntaxTree.WriteExpression(Expression.Self(typeof(string), ExpressionScope.CurrentModelOnStack)),
-                                SyntaxTree.WriteExpression(Expression.Property(model.Sub.GetType(), "Name", ExpressionScope.ModelOfParentScope)),
-                                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name", ExpressionScope.RootModel))
+                                SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(typeof(string), ExpressionScope.CurrentModelOnStack)),
+                                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.Sub.GetType(), "Name", ExpressionScope.ModelOfParentScope)),
+                                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Name", ExpressionScope.RootModel))
                             )
                         )
                     )
@@ -84,7 +84,7 @@ namespace Veil.Compiler
         {
             var model = new { Text = "<h1>Hello</h1>" };
             var template = SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Text", ExpressionScope.RootModel), true)
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Text", ExpressionScope.RootModel), true)
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("&lt;h1&gt;Hello&lt;/h1&gt;"));
@@ -96,7 +96,7 @@ namespace Veil.Compiler
             var model = new Dictionary<string, object>();
             model.Add("Name", "Joe");
             var template = SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Joe"));

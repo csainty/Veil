@@ -15,7 +15,7 @@ namespace Veil.SuperSimple
         {
             var model = new { };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model");
-            result.ShouldDeepEqual(Expression.Self(model.GetType(), ExpressionScope.RootModel));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Self(model.GetType(), ExpressionScope.RootModel));
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace Veil.SuperSimple
         {
             var model = new { };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Current");
-            result.ShouldDeepEqual(Expression.Self(model.GetType()));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Self(model.GetType()));
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Veil.SuperSimple
         {
             var model = new { Name = "foo" };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.Name");
-            result.ShouldDeepEqual(Expression.Property(model.GetType(), "Name", ExpressionScope.RootModel));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Property(model.GetType(), "Name", ExpressionScope.RootModel));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Veil.SuperSimple
         {
             var model = new { Items = new[] { 1, 2, 3 } };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "HasItems");
-            result.ShouldDeepEqual(Expression.HasItems(Expression.Property(model.GetType(), "Items")));
+            result.ShouldDeepEqual(SyntaxTreeExpression.HasItems(SyntaxTreeExpression.Property(model.GetType(), "Items")));
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace Veil.SuperSimple
         {
             var model = new { Items = new[] { 1, 2, 3 }, HasItems = true };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "HasItems");
-            result.ShouldDeepEqual(Expression.Property(model.GetType(), "HasItems"));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Property(model.GetType(), "HasItems"));
         }
 
         [Test]
@@ -55,9 +55,9 @@ namespace Veil.SuperSimple
         {
             var model = new { User = new { Name = "Bob" } };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.User.Name");
-            result.ShouldDeepEqual(Expression.SubModel(
-                Expression.Property(model.GetType(), "User", ExpressionScope.RootModel),
-                Expression.Property(model.User.GetType(), "Name")
+            result.ShouldDeepEqual(SyntaxTreeExpression.SubModel(
+                SyntaxTreeExpression.Property(model.GetType(), "User", ExpressionScope.RootModel),
+                SyntaxTreeExpression.Property(model.User.GetType(), "Name")
             ));
         }
 
@@ -66,9 +66,9 @@ namespace Veil.SuperSimple
         {
             var model = new { User = new { Name = "Bob" } };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Current.User.Name");
-            result.ShouldDeepEqual(Expression.SubModel(
-                Expression.Property(model.GetType(), "User"),
-                Expression.Property(model.User.GetType(), "Name")
+            result.ShouldDeepEqual(SyntaxTreeExpression.SubModel(
+                SyntaxTreeExpression.Property(model.GetType(), "User"),
+                SyntaxTreeExpression.Property(model.User.GetType(), "Name")
             ));
         }
 
@@ -77,13 +77,13 @@ namespace Veil.SuperSimple
         {
             var model = new { User = new { Department = new { Company = new { Name = "Foo" } } } };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(model.GetType()), "Model.User.Department.Company.Name");
-            result.ShouldDeepEqual(Expression.SubModel(
-                Expression.Property(model.GetType(), "User", ExpressionScope.RootModel),
-                Expression.SubModel(
-                    Expression.Property(model.User.GetType(), "Department"),
-                    Expression.SubModel(
-                        Expression.Property(model.User.Department.GetType(), "Company"),
-                        Expression.Property(model.User.Department.Company.GetType(), "Name")
+            result.ShouldDeepEqual(SyntaxTreeExpression.SubModel(
+                SyntaxTreeExpression.Property(model.GetType(), "User", ExpressionScope.RootModel),
+                SyntaxTreeExpression.SubModel(
+                    SyntaxTreeExpression.Property(model.User.GetType(), "Department"),
+                    SyntaxTreeExpression.SubModel(
+                        SyntaxTreeExpression.Property(model.User.Department.GetType(), "Company"),
+                        SyntaxTreeExpression.Property(model.User.Department.Company.GetType(), "Name")
                     )
                 )
             ));
@@ -93,14 +93,14 @@ namespace Veil.SuperSimple
         public void Should_parse_field_references()
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(ViewModel)), "Model.FieldName");
-            result.ShouldDeepEqual(Expression.Field(typeof(ViewModel), "FieldName", ExpressionScope.RootModel));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Field(typeof(ViewModel), "FieldName", ExpressionScope.RootModel));
         }
 
         [TestCaseSource("LateBoundTestCases")]
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(T)), "Model.Name");
-            result.ShouldDeepEqual(Expression.LateBound("Name", true, ExpressionScope.RootModel));
+            result.ShouldDeepEqual(SyntaxTreeExpression.LateBound("Name", true, ExpressionScope.RootModel));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Veil.SuperSimple
         {
             var model = new { HasItems = true, Items = new string[0] };
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(object)), "Model.HasItems");
-            result.ShouldDeepEqual(Expression.LateBound("HasItems", true, ExpressionScope.RootModel));
+            result.ShouldDeepEqual(SyntaxTreeExpression.LateBound("HasItems", true, ExpressionScope.RootModel));
         }
 
         [TestCase("Model.Wrong")]

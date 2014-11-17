@@ -15,16 +15,16 @@ namespace Veil.Handlebars
                 template,
                 SyntaxTree.WriteString("Hello "),
                 SyntaxTree.ScopeNode(
-                    Expression.Property(model.GetType(), "User"),
+                    SyntaxTreeExpression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Property(model.User.GetType(), "Name"), true)
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.User.GetType(), "Name"), true)
                     )
                 ),
                 SyntaxTree.WriteString(" from "),
                 SyntaxTree.ScopeNode(
-                    Expression.Property(model.GetType(), "Dept"),
+                    SyntaxTreeExpression.Property(model.GetType(), "Dept"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Property(model.Dept.GetType(), "Name"), true)
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.Dept.GetType(), "Name"), true)
                     )
                 )
             );
@@ -39,9 +39,9 @@ namespace Veil.Handlebars
                 template,
                 SyntaxTree.WriteString("Hello "),
                 SyntaxTree.ScopeNode(
-                    Expression.Property(model.GetType(), "User"),
+                    SyntaxTreeExpression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Self(model.User.GetType()), true)
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(model.User.GetType()), true)
                     )
                 )
             );
@@ -56,10 +56,10 @@ namespace Veil.Handlebars
                 template,
                 SyntaxTree.WriteString("Hello "),
                 SyntaxTree.ScopeNode(
-                    Expression.Property(model.GetType(), "User"),
+                    SyntaxTreeExpression.Property(model.GetType(), "User"),
                     SyntaxTree.Block(
-                        SyntaxTree.WriteExpression(Expression.Property(model.GetType(), "Name", ExpressionScope.ModelOfParentScope), true),
-                        SyntaxTree.WriteExpression(Expression.Self(model.User.GetType()), true)
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Name", ExpressionScope.ModelOfParentScope), true),
+                        SyntaxTree.WriteExpression(SyntaxTreeExpression.Self(model.User.GetType()), true)
                     )
                 )
             );

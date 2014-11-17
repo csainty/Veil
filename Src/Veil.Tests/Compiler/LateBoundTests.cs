@@ -12,7 +12,7 @@ namespace Veil.Compiler
         public void Should_handle_late_binding<T>(T model)
         {
             var template = SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.LateBound("Name"))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("Joe"));
@@ -26,9 +26,9 @@ namespace Veil.Compiler
             model.Add("User", new { Name = "U" });
             model.Add("Department", new Dictionary<string, object> { { "Name", "D2" } });
             var template = SyntaxTree.Block(
-                SyntaxTree.WriteExpression(Expression.LateBound("Name")),
-                SyntaxTree.WriteExpression(Expression.SubModel(Expression.LateBound("User"), Expression.LateBound("Name"))),
-                SyntaxTree.WriteExpression(Expression.SubModel(Expression.LateBound("Department"), Expression.LateBound("Name")))
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name")),
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.LateBound("User"), SyntaxTreeExpression.LateBound("Name"))),
+                SyntaxTree.WriteExpression(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.LateBound("Department"), SyntaxTreeExpression.LateBound("Name")))
             );
             var result = ExecuteTemplate(template, model);
             Assert.That(result, Is.EqualTo("D1UD2"));

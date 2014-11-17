@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
+using Veil.Parser;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
@@ -10,19 +12,19 @@ namespace Veil.Compiler
         private readonly ParameterExpression writer = Expression.Parameter(typeof(TextWriter), "writer");
         private readonly ParameterExpression model = Expression.Parameter(typeof(T), "model");
         private LinkedList<Expression> modelStack = new LinkedList<Expression>();
-        private readonly Func<string, Type, Veil.Parser.SyntaxTreeNode> includeParser;
-        private readonly IDictionary<string, Veil.Parser.SyntaxTreeNode> overrideSections = new Dictionary<string, Veil.Parser.SyntaxTreeNode>();
+        private readonly Func<string, Type, SyntaxTreeNode> includeParser;
+        private readonly IDictionary<string, SyntaxTreeNode> overrideSections = new Dictionary<string, Veil.Parser.SyntaxTreeNode>();
 
-        public VeilTemplateCompiler(Func<string, Type, Veil.Parser.SyntaxTreeNode> includeParser)
+        public VeilTemplateCompiler(Func<string, Type, SyntaxTreeNode> includeParser)
         {
             this.includeParser = includeParser;
         }
 
-        public Action<TextWriter, T> Compile(Parser.SyntaxTreeNode templateSyntaxTree)
+        public Action<TextWriter, T> Compile(SyntaxTreeNode templateSyntaxTree)
         {
-            while (templateSyntaxTree is Veil.Parser.Nodes.ExtendTemplateNode)
+            while (templateSyntaxTree is ExtendTemplateNode)
             {
-                templateSyntaxTree = Extend((Veil.Parser.Nodes.ExtendTemplateNode)templateSyntaxTree);
+                templateSyntaxTree = Extend((ExtendTemplateNode)templateSyntaxTree);
             }
 
             this.PushScope(model);
@@ -39,7 +41,7 @@ namespace Veil.Compiler
             this.modelStack.RemoveFirst();
         }
 
-        private Veil.Parser.SyntaxTreeNode Extend(Veil.Parser.Nodes.ExtendTemplateNode extendNode)
+        private SyntaxTreeNode Extend(ExtendTemplateNode extendNode)
         {
             foreach (var o in extendNode.Overrides)
             {

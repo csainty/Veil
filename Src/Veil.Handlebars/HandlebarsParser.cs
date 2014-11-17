@@ -184,7 +184,7 @@ namespace Veil.Handlebars
         private static void HandlePartial(HandlebarsParserState state)
         {
             var partialTemplateName = state.CurrentToken.Content.Substring(1).Trim();
-            var self = Expression.Self(state.BlockStack.GetCurrentModelType());
+            var self = SyntaxTreeExpression.Self(state.BlockStack.GetCurrentModelType());
             state.AddNodeToCurrentBlock(SyntaxTree.Include(partialTemplateName, self));
         }
 

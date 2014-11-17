@@ -16,11 +16,11 @@ namespace Veil.Handlebars
         public object[] PropertyNameTestSource()
         {
             return new object[] {
-                new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Name"), true) } },
-                new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Name"), true) } },
-                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTree.WriteString("Hello "), SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Name"), true) } },
-                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTree.WriteString("Hello "), SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Name"), true), SyntaxTree.WriteString(", "), SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Greeting"), true) } },
-                new object[] {"{{{ Name }}}", new SyntaxTreeNode[] { SyntaxTree.WriteExpression(Expression.Property(typeof(TestModel), "Name"), false) }}
+                new object[] {"{{Name}}", new SyntaxTreeNode[] { SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Name"), true) } },
+                new object[] {"{{ Name }}", new SyntaxTreeNode[] { SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Name"), true) } },
+                new object[] {"Hello {{Name}}", new SyntaxTreeNode[] { SyntaxTree.WriteString("Hello "), SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Name"), true) } },
+                new object[] {"Hello {{Name}}, {{ Greeting }}", new SyntaxTreeNode[] { SyntaxTree.WriteString("Hello "), SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Name"), true), SyntaxTree.WriteString(", "), SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Greeting"), true) } },
+                new object[] {"{{{ Name }}}", new SyntaxTreeNode[] { SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(typeof(TestModel), "Name"), false) }}
             };
         }
 

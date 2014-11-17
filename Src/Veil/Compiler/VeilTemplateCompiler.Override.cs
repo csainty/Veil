@@ -1,10 +1,11 @@
 ﻿using System.Linq.Expressions;
+using Veil.Parser.Nodes;
 
 namespace Veil.Compiler
 {
     internal partial class VeilTemplateCompiler<T>
     {
-        private Expression Override(Parser.Nodes.OverridePointNode node)
+        private Expression Override(OverridePointNode node)
         {
             if (!this.overrideSections.ContainsKey(node.OverrideName))
             {

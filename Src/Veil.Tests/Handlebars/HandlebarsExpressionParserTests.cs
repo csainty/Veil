@@ -14,32 +14,32 @@ namespace Veil.Handlebars
         public void Should_parse_property()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Property");
-            result.ShouldDeepEqual(Expression.Property(typeof(Model), "Property"));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Property(typeof(Model), "Property"));
         }
 
         [Test]
         public void Should_parse_field()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Field");
-            result.ShouldDeepEqual(Expression.Field(typeof(Model), "Field"));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Field(typeof(Model), "Field"));
         }
 
         [Test]
         public void Should_parse_property_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "SubModel.SubProperty");
-            result.ShouldDeepEqual(Expression.SubModel(Expression.Property(typeof(Model), "SubModel"), Expression.Property(typeof(SubModel), "SubProperty")));
+            result.ShouldDeepEqual(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Property(typeof(Model), "SubModel"), SyntaxTreeExpression.Property(typeof(SubModel), "SubProperty")));
         }
 
         [Test]
         public void Should_parse_field_from_subsubmodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "SubModel.SubSubModel.SubSubField");
-            result.ShouldDeepEqual(Expression.SubModel(
-                Expression.Property(typeof(Model), "SubModel"),
-                Expression.SubModel(
-                    Expression.Field(typeof(SubModel), "SubSubModel"),
-                    Expression.Field(typeof(SubSubModel), "SubSubField"))
+            result.ShouldDeepEqual(SyntaxTreeExpression.SubModel(
+                SyntaxTreeExpression.Property(typeof(Model), "SubModel"),
+                SyntaxTreeExpression.SubModel(
+                    SyntaxTreeExpression.Field(typeof(SubModel), "SubSubModel"),
+                    SyntaxTreeExpression.Field(typeof(SubSubModel), "SubSubField"))
                 )
             );
         }
@@ -48,21 +48,21 @@ namespace Veil.Handlebars
         public void Should_parse_function_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Function()");
-            result.ShouldDeepEqual(Expression.Function(typeof(Model), "Function"));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Function(typeof(Model), "Function"));
         }
 
         [TestCase("this")]
         public void Should_parse_self_expression_node(string expression)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(string)), expression);
-            result.ShouldDeepEqual(Expression.Self(typeof(string)));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Self(typeof(string)));
         }
 
         [TestCaseSource("LateBoundTestCases")]
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(T)), "Name");
-            result.ShouldDeepEqual(Expression.LateBound("Name", false, ExpressionScope.CurrentModelOnStack));
+            result.ShouldDeepEqual(SyntaxTreeExpression.LateBound("Name", false, ExpressionScope.CurrentModelOnStack));
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace Veil.Handlebars
 
             var scopes = CreateScopes(root.GetType(), parent.GetType(), current.GetType());
             var result = HandlebarsExpressionParser.Parse(scopes, "../Name");
-            result.ShouldDeepEqual(Expression.Property(parent.GetType(), "Name", ExpressionScope.ModelOfParentScope));
+            result.ShouldDeepEqual(SyntaxTreeExpression.Property(parent.GetType(), "Name", ExpressionScope.ModelOfParentScope));
         }
 
         [TestCaseSource("CaseInsensitiveTests")]
@@ -110,14 +110,14 @@ namespace Veil.Handlebars
         public object[] CaseInsensitiveTests()
         {
             return new object[] {
-                new object[] { "UserName", Expression.Property(typeof(CaseTestModel), "UserName") },
-                new object[] { "userName", Expression.Field(typeof(CaseTestModel), "userName") },
-                new object[] { "username", Expression.Property(typeof(CaseTestModel), "UserName") },
-                new object[] { "USERNAME", Expression.Property(typeof(CaseTestModel), "UserName") },
-                new object[] { "FOO", Expression.Field(typeof(CaseTestModel), "foo") },
-                new object[] { "function()", Expression.Function(typeof(CaseTestModel), "Function") },
-                new object[] { "submodel.subproperty", Expression.SubModel(Expression.Property(typeof(CaseTestModel), "SubModel"), Expression.Property(typeof(SubModel), "SubProperty")) },
-                new object[] { "submodel.subsubmodel.subsubfield", Expression.SubModel(Expression.Property(typeof(CaseTestModel), "SubModel"),Expression.SubModel(Expression.Field(typeof(SubModel), "SubSubModel"), Expression.Field(typeof(SubSubModel), "SubSubField")))}
+                new object[] { "UserName", SyntaxTreeExpression.Property(typeof(CaseTestModel), "UserName") },
+                new object[] { "userName", SyntaxTreeExpression.Field(typeof(CaseTestModel), "userName") },
+                new object[] { "username", SyntaxTreeExpression.Property(typeof(CaseTestModel), "UserName") },
+                new object[] { "USERNAME", SyntaxTreeExpression.Property(typeof(CaseTestModel), "UserName") },
+                new object[] { "FOO", SyntaxTreeExpression.Field(typeof(CaseTestModel), "foo") },
+                new object[] { "function()", SyntaxTreeExpression.Function(typeof(CaseTestModel), "Function") },
+                new object[] { "submodel.subproperty", SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Property(typeof(CaseTestModel), "SubModel"), SyntaxTreeExpression.Property(typeof(SubModel), "SubProperty")) },
+                new object[] { "submodel.subsubmodel.subsubfield", SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Property(typeof(CaseTestModel), "SubModel"),SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Field(typeof(SubModel), "SubSubModel"), SyntaxTreeExpression.Field(typeof(SubSubModel), "SubSubField")))}
             };
         }
 

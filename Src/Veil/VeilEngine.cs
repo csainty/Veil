@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq.Expressions;
 using System.Reflection;
 using Veil.Compiler;
 using Veil.Parser;
@@ -60,15 +61,15 @@ namespace Veil
             var typedCompileMethod = genericCompileMethod.MakeGenericMethod(modelType);
             var compiledTemplate = typedCompileMethod.Invoke(this, new object[] { parserKey, templateContents });
 
-            var writer = System.Linq.Expressions.Expression.Parameter(typeof(TextWriter));
-            var model = System.Linq.Expressions.Expression.Parameter(typeof(object));
-            var castModel = System.Linq.Expressions.Expression.Variable(modelType);
-            var template = System.Linq.Expressions.Expression.Constant(compiledTemplate);
-            var lambda = System.Linq.Expressions.Expression.Lambda<Action<TextWriter, object>>(
-                System.Linq.Expressions.Expression.Block(
-                    new [] { castModel },
-                    System.Linq.Expressions.Expression.Assign(castModel, System.Linq.Expressions.Expression.TypeAs(model, modelType)),
-                    System.Linq.Expressions.Expression.Call(template, compiledTemplate.GetType().GetMethod("Invoke"), writer, castModel)
+            var writer = Expression.Parameter(typeof(TextWriter));
+            var model = Expression.Parameter(typeof(object));
+            var castModel = Expression.Variable(modelType);
+            var template = Expression.Constant(compiledTemplate);
+            var lambda = Expression.Lambda<Action<TextWriter, object>>(
+                Expression.Block(
+                    new[] { castModel },
+                    Expression.Assign(castModel, System.Linq.Expressions.Expression.TypeAs(model, modelType)),
+                    Expression.Call(template, compiledTemplate.GetType().GetMethod("Invoke"), writer, castModel)
                 ),
                 writer,
                 model

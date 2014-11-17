@@ -14,7 +14,7 @@ namespace Veil.Expressions
         {
             Assert.Throws<VeilParserException>(() =>
             {
-                Expression.HasItems(Expression.Property(model.GetType(), "Items"));
+                SyntaxTreeExpression.HasItems(SyntaxTreeExpression.Property(model.GetType(), "Items"));
             });
         }
 
@@ -23,7 +23,7 @@ namespace Veil.Expressions
         {
             Assert.DoesNotThrow(() =>
             {
-                Expression.HasItems(Expression.Property(model.GetType(), "Items"));
+                SyntaxTreeExpression.HasItems(SyntaxTreeExpression.Property(model.GetType(), "Items"));
             });
         }
 
