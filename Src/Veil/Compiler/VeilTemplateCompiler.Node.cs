@@ -17,6 +17,7 @@ namespace Veil.Compiler
             if (node is FlushNode) return HandleFlush();
             if (node is IncludeTemplateNode) return HandleInclude((IncludeTemplateNode)node);
             if (node is OverridePointNode) return HandleOverride((OverridePointNode)node);
+            if (node is ExtendTemplateNode) throw new VeilCompilerException("Found an ExtendTemplate node inside a SyntaxTree. Extend nodes must be the root of a tree.");
 
             throw new VeilCompilerException("Unknown SyntaxTreeNode {0}".FormatInvariant(node.GetType().Name));
         }
