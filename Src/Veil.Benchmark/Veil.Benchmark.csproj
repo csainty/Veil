@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chevron.IE, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Chevron.IE, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Chevron.IE.Merged.0.4.1\Lib\NET40\Chevron.IE.dll</HintPath>
+      <HintPath>..\packages\Chevron.IE.Merged.0.5.0\Lib\NET40\Chevron.IE.dll</HintPath>
     </Reference>
     <Reference Include="SimpleSpeedTester">
       <HintPath>..\packages\SimpleSpeedTester.1.1.0\lib\net40\SimpleSpeedTester.dll</HintPath>
