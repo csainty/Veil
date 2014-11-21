@@ -11,8 +11,8 @@ namespace Veil.Benchmark.GCBenchmarkCases
 
         public ChevronGCBenchmarkCase()
         {
-            engine.RegisterPartial("Roles", Templates.ReadTemplate("Roles.haml"));
-            engine.RegisterTemplate("default", Templates.ReadTemplate("Template.haml"));
+            engine.RegisterPartial("Roles", Templates.ReadTemplate("Roles.hbs"));
+            engine.RegisterTemplate("default", Templates.ReadTemplate("Template.hbs"));
         }
 
         public void Render(TextWriter writer, ViewModel model)

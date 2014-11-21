@@ -22,15 +22,15 @@ namespace Veil.Benchmark.RenderSpeedBenchmarkCases
 
         public VeilHandlebarsRenderSpeedBenchmarkCase()
         {
-            var templateContents = Templates.ReadTemplate("Template.haml");
+            var templateContents = Templates.ReadTemplate("Template.hbs");
             var context = new VeilContext();
-            context.RegisterTemplate("Roles", Templates.ReadTemplate("Roles.haml"));
+            context.RegisterTemplate("Roles", Templates.ReadTemplate("Roles.hbs"));
             var engine = new VeilEngine(context);
 
-            compiledTypedTemplate = engine.Compile<ViewModel>("haml", new StringReader(templateContents));
-            compiledUntypedTemplate = engine.CompileNonGeneric("haml", new StringReader(templateContents), typeof(ViewModel));
-            compiledDynamicTemplate = engine.Compile<dynamic>("haml", new StringReader(templateContents));
-            compiledDictionaryTemplate = engine.Compile<IDictionary<string, object>>("haml", new StringReader(templateContents));
+            compiledTypedTemplate = engine.Compile<ViewModel>("hbs", new StringReader(templateContents));
+            compiledUntypedTemplate = engine.CompileNonGeneric("hbs", new StringReader(templateContents), typeof(ViewModel));
+            compiledDynamicTemplate = engine.Compile<dynamic>("hbs", new StringReader(templateContents));
+            compiledDictionaryTemplate = engine.Compile<IDictionary<string, object>>("hbs", new StringReader(templateContents));
         }
 
         public string RenderTypedModel(ViewModel model)

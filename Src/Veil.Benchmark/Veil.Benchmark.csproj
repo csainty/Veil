@@ -82,11 +82,11 @@
     <None Include="App.config" />
     <EmbeddedResource Include="Views\Master.sshtml" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Views\Template.haml" />
+    <EmbeddedResource Include="Views\Template.hbs" />
     <EmbeddedResource Include="Views\Template.cshtml" />
     <EmbeddedResource Include="Views\Template.sshtml" />
     <EmbeddedResource Include="Views\Roles.sshtml" />
-    <EmbeddedResource Include="Views\Roles.haml" />
+    <EmbeddedResource Include="Views\Roles.hbs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
