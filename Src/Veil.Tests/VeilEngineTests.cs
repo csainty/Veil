@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.IO;
 using NUnit.Framework;
 
@@ -133,7 +134,8 @@ namespace Veil
                 new object[] {"{{#each Reports}}{{this}}{{else}}No Reports{{/each}}", "No Reports"},
                 new object[] {"{{< master}}Testing 1.2.3", "Hello Chris Testing 1.2.3 See Ya!"},
                 new object[] {"{{#with Department}}{{../Name}}: {{DepartmentName}}{{/with}}", "Chris: Developers"},
-                new object[] {"{{ Properties.EnableFoo }}", "True"}
+                new object[] {"{{ Properties.EnableFoo }}", "True"},
+                new object[] {"{{ Department.Properties.HasManager }}", "False"}
             };
         }
 
@@ -152,7 +154,8 @@ namespace Veil
                 new object[] {"Hey @Model.Name from @Partial['Department', Department]", "Hey Chris from Developers Veil"},
                 new object[] {"@Master['Master']; @Section['Middle'];Testing 1.2.3@EndSection;", "Hello Chris Testing 1.2.3 See Ya!"},
                 new object[] {"@Master['MiddleMaster']; @Section['Content'];Testing 1.2.3@EndSection;", "Hello Chris from Developers Testing 1.2.3 See Ya!"},
-                new object[] {"@Model.Properties.EnableFoo", "True"}
+                new object[] {"@Model.Properties.EnableFoo", "True"},
+                new object[] {"@Model.Department.Properties.HasManager", "False"}
             };
         }
 
@@ -228,6 +231,14 @@ namespace Veil
             public string DepartmentName { get; set; }
 
             public Company Company { get; set; }
+
+            public dynamic Properties { get; set; }
+
+            public Department()
+            {
+                this.Properties = new ExpandoObject();
+                this.Properties.HasManager = "False";
+            }
 
             public int GetDepartmentNumber()
             {
