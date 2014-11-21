@@ -11,7 +11,7 @@ namespace Veil.Handlebars
     {
         public IEnumerable<string> Keys
         {
-            get { return new[] { "haml", "handlebars", "hbs" }; }
+            get { return new[] { "handlebars", "hbs" }; }
         }
 
         public Func<ITemplateParser> ParserFactory

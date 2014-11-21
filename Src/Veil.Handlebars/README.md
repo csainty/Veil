@@ -4,7 +4,7 @@ A [Handlebars](http://handlebarsjs.com/) inspired syntax parser for [Veil](https
 
 Get it on nuget `Install-Package Veil.Handlebars`
 
-The Handlebars parser is registered under the keys `handlebars` and `haml`.
+The Handlebars parser is registered under the keys `handlebars` and `hbs`.
 
 You can experiment with the syntax online - [http://tryveil.com](http://tryveil.com)
 

@@ -104,9 +104,9 @@
     <Compile Include="VeilEngineTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NancyViewEngines\Views\Header.haml" />
+    <None Include="NancyViewEngines\Views\Header.hbs" />
     <None Include="NancyViewEngines\Views\Header.vsshtml" />
-    <None Include="NancyViewEngines\Views\Handlebars.haml" />
+    <None Include="NancyViewEngines\Views\Handlebars.hbs" />
     <None Include="NancyViewEngines\Views\SuperSimple.vsshtml" />
     <None Include="packages.config" />
   </ItemGroup>
