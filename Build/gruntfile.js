@@ -128,6 +128,12 @@ module.exports = function (grunt) {
             dist: {
                 src: 'dist/*.nupkg'
             }
+        },
+        nugetrestore: {
+            restore: {
+                src: '../src/**/packages.config',
+                dest: '../src/packages/'
+            }
         }
     });
     grunt.loadNpmTasks('grunt-nuget');
@@ -135,7 +141,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-dotnet-assembly-info');
- 
-    grunt.registerTask("default", ["clean", "assemblyinfo", "msbuild", "copy", "nugetpack"]);
+    grunt.registerTask("build", ["nugetrestore", "msbuild"])
+    grunt.registerTask("default", ["clean", "assemblyinfo", "build", "copy", "nugetpack"]);
     grunt.registerTask("push", ["default", "nugetpush"]);
 };
