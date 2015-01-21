@@ -59,6 +59,17 @@ module.exports = function (grunt) {
                         platform: 'AnyCPU'
                     }
                 }
+            },
+            bench: {
+                src: ['../src/Veil.Benchmark/Veil.Benchmark.csproj'],
+                options: {
+                    projectConfiguration: 'Release',
+                    target: ['Clean', 'Rebuild'],
+                    stdout: true,
+                    buildParameters: {
+                        platform: 'AnyCPU'
+                    }
+                }
             }
         },
         clean: {
