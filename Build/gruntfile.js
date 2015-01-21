@@ -70,6 +70,17 @@ module.exports = function (grunt) {
                         platform: 'AnyCPU'
                     }
                 }
+            },
+            tests: {
+                src: ['../src/Veil.Tests/Veil.Tests.csproj'],
+                options: {
+                    projectConfiguration: 'Release',
+                    target: ['Clean', 'Rebuild'],
+                    stdout: true,
+                    buildParameters: {
+                        platform: 'AnyCPU'
+                    }
+                }
             }
         },
         clean: {
