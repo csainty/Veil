@@ -22,7 +22,8 @@ module.exports = function (grunt) {
                     target: ['Clean', 'Rebuild'],
                     stdout: true,
                     buildParameters: {
-                        documentationFile: 'Veil.xml'
+                        documentationFile: 'Veil.xml',
+                        platform: 'AnyCPU'
                     }
                 }
             },
@@ -31,7 +32,10 @@ module.exports = function (grunt) {
                 options: {
                     projectConfiguration: 'Release',
                     target: ['Clean', 'Rebuild'],
-                    stdout: true
+                    stdout: true,
+                    buildParameters: {
+                        platform: 'AnyCPU'
+                    }
                 }
             },
             handlebars: {
@@ -39,7 +43,10 @@ module.exports = function (grunt) {
                 options: {
                     projectConfiguration: 'Release',
                     target: ['Clean', 'Rebuild'],
-                    stdout: true
+                    stdout: true,
+                    buildParameters: {
+                        platform: 'AnyCPU'
+                    }
                 }
             },
             nancy: {
@@ -47,7 +54,10 @@ module.exports = function (grunt) {
                 options: {
                     projectConfiguration: 'Release',
                     target: ['Clean', 'Rebuild'],
-                    stdout: true
+                    stdout: true,
+                    buildParameters: {
+                        platform: 'AnyCPU'
+                    }
                 }
             }
         },
