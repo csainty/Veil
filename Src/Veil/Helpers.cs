@@ -10,7 +10,6 @@ namespace Veil
         public static void HtmlEncode(TextWriter writer, string value)
         {
             if (value == null || value.Length == 0) return;
-            var startIndex = 0;
             var currentIndex = 0;
             var valueLength = value.Length;
             char currentChar;
@@ -34,8 +33,9 @@ namespace Veil
             }
             else
             {
-                // For longer strings, the number of Write calls becomes prohibitive, so sacrifice a call to ToCharArray to allos us to buffer the Write calls
+                // For longer strings, the number of Write calls becomes prohibitive, so sacrifice a call to ToCharArray to allow us to buffer the Write calls
                 char[] chars = null;
+                var startIndex = 0;
                 for (; currentIndex < valueLength; ++currentIndex)
                 {
                     currentChar = value[currentIndex];

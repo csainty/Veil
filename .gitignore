@@ -6,3 +6,4 @@ Build/dist/
 Build/node_modules/
 Src/Veil/Veil.xml
 *.user
+Src/.vs/

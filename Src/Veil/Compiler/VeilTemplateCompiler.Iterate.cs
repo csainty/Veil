@@ -23,7 +23,6 @@ namespace Veil.Compiler
             var getCurrentMethod = getEnumeratorMethod.ReturnType.GetProperty("Current").GetGetMethod();
 
             var currentElement = Expression.Variable(node.ItemType, "current");
-            var didMoveNext = Expression.Variable(typeof(bool), "didMoveNext");
             var hasElements = Expression.Variable(typeof(bool), "hasElements");
             var enumerator = Expression.Variable(getEnumeratorMethod.ReturnType, "enumerator");
             var exitLabel = Expression.Label();
@@ -43,9 +42,7 @@ namespace Veil.Compiler
                 Expression.Assign(hasElements, Expression.Constant(false)),
                 Expression.Assign(enumerator, Expression.Call(collection, getEnumeratorMethod)),
                 Expression.Loop(Expression.Block(
-                    new[] { didMoveNext },
-                    Expression.Assign(didMoveNext, Expression.Call(enumerator, moveNextMethod)),
-                    Expression.IfThenElse(Expression.IsFalse(didMoveNext),
+                    Expression.IfThenElse(Expression.IsFalse(Expression.Call(enumerator, moveNextMethod)),
                         Expression.Break(exitLabel),
                         Expression.Block(
                             new[] { currentElement },
