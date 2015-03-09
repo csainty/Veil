@@ -81,9 +81,11 @@ namespace Veil
         {
             return (includeName, modelType) =>
             {
-                var template = context.GetTemplateByName(includeName, parserKey);
-                if (template == null) throw new InvalidOperationException("Unable to load template '{0}' using parser '{1}'".FormatInvariant(includeName, parserKey));
-                return VeilStaticConfiguration.GetParserInstance(parserKey).Parse(template, modelType);
+                using (var template = context.GetTemplateByName(includeName, parserKey))
+                {
+                    if (template == null) throw new InvalidOperationException("Unable to load template '{0}' using parser '{1}'".FormatInvariant(includeName, parserKey));
+                    return VeilStaticConfiguration.GetParserInstance(parserKey).Parse(template, modelType);
+                }
             };
         }
     }

@@ -32,10 +32,13 @@ namespace Nancy.ViewEngines.Veil
             {
                 try
                 {
-                    var context = new NancyVeilContext(renderContext, Extensions);
-                    var engine = new VeilEngine(context);
-                    Type modelType = model == null ? typeof(object) : model.GetType();
-                    return engine.CompileNonGeneric(viewLocationResult.Extension, result.Contents(), modelType);
+                    using (var contents = result.Contents())
+                    {
+                        var context = new NancyVeilContext(renderContext, Extensions);
+                        var engine = new VeilEngine(context);
+                        Type modelType = model == null ? typeof(object) : model.GetType();
+                        return engine.CompileNonGeneric(viewLocationResult.Extension, contents, modelType);
+                    }
                 }
                 catch (Exception e)
                 {
