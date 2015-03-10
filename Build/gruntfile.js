@@ -27,7 +27,8 @@ module.exports = function (grunt) {
                 src: ['../src/Veil/Veil.csproj'],
                 options: {
                     buildParameters: {
-                        documentationFile: 'Veil.xml'
+                        documentationFile: 'Veil.xml',
+                        platform: 'AnyCPU'
                     }
                 }
             },
