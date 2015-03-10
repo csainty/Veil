@@ -15,7 +15,8 @@ namespace Veil.Mvc5
 
         public void Render(ViewContext viewContext, TextWriter writer)
         {
-            template.Invoke(writer, viewContext.ViewData.Model);
+            var w = new HttpFlushingTextWriter(writer, viewContext.HttpContext.Response);
+            template.Invoke(w, viewContext.ViewData.Model);
         }
     }
 }
