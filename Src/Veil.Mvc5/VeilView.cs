@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace Veil.Mvc5
 {
-    public class VeilView : IView
+    internal class VeilView : IView
     {
         private readonly Action<TextWriter, object> template;
 

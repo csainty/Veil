@@ -2,7 +2,7 @@
 
 namespace Veil.Mvc5
 {
-    public class MvcVeilContext : IVeilContext
+    internal class MvcVeilContext : IVeilContext
     {
         private VeilViewEngine ViewEngine;
         private readonly string ControllerName;
@@ -12,6 +12,7 @@ namespace Veil.Mvc5
             ViewEngine = viewEngine;
             ControllerName = controllerName;
         }
+
         public TextReader GetTemplateByName(string name, string parserKey)
         {
             var viewFile = ViewEngine.LocateView(ControllerName, name, parserKey);

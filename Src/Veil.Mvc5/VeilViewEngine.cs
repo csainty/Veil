@@ -24,7 +24,7 @@ namespace Veil.Mvc5
         {
             Extensions = VeilStaticConfiguration.RegisteredParserKeys.ToArray();
             ViewCache = new ConcurrentDictionary<string, VeilView>();
-            ViewLocationFormats = new []
+            ViewLocationFormats = new[]
             {
                 "~/Views/{1}/{0}.{2}",
                 "~/Views/Shared/{0}.{2}"
