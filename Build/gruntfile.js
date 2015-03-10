@@ -15,72 +15,39 @@ module.exports = function (grunt) {
             }
         },        
         msbuild: {
+            options: {
+                projectConfiguration: 'Release',
+                target: ['Clean', 'Rebuild'],
+                stdout: true,
+                buildParameters: {
+                    platform: 'AnyCPU'
+                }
+            },
             core: {
                 src: ['../src/Veil/Veil.csproj'],
                 options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true,
                     buildParameters: {
-                        documentationFile: 'Veil.xml',
-                        platform: 'AnyCPU'
+                        documentationFile: 'Veil.xml'
                     }
                 }
             },
             supersimple: {
-                src: ['../src/Veil.SuperSimple/Veil.SuperSimple.csproj'],
-                options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true,
-                    buildParameters: {
-                        platform: 'AnyCPU'
-                    }
-                }
+                src: ['../src/Veil.SuperSimple/Veil.SuperSimple.csproj']
             },
             handlebars: {
-                src: ['../src/Veil.Handlebars/Veil.Handlebars.csproj'],
-                options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true,
-                    buildParameters: {
-                        platform: 'AnyCPU'
-                    }
-                }
+                src: ['../src/Veil.Handlebars/Veil.Handlebars.csproj']
             },
             nancy: {
-                src: ['../src/Nancy.ViewEngines.Veil/Nancy.ViewEngines.Veil.csproj'],
-                options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true,
-                    buildParameters: {
-                        platform: 'AnyCPU'
-                    }
-                }
+                src: ['../src/Nancy.ViewEngines.Veil/Nancy.ViewEngines.Veil.csproj']
+            },
+            mvc: {
+                src: ['../src/Veil.Mvc5/Veil.Mvc5.csproj']
             },
             bench: {
-                src: ['../src/Veil.Benchmark/Veil.Benchmark.csproj'],
-                options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true,
-                    buildParameters: {
-                        platform: 'AnyCPU'
-                    }
-                }
+                src: ['../src/Veil.Benchmark/Veil.Benchmark.csproj']
             },
             tests: {
-                src: ['../src/Veil.Tests/Veil.Tests.csproj'],
-                options: {
-                    projectConfiguration: 'Release',
-                    target: ['Clean', 'Rebuild'],
-                    stdout: true,
-                    buildParameters: {
-                        platform: 'AnyCPU'
-                    }
-                }
+                src: ['../src/Veil.Tests/Veil.Tests.csproj']
             }
         },
         clean: {
@@ -123,37 +90,37 @@ module.exports = function (grunt) {
                     cwd: '../src/Nancy.ViewEngines.Veil/bin/Release/',
                     src: ['Nancy.ViewEngines.Veil.*'],
                     dest: 'dist/lib/net40'
+                },{
+                    expand: true,
+                    cwd: '../src/Veil.Mvc5/bin/Release/',
+                    src: ['Veil.Mvc5.*'],
+                    dest: 'dist/lib/net45'
                 }]
             }
         },
         nugetpack: {
+            options: {
+                version: pkg.version
+            },
             core: {
                 src: 'dist/Veil.nuspec',
-                dest: 'dist/',
-                options: {
-                    version: pkg.version
-                }
+                dest: 'dist/'
             },
             supersimple: {
                 src: 'dist/Veil.SuperSimple.nuspec',
-                dest: 'dist/',
-                options: {
-                    version: pkg.version
-                }                
+                dest: 'dist/'
             },
             handlebars: {
                 src: 'dist/Veil.Handlebars.nuspec',
-                dest: 'dist/',
-                options: {
-                    version: pkg.version
-                }                
+                dest: 'dist/'
             },
             nancy: {
                 src: 'dist/Nancy.ViewEngines.Veil.nuspec',
-                dest: 'dist/',
-                options: {
-                    version: pkg.version
-                }                
+                dest: 'dist/'
+            },
+            mvc: {
+                src: 'dist/Veil.Mvc5.nuspec',
+                dest: 'dist/'
             }
         },
         nugetpush: {

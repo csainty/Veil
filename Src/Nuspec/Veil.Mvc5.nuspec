@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Veil.Mvc5</id>
+    <version>0.0.0</version>
+    <title>Veil.Mvc5</title>
+    <authors>csainty</authors>
+    <owners>csainty</owners>
+    <projectUrl>https://github.com/csainty/Veil</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A ViewEngine for ASP.NET MVC that uses all installed Veil parsers. Note: You must also install a Veil syntax parser.</description>
+    <copyright>Copyright 2014-2015</copyright>
+    <tags>asp mvc view engine veil</tags>
+    <dependencies>
+      <dependency id="Veil" version="$version$" />
+      <dependency id="Microsoft.AspNet.Mvc" version="5.2.3" />
+    </dependencies>    
+  </metadata>
+  <files>
+    <file src="lib\net45\Veil.Mvc5.dll" target="lib\net45" />
+    <file src="lib\net45\Veil.Mvc5.pdb" target="lib\net45" />
+  </files>  
+</package>
