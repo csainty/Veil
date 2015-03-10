@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/csainty/Veil</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A Veil parser for the Handlebars template syntax</description>
-    <copyright>Copyright 2014</copyright>
+    <copyright>Copyright 2014-2015</copyright>
     <tags>veil template render format view engine handlebars</tags>
     <dependencies>
       <dependency id="Veil" version="$version$" />
