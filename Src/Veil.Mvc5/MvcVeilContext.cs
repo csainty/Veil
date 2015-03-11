@@ -6,16 +6,18 @@ namespace Veil.Mvc5
     {
         private VeilViewEngine ViewEngine;
         private readonly string ControllerName;
+        private readonly string AreaName;
 
-        public MvcVeilContext(VeilViewEngine viewEngine, string controllerName)
+        public MvcVeilContext(VeilViewEngine viewEngine, string areaName, string controllerName)
         {
             ViewEngine = viewEngine;
+            AreaName = areaName;
             ControllerName = controllerName;
         }
 
         public TextReader GetTemplateByName(string name, string parserKey)
         {
-            var viewFile = ViewEngine.LocateView(ControllerName, name, parserKey);
+            var viewFile = ViewEngine.LocateView(AreaName, ControllerName, name, parserKey);
 
             if (viewFile == null)
             {

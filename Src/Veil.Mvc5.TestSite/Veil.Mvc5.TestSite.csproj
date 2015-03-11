@@ -102,6 +102,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\TestArea\Controllers\TestAreaController.cs" />
+    <Compile Include="Areas\TestArea\TestAreaAreaRegistration.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -111,6 +113,8 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
+    <Content Include="Areas\TestArea\Views\TestArea\Index.hbs" />
+    <Content Include="Areas\TestArea\Views\Shared\Master.hbs" />
     <None Include="Views\Home\Index.hbs" />
     <Content Include="Views\Shared\Message.hbs" />
     <Content Include="Views\Shared\Master.hbs" />
