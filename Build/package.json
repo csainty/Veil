@@ -1,7 +1,7 @@
 {
   "name": "Veil.Build",
-  "version": "0.3.0",
-  "assemblyVersion": "0.3.0",
+  "version": "0.3.1",
+  "assemblyVersion": "0.3.1",
   "description": "Build scripts for Veil",
   "repository": {
     "type": "git",
