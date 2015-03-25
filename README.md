@@ -1,6 +1,6 @@
 # Veil
 
-Veil is a .NET template renderer / view engine. It is designed to support many syntax parsers which sit on top of a single IL-emitting compiler.  
+Veil is a .NET template renderer / view engine. It is designed to support many syntax parsers which sit on top of a single optimized compiler.  
 See [Veil.SuperSimple](https://github.com/csainty/Veil/tree/master/Src/Veil.SuperSimple) and [Veil.Handlebars](https://github.com/csainty/Veil/tree/master/Src/Veil.Handlebars) for examples of supported syntax.
 
 ### Design Goals
@@ -16,10 +16,11 @@ A purist may argue this is actually a good thing :)
 
 
 ### Getting Started
-You have two options for using Veil :-
+You have a few options for using Veil :-
 
 1. If you are using [Nancy](https://github.com/NancyFx/Nancy) then install the [Nancy.ViewEngines.Veil](http://www.nuget.org/packages/Nancy.ViewEngines.Veil) package and your preferred syntax parsers e.g. [Veil.Handlebars](http://www.nuget.org/packages/Veil.Handlebars) or [Veil.SuperSimple](http://www.nuget.org/packages/Veil.SuperSimple)
-2. Alternatively you can install and use any Veil syntax parser directly in any application. E.g.
+2. If you are using [MVC](http://www.asp.net/mvc) the install the [Veil.Mvc5](http://www.nuget.org/packages/Veil.Mvc5/) package and your preferred syntax parsers e.g. [Veil.Handlebars](http://www.nuget.org/packages/Veil.Handlebars) or [Veil.SuperSimple](http://www.nuget.org/packages/Veil.SuperSimple). Then register the Veil viewengine in your `App_Start` method.
+3. Alternatively you can install and use any Veil syntax parser directly in any application. E.g.
 
 ````
 Install-Package Veil.Handlebars
