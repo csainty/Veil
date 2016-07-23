@@ -54,7 +54,7 @@ namespace Veil.Handlebars
 
             if (IsLateBoundAcceptingType(modelType)) return SyntaxTreeExpression.LateBound(expression, false, expressionScope);
 
-            throw new VeilParserException(String.Format("Unable to parse model expression '{0}' againt model '{1}'", expression, modelType.Name));
+            throw new VeilParserException(String.Format("Unable to parse model expression '{0}' against model '{1}'", expression, modelType.Name));
         }
 
         private static MemberInfo FindMember(Type t, string name, MemberTypes types)
