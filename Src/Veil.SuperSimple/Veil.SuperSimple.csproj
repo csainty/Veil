@@ -2,6 +2,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
+    <PackageId>Veil.SuperSimple</PackageId>
+    <PackageVersion>0.4.0</PackageVersion>
+    <Authors>csainty</Authors>
+    <Description>A Veil parser for the SuperSimple template syntax</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Initial release for netstandard</PackageReleaseNotes>
+    <Copyright>Copyright (c) 2014</Copyright>
+    <PackageTags>veil template render format view engine supersimple</PackageTags>
+    <PackageProjectUrl>https://github.com/csainty/Veil</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Veil/Veil.csproj"/>
