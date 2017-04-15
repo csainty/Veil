@@ -45,6 +45,6 @@ using (var writer = new StringWriter()) {
 
 
 ### Builds
-[![Build status](https://ci.appveyor.com/api/projects/status/cad383bewb58svi1/branch/master?svg=true)](https://ci.appveyor.com/project/csainty/veil/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/cad383bewb58svi1/branch/master?svg=true)](https://ci.appveyor.com/project/csainty/veil/branch/netstandard)
 
 Pre-built binaries of the latest commit are always available at [https://ci.appveyor.com/project/csainty/veil/build/artifacts](https://ci.appveyor.com/project/csainty/veil/build/artifacts)
