@@ -113,7 +113,7 @@ namespace Veil.Compiler
                 new object[] { new Model<uint> { DataField = 12U }, "12" },
                 new object[] { new Model<ulong> { DataField = 12345UL }, "12345" },
                 new object[] { new Model<object> { DataField = new object() }, "System.Object" },
-                new object[] { new Model<DateTime> { DataField = new DateTime(2014, 01, 01) }, "1/1/14 12:00:00 AM" },
+                new object[] { new Model<DateTime> { DataField = new DateTime(2014, 01, 01) }, new DateTime(2014, 01, 01).ToString() },
                 new object[] { new Model<EnumTest> { DataField = EnumTest.First }, "First" }
             };
         }
