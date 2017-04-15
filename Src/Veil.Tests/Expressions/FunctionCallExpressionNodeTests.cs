@@ -1,18 +1,14 @@
-﻿using NUnit.Framework;
-using Veil.Parser;
+﻿using Veil.Parser;
+using Xunit;
 
 namespace Veil.Expressions
 {
-    [TestFixture]
     public class FunctionCallExpressionNodeTests
     {
-        [Test]
+        [Fact]
         public void Should_choose_parameter_less_version_of_function()
         {
-            Assert.DoesNotThrow(() =>
-            {
-                var result = SyntaxTreeExpression.Function(typeof(string), "ToString");
-            });
+            var result = SyntaxTreeExpression.Function(typeof(string), "ToString");
         }
     }
 }

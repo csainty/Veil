@@ -92,18 +92,19 @@ namespace Veil
             var binder = lateBoundCache.GetOrAdd(Tuple.Create(model.GetType(), itemName), new Func<Tuple<Type, string>, Func<object, object>>(pair =>
             {
                 var type = pair.Item1;
+                var typeInfo = type.GetTypeInfo();
                 var flags = GetBindingFlags(isCaseSensitive);
 
                 if (pair.Item2.EndsWith("()"))
                 {
-                    var function = type.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), flags, null, new Type[0], new ParameterModifier[0]);
+                    var function = typeInfo.GetMethod(pair.Item2.Substring(0, pair.Item2.Length - 2), flags);
                     if (function != null) return DelegateBuilder.FunctionCall(type, function);
                 }
 
-                var property = type.GetProperty(pair.Item2, flags);
+                var property = typeInfo.GetProperty(pair.Item2, flags);
                 if (property != null) return DelegateBuilder.Property(type, property);
 
-                var field = type.GetField(pair.Item2, flags);
+                var field = typeInfo.GetField(pair.Item2, flags);
                 if (field != null) return DelegateBuilder.Field(type, field);
 
                 var dictionaryType = type.GetDictionaryTypeWithKey<string>();

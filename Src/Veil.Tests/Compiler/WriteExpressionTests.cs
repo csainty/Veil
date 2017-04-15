@@ -1,44 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using System.Reflection;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class WriteExpressionTests : CompilerTestBase
+    public class WriteExpressionTests : CompilerTestBase
     {
-        [SetCulture("en-US")]
-        [TestCaseSource("TestCases")]
+        [MemberData("TestCases")]
+        [Theory]
         public void Should_be_able_to_write_model_property<T>(T model, string expectedResult)
         {
             var template = SyntaxTree.Block(SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Data")));
             var result = ExecuteTemplate(template, model);
 
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [SetCulture("en-US")]
-        [TestCaseSource("TestCases")]
+        [MemberData("TestCases")]
+        [Theory]
         public void Should_be_able_to_write_model_field<T>(T model, string expectedResult)
         {
             var template = SyntaxTree.Block(SyntaxTree.WriteExpression(SyntaxTreeExpression.Field(model.GetType(), "DataField")));
             var result = ExecuteTemplate(template, model);
 
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [SetCulture("en-US")]
-        [TestCaseSource("TestCases")]
+        [MemberData("TestCases")]
+        [Theory]
         public void Should_be_able_to_write_from_sub_model<T>(T model, string expectedResult)
         {
             var template = SyntaxTree.Block(SyntaxTree.WriteExpression(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Property(model.GetType(), "Sub"), SyntaxTreeExpression.Property(model.GetType().GetProperty("Sub").PropertyType, "SubData"))));
             var result = ExecuteTemplate(template, model);
 
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_write_from_root_model()
         {
             var model = new { Text = "Hello!" };
@@ -46,10 +46,10 @@ namespace Veil.Compiler
                 SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Text", ExpressionScope.RootModel))
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello!"));
+            Assert.Equal("Hello!", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_write_from_parent_scope_model()
         {
             var model = new Model<string>
@@ -76,10 +76,10 @@ namespace Veil.Compiler
                 )
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("A1RootB1RootC2RootD2Root"));
+            Assert.Equal("A1RootB1RootC2RootD2Root", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_apply_html_encoding_when_requested()
         {
             var model = new { Text = "<h1>Hello</h1>" };
@@ -87,10 +87,10 @@ namespace Veil.Compiler
                 SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Text", ExpressionScope.RootModel), true)
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("&lt;h1&gt;Hello&lt;/h1&gt;"));
+            Assert.Equal("&lt;h1&gt;Hello&lt;/h1&gt;", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_write_item_from_dictionary()
         {
             var model = new Dictionary<string, object>();
@@ -99,10 +99,10 @@ namespace Veil.Compiler
                 SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Joe"));
+            Assert.Equal("Joe", result);
         }
 
-        public object[] TestCases()
+        public static object[] TestCases()
         {
             return new object[] {
                 new object[] { new Model<string> { DataField = "World" }, "World" },
@@ -113,7 +113,7 @@ namespace Veil.Compiler
                 new object[] { new Model<uint> { DataField = 12U }, "12" },
                 new object[] { new Model<ulong> { DataField = 12345UL }, "12345" },
                 new object[] { new Model<object> { DataField = new object() }, "System.Object" },
-                new object[] { new Model<DateTime> { DataField = new DateTime(2014, 01, 01) }, "1/1/2014 12:00:00 AM" },
+                new object[] { new Model<DateTime> { DataField = new DateTime(2014, 01, 01) }, "1/1/14 12:00:00 AM" },
                 new object[] { new Model<EnumTest> { DataField = EnumTest.First }, "First" }
             };
         }

@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using FakeItEasy;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class FlushTests : CompilerTestBase
+    
+    public class FlushTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_flush_textwriter()
         {
             var template = SyntaxTree.Block(
@@ -18,17 +18,11 @@ namespace Veil.Compiler
             );
             var compiledTemplate = new VeilTemplateCompiler<object>(this.GetTemplateByName).Compile(template);
 
-            using (var scope = Fake.CreateScope())
-            {
-                var writer = A.Fake<TextWriter>();
-                compiledTemplate(writer, new object());
-                using (scope.OrderedAssertions())
-                {
-                    A.CallTo(() => writer.Write("Start")).MustHaveHappened();
-                    A.CallTo(() => writer.Flush()).MustHaveHappened();
-                    A.CallTo(() => writer.Write("End")).MustHaveHappened();
-                }
-            }
+            var writer = A.Fake<TextWriter>();
+            compiledTemplate(writer, new object());
+            A.CallTo(() => writer.Write("Start")).MustHaveHappened()
+                .Then(A.CallTo(() => writer.Flush()).MustHaveHappened())
+                .Then(A.CallTo(() => writer.Write("End")).MustHaveHappened());
         }
     }
 }

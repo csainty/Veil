@@ -1,140 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5584FBD-6E00-499A-A6E3-784DB92B3180}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Veil</RootNamespace>
-    <AssemblyName>Veil.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
-    </Reference>
-    <Reference Include="DeepEqual, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DeepEqual.1.4.0.0\lib\net40\DeepEqual.dll</HintPath>
-    </Reference>
-    <Reference Include="FakeItEasy, Version=1.25.2.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FakeItEasy.1.25.2\lib\net40\FakeItEasy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.1.1\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Testing, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.Testing.1.1\lib\net40\Nancy.Testing.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0"/>
+    <PackageReference Include="xunit" Version="2.3.0-beta1-build3642"/>
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0"/>
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0"/>
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.0.0"/>
+    <PackageReference Include="FakeItEasy" Version="3.2.0"/>
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642"/>
+    <ProjectReference Include="../Veil/Veil.csproj"/>
+    <ProjectReference Include="../Veil.SuperSimple/Veil.SuperSimple.csproj"/>
+    <ProjectReference Include="../Veil.Handlebars/Veil.Handlebars.csproj"/>
+    <ProjectReference Include="../DeepEqual/DeepEqual.csproj"/>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Compiler\CompilerTestBase.cs" />
-    <Compile Include="Compiler\ConditionalTests.cs" />
-    <Compile Include="Compiler\ExtendTests.cs" />
-    <Compile Include="Compiler\FlushTests.cs" />
-    <Compile Include="Compiler\IncludeTests.cs" />
-    <Compile Include="Compiler\IterateTests.cs" />
-    <Compile Include="Compiler\InvalidSyntaxTreeTests.cs" />
-    <Compile Include="Compiler\BlockTests.cs" />
-    <Compile Include="Compiler\LateBoundTests.cs" />
-    <Compile Include="Compiler\ScopedNodeTests.cs" />
-    <Compile Include="Compiler\WriteLiteralTests.cs" />
-    <Compile Include="Compiler\WriteExpressionTests.cs" />
-    <Compile Include="Expressions\CollectionHasItemsNodeTests.cs" />
-    <Compile Include="Expressions\ConditionalNodeTests.cs" />
-    <Compile Include="Expressions\FunctionCallExpressionNodeTests.cs" />
-    <Compile Include="Expressions\IterateNodeTests.cs" />
-    <Compile Include="Handlebars\CommentTests.cs" />
-    <Compile Include="Handlebars\ConditionalTests.cs" />
-    <Compile Include="Handlebars\ExtendTests.cs" />
-    <Compile Include="Handlebars\FlushTests.cs" />
-    <Compile Include="Handlebars\HandlebarsExpressionParserTests.cs" />
-    <Compile Include="Handlebars\IterationTests.cs" />
-    <Compile Include="Handlebars\PartialTests.cs" />
-    <Compile Include="Handlebars\UnlessTests.cs" />
-    <Compile Include="Handlebars\WhitespaceControlTests.cs" />
-    <Compile Include="Handlebars\WithTests.cs" />
-    <Compile Include="Handlebars\WriteLiteralTests.cs" />
-    <Compile Include="Handlebars\WriteExpressionTests.cs" />
-    <Compile Include="Helpers\HtmlEncodeTests.cs" />
-    <Compile Include="NancyViewEngines\IndexViewModel.cs" />
-    <Compile Include="NancyViewEngines\NancyViewEngineTests.cs" />
-    <Compile Include="NancyViewEngines\TestingModule.cs" />
-    <Compile Include="NancyViewEngines\TestingRootPathProvider.cs" />
-    <Compile Include="ParserTestBase.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SuperSimple\SuperSimpleExpressionParserTests.cs" />
-    <Compile Include="SuperSimple\SuperSimpleParserTests.cs" />
-    <Compile Include="TestVeilContext.cs" />
-    <Compile Include="VeilEngineTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NancyViewEngines\Views\Header.hbs" />
-    <None Include="NancyViewEngines\Views\Header.vsshtml" />
-    <None Include="NancyViewEngines\Views\Handlebars.hbs" />
-    <None Include="NancyViewEngines\Views\SuperSimple.vsshtml" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Nancy.ViewEngines.Veil\Nancy.ViewEngines.Veil.csproj">
-      <Project>{d75aa844-9cc6-4a81-af27-9df312981f7e}</Project>
-      <Name>Nancy.ViewEngines.Veil</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Veil.Handlebars\Veil.Handlebars.csproj">
-      <Project>{3335691a-38b6-4dd1-96cb-a1c262cef4cc}</Project>
-      <Name>Veil.Handlebars</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Veil.SuperSimple\Veil.SuperSimple.csproj">
-      <Project>{3478795d-95e0-45d8-bf31-b85f95b1e160}</Project>
-      <Name>Veil.SuperSimple</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Veil\Veil.csproj">
-      <Project>{97d96b66-edfe-474b-bc72-d8439830fc76}</Project>
-      <Name>Veil</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

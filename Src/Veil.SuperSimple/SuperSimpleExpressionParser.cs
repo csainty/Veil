@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Veil.Parser;
 
 namespace Veil.SuperSimple
@@ -76,7 +77,7 @@ namespace Veil.SuperSimple
 
         private static bool IsDictionary(this Type t)
         {
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
+            return t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
         }
     }
 }

@@ -1,18 +1,18 @@
-﻿using NUnit.Framework;
-using Veil.Parser;
+﻿using Veil.Parser;
 using Veil.Parser.Nodes;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class WriteLiteralTests : CompilerTestBase
+    public class WriteLiteralTests : CompilerTestBase
     {
-        [TestCase("Hello World", "Hello World")]
+        [InlineData("Hello World", "Hello World")]
+        [Theory]
         public void Should_output_literal(string literal, string expectedResult)
         {
             var template = SyntaxTree.Block(new WriteLiteralNode { LiteralContent = literal });
             var result = ExecuteTemplate(template, new { });
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
     }
 }

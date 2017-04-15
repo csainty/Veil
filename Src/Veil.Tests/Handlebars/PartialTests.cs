@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class PartialTests : ParserTestBase<HandlebarsParser>
+    
+    public class PartialTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_partial_syntax()
         {
             var model = new { };

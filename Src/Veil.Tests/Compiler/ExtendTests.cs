@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class ExtendTests : CompilerTestBase
+    
+    public class ExtendTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_be_able_to_extend_a_template()
         {
             var model = new { Name = "Bob" };
@@ -28,20 +28,20 @@ namespace Veil.Compiler
             });
             var result = ExecuteTemplate(template, model);
 
-            Assert.That(result, Is.EqualTo("<html><head><title>Bob</title></head></html>"));
+            Assert.Equal("<html><head><title>Bob</title></head></html>", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_not_throw_if_optional_override_is_missing()
         {
             var model = new { };
             RegisterTemplate("master", SyntaxTree.Block(SyntaxTree.WriteString("Hello"), SyntaxTree.Override("foo", true)));
             var template = SyntaxTree.Extend("master");
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello"));
+            Assert.Equal("Hello", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_throw_if_required_override_is_missing()
         {
             var model = new { };
@@ -53,17 +53,17 @@ namespace Veil.Compiler
             });
         }
 
-        [Test]
+        [Fact]
         public void Should_use_default_for_a_section_if_not_overridden()
         {
             var model = new { };
             RegisterTemplate("master", SyntaxTree.Block(SyntaxTree.WriteString("Hello "), SyntaxTree.Override("foo", SyntaxTree.WriteString("World"))));
             var template = SyntaxTree.Extend("master");
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello World"));
+            Assert.Equal("Hello World", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_nest_extends()
         {
             var model = new { };
@@ -79,7 +79,7 @@ namespace Veil.Compiler
                 {"name", SyntaxTree.WriteString("Bob")}
             });
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Well hello there Bob"));
+            Assert.Equal("Well hello there Bob", result);
         }
     }
 }

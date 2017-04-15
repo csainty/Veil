@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.IO;
-using NUnit.Framework;
+using Veil.Handlebars;
+using Veil.SuperSimple;
+using Xunit;
 
 namespace Veil
 {
-    [TestFixture]
+    
     public class VeilEngineTests
     {
         private TestVeilContext context;
@@ -34,79 +36,84 @@ namespace Veil
             })
         };
 
-        [SetUp]
-        public void SetUp()
+        public VeilEngineTests()
         {
             context = new TestVeilContext();
             engine = new VeilEngine(context);
         }
 
-        [TestCaseSource("HandlebarsTemplates")]
+        [Theory]
+        [MemberData("HandlebarsTemplates")]
         public void Should_render_handlebars_template(string template, string expectedResult)
         {
             RegisterHandlebarsTemplates();
             var view = Compile(template, "handlebars");
             var result = Execute(view, viewModel);
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCaseSource("HandlebarsTemplates")]
+        [Theory]
+        [MemberData("HandlebarsTemplates")]
         public void Should_render_handlebars_template_nongeneric(string template, string expectedResult)
         {
             RegisterHandlebarsTemplates();
             var view = CompileNonGeneric(template, "handlebars");
             var result = Execute(view, viewModel);
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCaseSource("HandlebarsTemplates")]
+        [Theory]
+        [MemberData("HandlebarsTemplates")]
         public void Should_render_handlebars_template_latebound(string template, string expectedResult)
         {
             RegisterHandlebarsTemplates();
             var view = CompileLateBound(template, "handlebars");
             var result = Execute(view, viewModel);
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCaseSource("SuperSimpleTemplates")]
+        [Theory]
+        [MemberData("SuperSimpleTemplates")]
         public void Should_render_supersimple_template(string template, string expectedResult)
         {
             RegisterSuperSimpleTemplates();
             var view = Compile(template, "supersimple");
             var result = Execute(view, viewModel);
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCaseSource("SuperSimpleTemplates")]
+        [Theory]
+        [MemberData("SuperSimpleTemplates")]
         public void Should_render_supersimple_template_nongeneric(string template, string expectedResult)
         {
             RegisterSuperSimpleTemplates();
             var view = CompileNonGeneric(template, "supersimple");
             var result = Execute(view, viewModel);
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCaseSource("SuperSimpleTemplates")]
+        [Theory]
+        [MemberData("SuperSimpleTemplates")]
         public void Should_render_supersimple_template_latebound(string template, string expectedResult)
         {
             RegisterSuperSimpleTemplates();
             var view = CompileLateBound(template, "supersimple");
             var result = Execute(view, viewModel);
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.Equal(expectedResult, result);
         }
 
-        [Test]
+        [Fact]
         public void Should_work_with_no_veilcontext()
         {
             var view = new VeilEngine().Compile<ViewModel>("supersimple", new StringReader("Hello @Model.Name"));
             using (var writer = new StringWriter())
             {
                 view(writer, new ViewModel { Name = "Joe" });
-                Assert.That(writer.ToString(), Is.EqualTo("Hello Joe"));
+                Assert.Equal("Hello Joe", writer.ToString());
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_throw_if_attempt_to_use_partials_without_veilcontext()
         {
             Assert.Throws<InvalidOperationException>(() =>
@@ -115,7 +122,7 @@ namespace Veil
             });
         }
 
-        public object[] HandlebarsTemplates()
+        public static object[] HandlebarsTemplates()
         {
             return new object[] {
                 new object[] {"Hello {{ Name }}. You have visited us {{ ViewCount }} times!", "Hello Chris. You have visited us 10 times!"},
@@ -139,7 +146,7 @@ namespace Veil
             };
         }
 
-        public object[] SuperSimpleTemplates()
+        public static object[] SuperSimpleTemplates()
         {
             return new object[] {
                 new object[] {"Hello @Model.Name;. You have visited us @Model.ViewCount times!", "Hello Chris. You have visited us 10 times!"},
@@ -161,6 +168,9 @@ namespace Veil
 
         private void RegisterSuperSimpleTemplates()
         {
+            if (!VeilStaticConfiguration.IsParserRegistered("supersimple")) {
+                VeilStaticConfiguration.RegisterParser("supersimple", new SuperSimpleParser());
+            }
             context.RegisterTemplate("Role", "@Current;");
             context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
             context.RegisterTemplate("Department", "@Model.DepartmentName @Model.Company.CompanyName");
@@ -170,6 +180,9 @@ namespace Veil
 
         private void RegisterHandlebarsTemplates()
         {
+            if (!VeilStaticConfiguration.IsParserRegistered("handlebars")) {
+                VeilStaticConfiguration.RegisterParser("handlebars", new HandlebarsParser());
+            }
             context.RegisterTemplate("role", "{{ this }}");
             context.RegisterTemplate("master", "Hello {{ Name }} {{body}} See Ya!");
         }

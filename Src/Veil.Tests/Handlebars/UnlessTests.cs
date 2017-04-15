@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class UnlessTests : ParserTestBase<HandlebarsParser>
+    
+    public class UnlessTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_unless_block()
         {
             var model = new { Test = true };
@@ -24,9 +24,10 @@ namespace Veil.Handlebars
             );
         }
 
-        [TestCase("Hello {{#unless Conditional}} There")]
-        [TestCase("Hello {{/unless}} There")]
-        [TestCase("Hello {{#unless Conditional}} There{{/unless}}{{/unless}}")]
+        [Theory]
+        [InlineData("Hello {{#unless Conditional}} There")]
+        [InlineData("Hello {{/unless}} There")]
+        [InlineData("Hello {{#unless Conditional}} There{{/unless}}{{/unless}}")]
         public void Should_throw_if_block_not_open_and_closed_consistently(string template)
         {
             var model = new { Conditional = false };

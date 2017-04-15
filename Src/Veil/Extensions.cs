@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 
 namespace Veil
 {
@@ -15,17 +16,17 @@ namespace Veil
 
         private static bool IsEnumerableType(Type t)
         {
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+            return t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>);
         }
 
         private static bool IsDictionaryType(Type t)
         {
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
+            return t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
         }
 
         private static bool IsCollectionType(Type t)
         {
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(ICollection<>);
+            return t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(ICollection<>);
         }
 
         private static bool IsNonGenericCollectionType(Type t)
@@ -60,7 +61,7 @@ namespace Veil
             else dictionaryType = t.GetInterfaces().FirstOrDefault(IsDictionaryType);
 
             if (dictionaryType == null) return null;
-            if (dictionaryType.GetGenericArguments()[0] != typeof(string)) return null;
+            if (dictionaryType.GenericTypeArguments[0] != typeof(string)) return null;
             return dictionaryType;
         }
     }

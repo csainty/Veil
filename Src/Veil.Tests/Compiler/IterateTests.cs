@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class IterateTests : CompilerTestBase
+    
+    public class IterateTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_be_able_to_iterate_a_list()
         {
             var model = new { Items = new List<string> { "1", "2" } };
@@ -22,10 +22,10 @@ namespace Veil.Compiler
             ));
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("ItemItem"));
+            Assert.Equal("ItemItem", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_iterate_an_array()
         {
             var model = new { Items = new[] { "1", "2" } };
@@ -40,10 +40,10 @@ namespace Veil.Compiler
             ));
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("ItemItem"));
+            Assert.Equal("ItemItem", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_use_items_from_collection_as_scope()
         {
             var model = new { Items = new[] { new ItemModel { Name = "John" }, new ItemModel { Name = "Kim" } } };
@@ -54,10 +54,10 @@ namespace Veil.Compiler
                 )
             ));
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("JohnKim"));
+            Assert.Equal("JohnKim", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_output_value_types_from_collections()
         {
             var model = new { Items = new[] { "1", "2", "3", "4" } };
@@ -69,10 +69,10 @@ namespace Veil.Compiler
             ));
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("1234"));
+            Assert.Equal("1234", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_iterate_items_from_an_untyped_model()
         {
             var model = new Dictionary<string, object>();
@@ -85,10 +85,10 @@ namespace Veil.Compiler
             ));
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("12"));
+            Assert.Equal("12", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_render_empty_block_no_items_in_collection()
         {
             var model = new { Items = new List<string> { } };
@@ -103,10 +103,10 @@ namespace Veil.Compiler
             ));
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Empty"));
+            Assert.Equal("Empty", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_render_empty_block_no_items_in_array()
         {
             var model = new { Items = new string[0] };
@@ -121,7 +121,7 @@ namespace Veil.Compiler
             ));
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Empty"));
+            Assert.Equal("Empty", result);
         }
 
         private class ItemModel

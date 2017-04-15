@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class WriteLiteralTests : ParserTestBase<HandlebarsParser>
+    
+    public class WriteLiteralTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_template_without_expressions_as_literal()
         {
             var result = Parse("Hello World");
