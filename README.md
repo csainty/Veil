@@ -47,3 +47,10 @@ using (var writer = new StringWriter()) {
 [![Build status](https://ci.appveyor.com/api/projects/status/cad383bewb58svi1/branch/master?svg=true)](https://ci.appveyor.com/project/csainty/veil/branch/master)
 
 Pre-built binaries of the latest commit are always available at [https://ci.appveyor.com/project/csainty/veil/build/artifacts](https://ci.appveyor.com/project/csainty/veil/build/artifacts)
+
+Alternatively you can grab them from the AppVeyor nuget feed -
+```
+<packageSources>
+    <add key="veil.appveyor" value="https://ci.appveyor.com/nuget/veil" protocolVersion="2" />
+</packageSources>
+```
