@@ -9,9 +9,12 @@ namespace Veil.NancyViewEngines
     public class NancyViewEngineTests
     {
         static NancyViewEngineTests() {
-            VeilStaticConfiguration.ClearParserRegistrations();
-            VeilStaticConfiguration.RegisterParser(new HandlebarsTemplateParserRegistration());
-            VeilStaticConfiguration.RegisterParser(new SuperSimpleParserRegistration());
+            if (!VeilStaticConfiguration.IsParserRegistered("handlebars")) {
+                VeilStaticConfiguration.RegisterParser(new HandlebarsTemplateParserRegistration());
+            }
+            if (!VeilStaticConfiguration.IsParserRegistered("supersimple")) {
+                VeilStaticConfiguration.RegisterParser(new SuperSimpleParserRegistration());
+            }
         }
 
         [Theory]

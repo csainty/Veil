@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Veil
 {
-    
+
     public class VeilEngineTests
     {
         private TestVeilContext context;
@@ -169,7 +169,7 @@ namespace Veil
         private void RegisterSuperSimpleTemplates()
         {
             if (!VeilStaticConfiguration.IsParserRegistered("supersimple")) {
-                VeilStaticConfiguration.RegisterParser("supersimple", new SuperSimpleParser());
+                VeilStaticConfiguration.RegisterParser(new SuperSimpleParserRegistration());
             }
             context.RegisterTemplate("Role", "@Current;");
             context.RegisterTemplate("Roles", "<ul>@Each.Current;<li>@Partial['Role'];</li>@EndEach;</ul>");
@@ -181,7 +181,7 @@ namespace Veil
         private void RegisterHandlebarsTemplates()
         {
             if (!VeilStaticConfiguration.IsParserRegistered("handlebars")) {
-                VeilStaticConfiguration.RegisterParser("handlebars", new HandlebarsParser());
+                VeilStaticConfiguration.RegisterParser(new HandlebarsTemplateParserRegistration());
             }
             context.RegisterTemplate("role", "{{ this }}");
             context.RegisterTemplate("master", "Hello {{ Name }} {{body}} See Ya!");
