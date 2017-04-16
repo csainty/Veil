@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <PackageId>Veil.SuperSimple</PackageId>
-    <PackageVersion>1.0.0-alpha</PackageVersion>
+    <PackageVersion>$([MSBuild]::ValueOrDefault(`$(APPVEYOR_BUILD_VERSION)`, `1.0.0-alpha`))</PackageVersion>
     <Authors>csainty</Authors>
     <Description>A Veil parser for the SuperSimple template syntax</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
