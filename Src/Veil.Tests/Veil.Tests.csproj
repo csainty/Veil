@@ -16,5 +16,7 @@
 
     <PackageReference Include="xunit" Version="2.2.0"/>
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642"/>
+
+    <Content Include="NancyViewEngines\Views\*.*" CopyToOutputDirectory="Always"/>
   </ItemGroup>
 </Project>

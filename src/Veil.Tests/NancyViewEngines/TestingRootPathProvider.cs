@@ -7,7 +7,7 @@ namespace Veil.NancyViewEngines
     {
         public string GetRootPath()
         {
-            return Path.Combine(Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationBasePath, "..", "..", "..", "NancyViewEngines");
+            return Path.Combine(Microsoft.DotNet.InternalAbstractions.ApplicationEnvironment.ApplicationBasePath, "NancyViewEngines");
         }
     }
 }
