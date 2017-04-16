@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class FlushTests : ParserTestBase<HandlebarsParser>
+    
+    public class FlushTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_flush()
         {
             var syntaxTree = Parse("{{#flush}}", typeof(object));

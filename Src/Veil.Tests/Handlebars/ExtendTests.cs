@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using DeepEqual.Syntax;
-using NUnit.Framework;
+using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class ExtendTests : ParserTestBase<HandlebarsParser>
+    
+    public class ExtendTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_extend_pages()
         {
             var result = Parse("{{< Master}}Hello World");
@@ -18,7 +18,7 @@ namespace Veil.Handlebars
             }));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_body_override()
         {
             var result = Parse("<p>{{body}}</p>");
@@ -30,7 +30,7 @@ namespace Veil.Handlebars
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_throw_when_extend_is_not_first_node()
         {
             Assert.Throws<VeilParserException>(() =>

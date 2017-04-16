@@ -2,36 +2,36 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using DeepEqual.Syntax;
-using NUnit.Framework;
+using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
+    
     public class HandlebarsExpressionParserTests
     {
-        [Test]
+        [Fact]
         public void Should_parse_property()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Property");
             result.ShouldDeepEqual(SyntaxTreeExpression.Property(typeof(Model), "Property"));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_field()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Field");
             result.ShouldDeepEqual(SyntaxTreeExpression.Field(typeof(Model), "Field"));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_property_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "SubModel.SubProperty");
             result.ShouldDeepEqual(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.Property(typeof(Model), "SubModel"), SyntaxTreeExpression.Property(typeof(SubModel), "SubProperty")));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_field_from_subsubmodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "SubModel.SubSubModel.SubSubField");
@@ -44,28 +44,30 @@ namespace Veil.Handlebars
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_function_from_submodel()
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(Model)), "Function()");
             result.ShouldDeepEqual(SyntaxTreeExpression.Function(typeof(Model), "Function"));
         }
 
-        [TestCase("this")]
+        [Theory]
+        [InlineData("this")]
         public void Should_parse_self_expression_node(string expression)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(string)), expression);
             result.ShouldDeepEqual(SyntaxTreeExpression.Self(typeof(string)));
         }
 
-        [TestCaseSource("LateBoundTestCases")]
+        [Theory]
+        [MemberData("LateBoundTestCases")]
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = HandlebarsExpressionParser.Parse(CreateScopes(typeof(T)), "Name");
             result.ShouldDeepEqual(SyntaxTreeExpression.LateBound("Name", false, ExpressionScope.CurrentModelOnStack));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_reference_parent_scopes_model()
         {
             var current = new { };
@@ -77,7 +79,8 @@ namespace Veil.Handlebars
             result.ShouldDeepEqual(SyntaxTreeExpression.Property(parent.GetType(), "Name", ExpressionScope.ModelOfParentScope));
         }
 
-        [TestCaseSource("CaseInsensitiveTests")]
+        [Theory]
+        [MemberData("CaseInsensitiveTests")]
         public void Should_match_case_insensitivity_correctly(string expression, ExpressionNode expectedResult)
         {
             var scopes = CreateScopes(typeof(CaseTestModel));
@@ -85,11 +88,12 @@ namespace Veil.Handlebars
             result.ShouldDeepEqual(expectedResult);
         }
 
-        [TestCase("Foo")]
-        [TestCase("Foo.Bar")]
-        [TestCase("SubModel.Foo")]
-        [TestCase("Property[]")]
-        [TestCase("Property.foo()")]
+        [Theory]
+        [InlineData("Foo")]
+        [InlineData("Foo.Bar")]
+        [InlineData("SubModel.Foo")]
+        [InlineData("Property[]")]
+        [InlineData("Property.foo()")]
         public void Should_throw_if_expression_cant_be_parsed(string expression)
         {
             Assert.Throws<VeilParserException>(() =>
@@ -98,7 +102,7 @@ namespace Veil.Handlebars
             });
         }
 
-        public object[] LateBoundTestCases()
+        public static object[] LateBoundTestCases()
         {
             return new object[] {
                 new object[] { new object() },
@@ -107,7 +111,7 @@ namespace Veil.Handlebars
             };
         }
 
-        public object[] CaseInsensitiveTests()
+        public static object[] CaseInsensitiveTests()
         {
             return new object[] {
                 new object[] { "UserName", SyntaxTreeExpression.Property(typeof(CaseTestModel), "UserName") },

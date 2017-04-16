@@ -1,21 +1,23 @@
 ﻿using System;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 
 namespace Veil.HelperTests
 {
-    [TestFixture]
+    
     public class HtmlEncodeTests
     {
-        [TestCaseSource("TestCases")]
+        [Theory]
+        [MemberData("TestCases")]
         public void Should_encode_html(string input, string expectedOutput)
         {
             var writer = new StringWriter();
             Veil.Helpers.HtmlEncode(writer, input);
-            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
+            Assert.Equal(expectedOutput, writer.ToString());
         }
 
-        [TestCaseSource("TestCases")]
+        [Theory]
+        [MemberData("TestCases")]
         public void Should_encode_long_html(string input, string expectedOutput)
         {
             var longInput = input + new String('x', 100);
@@ -23,10 +25,10 @@ namespace Veil.HelperTests
 
             var writer = new StringWriter();
             Veil.Helpers.HtmlEncode(writer, longInput);
-            Assert.That(writer.ToString(), Is.EqualTo(longExpectedOutput));
+            Assert.Equal(longExpectedOutput, writer.ToString());
         }
 
-        public object[] TestCases()
+        public static object[] TestCases()
         {
             return new object[] {
                 new object[] { "", "" },

@@ -1,24 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class LateBoundTests : CompilerTestBase
+    
+    public class LateBoundTests : CompilerTestBase
     {
-        [TestCaseSource("TestCases")]
+        [Theory]
+        [MemberData("TestCases")]
         public void Should_handle_late_binding<T>(T model)
         {
             var template = SyntaxTree.Block(
                 SyntaxTree.WriteExpression(SyntaxTreeExpression.LateBound("Name"))
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Joe"));
+            Assert.Equal("Joe", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_not_get_mixed_up_by_caching_of_late_bindings()
         {
             var model = new Dictionary<string, object>();
@@ -31,10 +32,10 @@ namespace Veil.Compiler
                 SyntaxTree.WriteExpression(SyntaxTreeExpression.SubModel(SyntaxTreeExpression.LateBound("Department"), SyntaxTreeExpression.LateBound("Name")))
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("D1UD2"));
+            Assert.Equal("D1UD2", result);
         }
 
-        public object[] TestCases()
+        public static object[] TestCases()
         {
             return new object[] {
                 new object[] { new { Name = "Joe" } },
@@ -45,7 +46,7 @@ namespace Veil.Compiler
             };
         }
 
-        private dynamic Expando()
+        private static dynamic Expando()
         {
             dynamic model = new ExpandoObject();
             model.Name = "Joe";

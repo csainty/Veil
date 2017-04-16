@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class ConditionalTests : ParserTestBase<HandlebarsParser>
+    
+    public class ConditionalTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_if_statement()
         {
             var template = Parse("Hello {{#if Conditional }} John{{/if}}", typeof(TestModel));
@@ -18,7 +18,7 @@ namespace Veil.Handlebars
             });
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_else_statement()
         {
             var template = Parse("Hello {{#if Conditional }}John{{else}}Jim{{/if}}", typeof(TestModel));
@@ -31,7 +31,7 @@ namespace Veil.Handlebars
             });
         }
 
-        [Test]
+        [Fact]
         public void Should_throw_if_property_not_on_model()
         {
             Assert.Throws<VeilParserException>(() =>
@@ -40,12 +40,13 @@ namespace Veil.Handlebars
             });
         }
 
-        [TestCase("Hello {{#if Conditional}} There")]
-        [TestCase("Hello {{#if Conditional}} There {{else}}")]
-        [TestCase("Hello {{/if}} There")]
-        [TestCase("Hello {{#if Conditional}} There{{/if}}{{/if}}")]
-        [TestCase("Hello {{else}} Foo")]
-        [TestCase("Hello {{#if Conditional}} There{{/if}}{{else}}")]
+        [Theory]
+        [InlineData("Hello {{#if Conditional}} There")]
+        [InlineData("Hello {{#if Conditional}} There {{else}}")]
+        [InlineData("Hello {{/if}} There")]
+        [InlineData("Hello {{#if Conditional}} There{{/if}}{{/if}}")]
+        [InlineData("Hello {{else}} Foo")]
+        [InlineData("Hello {{#if Conditional}} There{{/if}}{{else}}")]
         public void Should_throw_if_block_not_open_and_closed_consistently(string template)
         {
             Assert.Throws<VeilParserException>(() =>

@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using DeepEqual.Syntax;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.SuperSimple
 {
-    [TestFixture]
-    internal class SuperSimpleExpressionParserTests
+    
+    public class SuperSimpleExpressionParserTests
     {
-        [Test]
+        [Fact]
         public void Should_parse_model_keywords_as_self_expression_scoped_to_root()
         {
             var model = new { };
@@ -18,7 +18,7 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeExpression.Self(model.GetType(), ExpressionScope.RootModel));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_current_keyword_as_self_expression()
         {
             var model = new { };
@@ -26,7 +26,7 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeExpression.Self(model.GetType()));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_model_dot_property_as_proeprty_expression()
         {
             var model = new { Name = "foo" };
@@ -34,7 +34,7 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeExpression.Property(model.GetType(), "Name", ExpressionScope.RootModel));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_hasitems_expression()
         {
             var model = new { Items = new[] { 1, 2, 3 } };
@@ -42,7 +42,7 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeExpression.HasItems(SyntaxTreeExpression.Property(model.GetType(), "Items")));
         }
 
-        [Test]
+        [Fact]
         public void Should_give_precedence_to_property_over_hasitems()
         {
             var model = new { Items = new[] { 1, 2, 3 }, HasItems = true };
@@ -50,7 +50,7 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeExpression.Property(model.GetType(), "HasItems"));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_sub_model_expression_from_root_model()
         {
             var model = new { User = new { Name = "Bob" } };
@@ -61,7 +61,7 @@ namespace Veil.SuperSimple
             ));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_sub_model_expression_from_current_model()
         {
             var model = new { User = new { Name = "Bob" } };
@@ -72,7 +72,7 @@ namespace Veil.SuperSimple
             ));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_multiple_sub_model_expressions()
         {
             var model = new { User = new { Department = new { Company = new { Name = "Foo" } } } };
@@ -89,21 +89,22 @@ namespace Veil.SuperSimple
             ));
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_field_references()
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(ViewModel)), "Model.FieldName");
             result.ShouldDeepEqual(SyntaxTreeExpression.Field(typeof(ViewModel), "FieldName", ExpressionScope.RootModel));
         }
 
-        [TestCaseSource("LateBoundTestCases")]
+        [Theory]
+        [MemberData("LateBoundTestCases")]
         public void Should_parse_as_late_bound_when_model_type_is_not_known<T>(T model)
         {
             var result = SuperSimpleExpressionParser.Parse(CreateScopes(typeof(T)), "Model.Name");
             result.ShouldDeepEqual(SyntaxTreeExpression.LateBound("Name", true, ExpressionScope.RootModel));
         }
 
-        [Test]
+        [Fact]
         public void Should_preference_late_binding_over_Has_prefix()
         {
             var model = new { HasItems = true, Items = new string[0] };
@@ -111,8 +112,9 @@ namespace Veil.SuperSimple
             result.ShouldDeepEqual(SyntaxTreeExpression.LateBound("HasItems", true, ExpressionScope.RootModel));
         }
 
-        [TestCase("Model.Wrong")]
-        [TestCase("Model.name")]
+        [Theory]
+        [InlineData("Model.Wrong")]
+        [InlineData("Model.name")]
         public void Should_throw_for_invalid_expressions(string expression)
         {
             var model = new { Name = "foo" };
@@ -122,7 +124,7 @@ namespace Veil.SuperSimple
             });
         }
 
-        public object[] LateBoundTestCases()
+        public static object[] LateBoundTestCases()
         {
             return new object[] {
                 new object[] { new object() },

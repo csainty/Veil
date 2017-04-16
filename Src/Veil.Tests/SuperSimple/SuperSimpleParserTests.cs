@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using DeepEqual.Syntax;
-using NUnit.Framework;
 using Veil.Parser;
 using Veil.Parser.Nodes;
 using Veil.SuperSimple;
+using Xunit;
 
 namespace Veil.Tests.SuperSimple
 {
-    [TestFixture]
-    internal class SuperSimpleParserTests : ParserTestBase<SuperSimpleParser>
+    
+    public class SuperSimpleParserTests : ParserTestBase<SuperSimpleParser>
     {
-        [Test]
+        [Fact]
         public void Should_not_choke_on_an_email_address()
         {
             var input = "<a href=\"mailto:foo@foo.com\">foo@foo.com</a>";
@@ -22,7 +23,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_replace_primitive_model_with_value()
         {
             var input = @"<html><head></head><body>Hello there @Model;</body></html>";
@@ -34,7 +35,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_replaces_valid_property()
         {
             var input = @"<html><head></head><body>Hello there @Model.Name;</body></html>";
@@ -47,7 +48,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_replace_multiple_properties_with_the_same_name()
         {
             const string input = @"<html><head></head><body>Hello there @Model.Name;, nice to see you @Model.Name;</body></html>";
@@ -62,7 +63,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_replace_multiple_properties_from_model()
         {
             var input = @"<html><head></head><body>Hello there @Model.Name; - welcome to @Model.SiteName;</body></html>";
@@ -82,7 +83,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_support_implicit_model_reference_for_each_block()
         {
             var input = @"<html><head></head><body><ul>@Each.Users;<li>@Current;</li>@EndEach;</ul></body></html>";
@@ -102,7 +103,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_support_explicit_model_reference_for_each_block()
         {
             var input = @"<html><head></head><body><ul>@Each.Model.Users;<li>@Current;</li>@EndEach;</ul></body></html>";
@@ -122,7 +123,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_use_multiple_current_statements_inside_each()
         {
             const string input = @"<html><head></head><body><ul>@Each.Users;<li id=""@Current;"">@Current;</li>@EndEach;</ul></body></html>";
@@ -145,7 +146,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_throw_if_using_non_enumerable_type_for_each()
         {
             var input = @"<html><head></head><body><ul>@Each.Users;<li id=""@Current;"">@Current;</li>@EndEach;</ul></body></html>";
@@ -156,7 +157,7 @@ namespace Veil.Tests.SuperSimple
             });
         }
 
-        [Test]
+        [Fact]
         public void Should_combine_single_substitutions_and_each_substitutions()
         {
             var input = @"<html><head></head><body><ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
@@ -183,7 +184,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_allow_model_statement_to_be_followed_by_a_newline()
         {
             var input = "<html><head></head><body>Hello there @Model.Name;\n</body></html>";
@@ -196,7 +197,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_allow_each_statements_to_work_over_multiple_lines()
         {
             var input = "<html>\n\t<head>\n\t</head>\n\t<body>\n\t\t<ul>@Each.Users;\n\t\t\t<li>@Current;</li>@EndEach;\n\t\t</ul>\n\t</body>\n</html>";
@@ -217,7 +218,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_if_block_with_implcit_model_reference()
         {
             var input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
@@ -247,7 +248,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_if_block_with_explicit_model_reference()
         {
             var input = @"<html><head></head><body>@If.Model.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
@@ -277,7 +278,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_not_render_block_when_ifnot_statements_returns_true()
         {
             var input = @"<html><head></head><body>@IfNot.HasUsers;<p>No users found!</p>@EndIf;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul></body></html>";
@@ -308,7 +309,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_return_true_for_ifhascollection_when_if_model_has_a_collection_with_items_but_no_bool()
         {
             var input = @"<html><head></head><body>@If.HasUsers;<ul>@Each.Users;<li>Hello @Current;, @Model.Name; says hello!</li>@EndEach;</ul>@EndIf;</body></html>";
@@ -339,26 +340,28 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [TestCase("Hello @Model.Name")]
-        [TestCase("@Model.Name says hello")]
-        [TestCase("Hello @Model.Name, welcome")]
-        [TestCase("<b>Hello @Model.Name</b>")]
-        [TestCase("Hello @Model.Name?")]
-        [TestCase("Hello @Model.Name!")]
-        [TestCase("Hello \"@Model.Name\"")]
-        [TestCase("Hello '@Model.Name'")]
+        [Theory]
+        [InlineData("Hello @Model.Name")]
+        [InlineData("@Model.Name says hello")]
+        [InlineData("Hello @Model.Name, welcome")]
+        [InlineData("<b>Hello @Model.Name</b>")]
+        [InlineData("Hello @Model.Name?")]
+        [InlineData("Hello @Model.Name!")]
+        [InlineData("Hello \"@Model.Name\"")]
+        [InlineData("Hello '@Model.Name'")]
         public void Should_handle_expression_without_closing_tag(string input)
         {
             var model = new { Name = "Bob" };
             var template = Parse(input, model.GetType());
             var result = ((BlockNode)template).Nodes.OfType<WriteExpressionNode>().Single().Expression as PropertyExpressionNode;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.PropertyInfo, Is.EqualTo(model.GetType().GetProperty("Name")));
+            Assert.NotNull(result);
+            Assert.Equal(model.GetType().GetProperty("Name"), result.PropertyInfo);
         }
 
-        [TestCase(@"<html><head></head><body><ul>@Each;<li>Hello @Current;</li>@EndEach;</ul></body></html>")]
-        [TestCase(@"<html><head></head><body><ul>@Each<li>Hello @Current</li>@EndEach</ul></body></html>")]
+        [Theory]
+        [InlineData(@"<html><head></head><body><ul>@Each;<li>Hello @Current;</li>@EndEach;</ul></body></html>")]
+        [InlineData(@"<html><head></head><body><ul>@Each<li>Hello @Current</li>@EndEach</ul></body></html>")]
         public void Should_allow_each_without_a_variable_and_iterate_over_the_model_if_it_is_enumerable(string input)
         {
             var model = new List<string>() { "Bob", "Jim", "Bill" };
@@ -379,7 +382,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Model_with_exclaimation_should_html_encode()
         {
             var input = @"<html><head></head><body>Hello there @!Model.Name;</body></html>";
@@ -394,7 +397,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Current_with_exclaimation_and_no_parameters_should_html_encode()
         {
             var input = @"<html><head></head><body><ul>@Each;<li>Hello @!Current</li>@EndEach</ul></body></html>";
@@ -416,7 +419,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Current_with_explaimation_and_parameters_should_html_encode()
         {
             var input = @"<html><head></head><body><ul>@Each.Users;<li>@!Current.Name;</li>@EndEach;</ul></body></html>";
@@ -438,7 +441,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_basic_partials()
         {
             var input = @"<html><head></head><body>@Partial['testing'];</body></html>";
@@ -452,7 +455,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_partial_with_specified_model_property()
         {
             var input = @"<html><head></head><body>@Partial['testing', Model.User];</body></html>";
@@ -467,7 +470,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_master_page_if_one_specified()
         {
             var input = "@Master['myMaster']\r\n@Section['Header'];\r\nHeader\r\n@EndSection\r\n@Section['Footer']\r\nFooter\r\n@EndSection";
@@ -482,7 +485,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_sections_in_master_page()
         {
             var input = @"<div id='header'>@Section['Header'];</div><div id='footer'>@Section['Footer'];</div>";
@@ -498,7 +501,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_handle_master_page_hierarchies()
         {
             var input = "@Master['top']\r\n@Section['TopContent']Top\r\n@Section['MiddleContent']@EndSection";
@@ -518,7 +521,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_flush()
         {
             var input = "Header@Flush;Footer";
@@ -532,7 +535,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_include_block_with_ifnull_if_value_null()
         {
             var input = @"<html><head></head><body>@IfNull.Name;No users found@EndIf;</body></html>";
@@ -549,7 +552,7 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_include_block_with_ifnotnull_if_value_non_null()
         {
             var input = @"<html><head></head><body>@IfNotNull.Name;Hello @Model.Name@EndIf;</body></html>";
@@ -569,34 +572,35 @@ namespace Veil.Tests.SuperSimple
             );
         }
 
-        [TestCase("@Master['Master'];@Section['Middle'];Hello@EndSection;Content out here")]
-        [TestCase("@Master['Master'];@Section['Middle'];Hello@EndSection;@Model;")]
-        [TestCase("@Master;")]
-        [TestCase("@Master[];")]
-        [TestCase("@Master[''];")]
-        [TestCase("@Master['Master'];@Section")]
-        [TestCase("@Master['Master'];@Section[]")]
-        [TestCase("@Master['Master'];@Section['']")]
-        [TestCase("@Master['Master'];@EndSection;")]
-        [TestCase("Foo @EndSection; Bar")]
-        [TestCase("Foo @EndIf; Bar")]
-        [TestCase("Foo @EndEach; Bar")]
-        [TestCase("@Section;")]
-        [TestCase("@Section[]")]
-        [TestCase("@Section['']")]
-        [TestCase("@Partial;")]
-        [TestCase("@Partial[]")]
-        [TestCase("@Partial['']")]
-        [TestCase("@If.;")]
-        [TestCase("@If;")]
-        [TestCase("@IfNull.;")]
-        [TestCase("@IfNull;")]
-        [TestCase("@IfNot.;")]
-        [TestCase("@IfNot;")]
-        [TestCase("@IfNotNull.;")]
-        [TestCase("@IfNotNull;")]
-        [TestCase("Hello @Each.Items; World")]
-        [TestCase("Hello @If.Test; World")]
+        [Theory]
+        [InlineData("@Master['Master'];@Section['Middle'];Hello@EndSection;Content out here")]
+        [InlineData("@Master['Master'];@Section['Middle'];Hello@EndSection;@Model;")]
+        [InlineData("@Master;")]
+        [InlineData("@Master[];")]
+        [InlineData("@Master[''];")]
+        [InlineData("@Master['Master'];@Section")]
+        [InlineData("@Master['Master'];@Section[]")]
+        [InlineData("@Master['Master'];@Section['']")]
+        [InlineData("@Master['Master'];@EndSection;")]
+        [InlineData("Foo @EndSection; Bar")]
+        [InlineData("Foo @EndIf; Bar")]
+        [InlineData("Foo @EndEach; Bar")]
+        [InlineData("@Section;")]
+        [InlineData("@Section[]")]
+        [InlineData("@Section['']")]
+        [InlineData("@Partial;")]
+        [InlineData("@Partial[]")]
+        [InlineData("@Partial['']")]
+        [InlineData("@If.;")]
+        [InlineData("@If;")]
+        [InlineData("@IfNull.;")]
+        [InlineData("@IfNull;")]
+        [InlineData("@IfNot.;")]
+        [InlineData("@IfNot;")]
+        [InlineData("@IfNotNull.;")]
+        [InlineData("@IfNotNull;")]
+        [InlineData("Hello @Each.Items; World")]
+        [InlineData("Hello @If.Test; World")]
         public void Should_throw_for_invalid_templates(string template)
         {
             var model = new { Test = false, Items = new string[0] };
@@ -607,7 +611,7 @@ namespace Veil.Tests.SuperSimple
         }
 
         /*
-                [Test]
+                [Fact]
                 public void Should_call_to_expand_paths()
                 {
                     const string input = @"<script src='@Path['~/scripts/test.js']'></script>";
@@ -620,7 +624,7 @@ namespace Veil.Tests.SuperSimple
                     Assert.Equal("<script src='/BasePath/scripts/test.js'></script>", result);
                 }
 
-                [Test]
+                [Fact]
                 public void Should_expand_anti_forgery_tokens()
                 {
                     const string input = "<html><body><form>@AntiForgeryToken</form><body></html>";

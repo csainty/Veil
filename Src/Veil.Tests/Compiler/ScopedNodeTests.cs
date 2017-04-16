@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
-using Veil.Parser;
+﻿using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class ScopedNodeTests : CompilerTestBase
+    public class ScopedNodeTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_change_scope_in_a_scope_block()
         {
             var model = new { User = new { Name = "Joe" }, Foo = "Bar" };
@@ -20,7 +19,7 @@ namespace Veil.Compiler
                 ),
                 SyntaxTree.WriteExpression(SyntaxTreeExpression.Property(model.GetType(), "Foo"))
             ), model);
-            Assert.That(result, Is.EqualTo("Hello JoeBar"));
+            Assert.Equal("Hello JoeBar", result);
         }
     }
 }

@@ -5,7 +5,7 @@ using Veil.Parser;
 
 namespace Veil
 {
-    internal class ParserTestBase<T> where T : ITemplateParser, new()
+    public class ParserTestBase<T> where T : ITemplateParser, new()
     {
         protected T parser;
 

@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
-using Veil.Parser;
+﻿using Veil.Parser;
+using Xunit;
 
 namespace Veil.Expressions
 {
-    [TestFixture]
     public class ConditionalNodeTests
     {
-        [TestCaseSource("InvalidCases")]
+        [Theory]
+        [MemberDataAttribute("InvalidCases")]
         public void Should_throw_when_conditional_expression_not_suitable<T>(T model)
         {
             Assert.Throws<VeilParserException>(() =>
@@ -15,16 +15,14 @@ namespace Veil.Expressions
             });
         }
 
-        [TestCaseSource("ValidCases")]
+        [Theory]
+        [MemberDataAttribute("ValidCases")]
         public void Should_not_throw_when_conditional_expression_is_a_suitable_type<T>(T model)
         {
-            Assert.DoesNotThrow(() =>
-            {
-                SyntaxTree.Conditional(SyntaxTreeExpression.Property(model.GetType(), "Items"), SyntaxTree.Block(), SyntaxTree.Block());
-            });
+            SyntaxTree.Conditional(SyntaxTreeExpression.Property(model.GetType(), "Items"), SyntaxTree.Block(), SyntaxTree.Block());
         }
 
-        public object[] ValidCases()
+        public static object[] ValidCases()
         {
             return new object[] {
                 new object[] { new { Items = true } },
@@ -35,7 +33,7 @@ namespace Veil.Expressions
             };
         }
 
-        public object[] InvalidCases()
+        public static object[] InvalidCases()
         {
             return new object[] {
                 new object[] { new { Items = 0 } },

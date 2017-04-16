@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class IncludeTests : CompilerTestBase
+    
+    public class IncludeTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_throw_if_unable_to_load_template()
         {
             var model = new { Name = "Joe" };
@@ -22,7 +22,7 @@ namespace Veil.Compiler
             });
         }
 
-        [Test]
+        [Fact]
         public void Should_render_include_with_same_model()
         {
             var model = new { Name = "Joe" };
@@ -35,10 +35,10 @@ namespace Veil.Compiler
             );
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello Joe"));
+            Assert.Equal("Hello Joe", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_render_include_with_same_sub_model()
         {
             var model = new { Name = "Joe", Company = new { Name = "Foo" } };
@@ -57,10 +57,10 @@ namespace Veil.Compiler
             );
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Welcome from Foo the amazing Joe."));
+            Assert.Equal("Welcome from Foo the amazing Joe.", result);
         }
 
-        [Test]
+        [Fact]
         public void Root_model_of_template_should_be_the_model_executed_against()
         {
             var model = new { Name = "Joe", Company = new { Name = "Foo", Departments = new[] { "IT", "Admin" } } };
@@ -76,10 +76,10 @@ namespace Veil.Compiler
             );
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Foo - FooFoo"));
+            Assert.Equal("Foo - FooFoo", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_render_include_with_untyped_model()
         {
             var model = new Dictionary<string, object>();
@@ -94,10 +94,10 @@ namespace Veil.Compiler
             );
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello Joe"));
+            Assert.Equal("Hello Joe", result);
         }
 
-        [Test]
+        [Fact]
         public void Should_render_include_with_untyped_sub_model()
         {
             var model = new Dictionary<string, object>();
@@ -112,7 +112,7 @@ namespace Veil.Compiler
             );
 
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello Joe"));
+            Assert.Equal("Hello Joe", result);
         }
     }
 }

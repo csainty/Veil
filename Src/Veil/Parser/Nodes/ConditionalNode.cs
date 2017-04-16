@@ -1,4 +1,6 @@
-﻿namespace Veil.Parser.Nodes
+﻿using System.Reflection;
+
+namespace Veil.Parser.Nodes
 {
     /// <summary>
     /// A node that evaluates an expression and executes one of the blocks based on the truthy-ness of the result
@@ -24,7 +26,7 @@
 
         private void Validate()
         {
-            if (expression.ResultType.IsValueType && expression.ResultType != typeof(bool))
+            if (expression.ResultType.GetTypeInfo().IsValueType && expression.ResultType != typeof(bool))
             {
                 throw new VeilParserException("Attempted to use a ValueType other than bool as the expression in a conditional.");
             }

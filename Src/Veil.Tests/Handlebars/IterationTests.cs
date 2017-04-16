@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class IterationTests : ParserTestBase<HandlebarsParser>
+    
+    public class IterationTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_parse_each_block()
         {
             var result = Parse("{{#each Items }}{{ this }}{{/each}}", typeof(TestModel));
@@ -21,7 +21,7 @@ namespace Veil.Handlebars
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_reference_parent_scope_from_within_each_block()
         {
             var result = Parse("{{#each Items }}{{ ../Prefix }}{{ this }}{{/each}}", typeof(TestModel));
@@ -36,7 +36,7 @@ namespace Veil.Handlebars
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_parse_else_block_of_each()
         {
             var result = Parse("{{#each Items }}Foo{{else}}Bar{{/each}}", typeof(TestModel));
@@ -53,12 +53,13 @@ namespace Veil.Handlebars
             );
         }
 
-        [TestCase("Hello {{#each Items}} There")]
-        [TestCase("Hello {{#each Items}} There {{else}}")]
-        [TestCase("Hello {{/each}} There")]
-        [TestCase("Hello {{#each Items}} There{{/each}}{{/each}}")]
-        [TestCase("Hello {{else}} Foo")]
-        [TestCase("Hello {{#each Items}} There{{/each}}{{else}}")]
+        [Theory]
+        [InlineData("Hello {{#each Items}} There")]
+        [InlineData("Hello {{#each Items}} There {{else}}")]
+        [InlineData("Hello {{/each}} There")]
+        [InlineData("Hello {{#each Items}} There{{/each}}{{/each}}")]
+        [InlineData("Hello {{else}} Foo")]
+        [InlineData("Hello {{#each Items}} There{{/each}}{{else}}")]
         public void Should_throw_if_block_not_open_and_closed_consistently(string template)
         {
             Assert.Throws<VeilParserException>(() =>

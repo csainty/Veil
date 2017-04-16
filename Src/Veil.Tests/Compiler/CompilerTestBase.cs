@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
 using Veil.Parser;
 
 namespace Veil.Compiler
 {
-    internal class CompilerTestBase
+    public class CompilerTestBase
     {
         private readonly Dictionary<string, SyntaxTreeNode> templates = new Dictionary<string, SyntaxTreeNode>();
 
-        [SetUp]
-        public void SetUp()
+        public CompilerTestBase()
         {
             templates.Clear();
         }

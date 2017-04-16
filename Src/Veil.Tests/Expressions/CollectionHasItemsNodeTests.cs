@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using Veil.Parser;
+using Xunit;
 
 namespace Veil.Expressions
 {
-    [TestFixture]
-    internal class CollectionHasItemsNodeTests
+    
+    public class CollectionHasItemsNodeTests
     {
-        [TestCaseSource("InvalidCases")]
+        [Theory]
+        [MemberData("InvalidCases")]
         public void Should_throw_when_collection_expression_not_suitable<T>(T model)
         {
             Assert.Throws<VeilParserException>(() =>
@@ -18,16 +19,14 @@ namespace Veil.Expressions
             });
         }
 
-        [TestCaseSource("ValidCases")]
+        [Theory]
+        [MemberData("ValidCases")]
         public void Should_not_throw_when_collection_expression_is_a_suitable_type<T>(T model)
         {
-            Assert.DoesNotThrow(() =>
-            {
-                SyntaxTreeExpression.HasItems(SyntaxTreeExpression.Property(model.GetType(), "Items"));
-            });
+            SyntaxTreeExpression.HasItems(SyntaxTreeExpression.Property(model.GetType(), "Items"));
         }
 
-        public object[] ValidCases()
+        public static object[] ValidCases()
         {
             return new object[] {
                 new object[] { new { Items = new ArrayList() } },
@@ -39,7 +38,7 @@ namespace Veil.Expressions
             };
         }
 
-        public object[] InvalidCases()
+        public static object[] InvalidCases()
         {
             return new object[] {
                 new object[] { new { Items = "" } },

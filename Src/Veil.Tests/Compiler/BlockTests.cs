@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
-using Veil.Parser;
+﻿using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class BlockTests : CompilerTestBase
+    public class BlockTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_emit_all_nodes_in_block()
         {
             var model = new { Name = "World" };
@@ -16,7 +15,7 @@ namespace Veil.Compiler
                 SyntaxTree.WriteString("!")
             );
             var result = ExecuteTemplate(template, model);
-            Assert.That(result, Is.EqualTo("Hello World!"));
+            Assert.Equal("Hello World!", result);
         }
     }
 }

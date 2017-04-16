@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Veil.Parser;
 
 namespace Veil.Handlebars
 {
-    [TestFixture]
-    internal class WhitespaceControlTests : ParserTestBase<HandlebarsParser>
+    
+    public class WhitespaceControlTests : ParserTestBase<HandlebarsParser>
     {
-        [Test]
+        [Fact]
         public void Should_trim_whitespace_from_previous_literal()
         {
             var template = Parse("Hello \r\n{{~this}}", typeof(string));
@@ -17,7 +17,7 @@ namespace Veil.Handlebars
             );
         }
 
-        [Test]
+        [Fact]
         public void Should_trim_whitespace_from_next_literal()
         {
             var template = Parse("Hello {{this~}}\r\n!", typeof(string));

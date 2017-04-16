@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
-using Veil.Parser;
+﻿using Veil.Parser;
+using Xunit;
 
 namespace Veil.Compiler
 {
-    [TestFixture]
-    internal class InvalidSyntaxTreeTests : CompilerTestBase
+    public class InvalidSyntaxTreeTests : CompilerTestBase
     {
-        [Test]
+        [Fact]
         public void Should_throw_when_invalid_syntax_node_found()
         {
             var template = SyntaxTree.Block(new InvalidSyntaxTreeNode());

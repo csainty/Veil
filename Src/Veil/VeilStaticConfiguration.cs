@@ -11,19 +11,9 @@ namespace Veil
     {
         private static IDictionary<string, Func<ITemplateParser>> parserFactories = new Dictionary<string, Func<ITemplateParser>>();
 
-        static VeilStaticConfiguration()
-        {
-            ScanForParsersInAppDomain();
-        }
-
-        private static void ScanForParsersInAppDomain()
-        {
-            foreach (var registration in AssemblyParserFinder.ParserRegistrations)
-            {
-                foreach (var key in registration.Keys)
-                {
-                    RegisterParser(key, registration.ParserFactory);
-                }
+        public static void RegisterParser(ITemplateParserRegistration registration) {
+            foreach (var key in registration.Keys) {
+                RegisterParser(key, registration.ParserFactory);
             }
         }
 

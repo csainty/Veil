@@ -59,8 +59,11 @@ namespace Veil.Handlebars
 
         private static MemberInfo FindMember(Type t, string name, MemberTypes types)
         {
+            MemberFilter f = (m,n) => m.Name.Equals((String)n, StringComparison.OrdinalIgnoreCase);
+            
             return t
-                .FindMembers(types, BindingFlags.Instance | BindingFlags.Public, Type.FilterNameIgnoreCase, name)
+                .GetTypeInfo()
+                .FindMembers(types, BindingFlags.Instance | BindingFlags.Public, f, name)
                 .OrderByDescending(x => x.Name == name)
                 .ThenByDescending(x => x.MemberType == MemberTypes.Property)
                 .FirstOrDefault();
@@ -76,7 +79,7 @@ namespace Veil.Handlebars
 
         private static bool IsDictionary(this Type t)
         {
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
+            return t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
         }
     }
 }
