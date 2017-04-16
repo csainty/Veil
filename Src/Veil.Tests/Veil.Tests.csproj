@@ -8,9 +8,11 @@
     <ProjectReference Include="../Veil/Veil.csproj"/>
     <ProjectReference Include="../Veil.SuperSimple/Veil.SuperSimple.csproj"/>
     <ProjectReference Include="../Veil.Handlebars/Veil.Handlebars.csproj"/>
+    <ProjectReference Include="../Nancy.ViewEngines.Veil/Nancy.ViewEngines.Veil.csproj"/>
 
     <ProjectReference Include="../DeepEqual/DeepEqual.csproj"/>
     <PackageReference Include="FakeItEasy" Version="3.2.0"/>
+    <PackageReference Include="Nancy.Testing" Version="2.0.0-clinteastwood"/>
 
     <PackageReference Include="xunit" Version="2.2.0"/>
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642"/>
